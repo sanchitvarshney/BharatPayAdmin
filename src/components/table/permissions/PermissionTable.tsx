@@ -81,9 +81,9 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   // const [isId, setIsId] = useState(selectedVal);
   // const [isId, setIsID] = useState(selectedVal);
   // const isId = useSelector((state: RootState) => state.isId.isId);
-  const { menuList, menuListLoading } =
+  const { menuList, menuListLoading , updatedMenuList } =
     useAppSelector((state) => state.menu);
-
+console.log(updatedMenuList)
   const [columnDefs] = useState<ColDef[]>([
     { field: "name", headerName: "Menu Name", filter: true },
     { field: "url", headerName: "URL" },
@@ -187,7 +187,7 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   }, []);
 
   useEffect(() => {
-    setRowData(flattenMenuHierarchy(menuList || []));
+    menuList&&setRowData(flattenMenuHierarchy(menuList));
   }, [menuList]);
 
   return (

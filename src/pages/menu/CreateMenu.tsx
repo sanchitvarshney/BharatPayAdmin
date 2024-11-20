@@ -61,6 +61,7 @@ const CreateMenu: React.FC = () => {
       icon: data.icon,
       order: data.order,
       is_active: true,
+      has_parent:true,
     };
     dispatch(createMenu(payload)).then((res: any) => {
       if (res.payload.data?.success) {

@@ -13,7 +13,7 @@ import Navigation from "@/components/shared/Navigation";
 import ButtonBase from "@mui/material/ButtonBase";
 import { IoMenu } from "react-icons/io5";
 import { FaKey } from "react-icons/fa6";
-import axiosInstance from "@/api/baratpayDashApi";
+// import axiosInstance from "@/api/baratpayDashApi";
 import { CgArrowTopRight } from "react-icons/cg";
 import {
   Accordion,
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/accordion";
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import { Separator } from "@/components/ui/separator";
+import axiosInstance from "@/api/baratpayDashApi";
 
 type Props = {
   children: React.ReactNode;
@@ -36,29 +37,29 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   // const { sheetOpen, setSheetOpen, modalRef } = uiState;
   console.log(sheetOpen);
-  // const getUserMenuPermission = async () => {
-  //   try {
-  //     const response = await axiosInstance.get(
-  //       "user/menu/getUserMenuPermission"
-  //     );
+  const getUserMenuPermission = async () => {
+    try {
+      const response = await axiosInstance.get(
+        "user/menu/getUserMenuPermission"
+      );
 
-  //     // Handle the response
-  //     console.log("Response:", response);
-  //     let newMenu = response.data.menu;
-  //     let master = response.data.masterMenu;
-  //     setNewMenu(newMenu);
-  //     setMasterMenu(master);
-  //     return newMenu;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
+      // Handle the response
+      console.log("Response:", response);
+      let newMenu = response.data.menu;
+      let master = response.data.masterMenu;
+      setNewMenu(newMenu);
+      setMasterMenu(master);
+      return newMenu;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   if (masterMenu && newmenu) {
-  //     getUserMenuPermission();
-  //   }
-  // }, [masterMenu, newmenu]);
+  useEffect(() => {
+    if (masterMenu && newmenu) {
+      getUserMenuPermission();
+    }
+  }, [masterMenu, newmenu]);
   const location = useLocation();
   const renderIcon = (iconClass: string) => {
     console.log("iconClass", iconClass);
@@ -167,16 +168,16 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                 <LuUser2 className="h-[20px] w-[20px] text-slate-500" />
               </Button>
             </Tooltip>
-            <Tooltip title="Permission" placement="right" arrow>
+            <Tooltip title="Role" placement="right" arrow>
               <Button
-                onClick={() => setTab("permission")}
+                onClick={() => setTab("role")}
                 sx={{
                   width: 40,
                   height: 40,
                   borderRadius: "50%",
                   minWidth: 0,
                   padding: 0,
-                  backgroundColor: `${tab === "permission" ? "#dbeafe" : ""}`,
+                  backgroundColor: `${tab === "role" ? "#dbeafe" : ""}`,
                 }}
               >
                 <GrShieldSecurity className="h-[20px] w-[20px] text-slate-500" />
@@ -214,7 +215,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             </Tooltip>
             <Tooltip title="Permission" placement="right" arrow>
               <Button
-                onClick={() => setTab("permissionsNew")}
+                onClick={() => setTab("permissions")}
                 sx={{
                   width: 40,
                   height: 40,
@@ -222,7 +223,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   minWidth: 0,
                   padding: 0,
                   backgroundColor: `${
-                    tab === "permissionsNew" ? "#dbeafe" : ""
+                    tab === "permissions" ? "#dbeafe" : ""
                   }`,
                 }}
               >
@@ -392,18 +393,18 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
             </div>
           )}
-          {tab === "permission" && (
+          {tab === "role" && (
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
                 <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Permission
+                  Role
                 </h1>
               </div>
               <div>
                 <ul className="w-full pe-[10px]">
                   <li className="w-full">
                     <NavLink
-                      to={"/permission/rols"}
+                      to={"/role/rols"}
                       className={({ isActive }) =>
                         isActive ? "active navlink " : "navlink rounded-e-md"
                       }
@@ -452,11 +453,11 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
             </div>
           )}
-          {tab === "permissionsNew" && (
+          {tab === "permissions" && (
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
                 <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  PermissionsNew
+                  Permissions
                 </h1>
               </div>
               <div>

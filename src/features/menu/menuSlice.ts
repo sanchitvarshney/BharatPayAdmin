@@ -13,6 +13,7 @@ const initialState: MenuState = {
   createMenuLoading: false,
   menuListLoading: false,
   menuList: null,
+  updatedMenuList:null,
   userList: null,
   deleteMenuLoading: false,
   disableMenuLoading: false,
@@ -37,16 +38,16 @@ export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>(
 );
 export const getUserMenu = createAsyncThunk<
   AxiosResponse<MenuListResponse>,
-  { id: string }
->(`/user/menu/getUserMenu`, async (payload) => {
-  const response = await axiosInstance.get(`/user/menu/getUserMenu/${payload}`);
+  string
+>(`/user/menu/getUserMenu`, async (id) => {
+  const response = await axiosInstance.get(`/permission/getUserMenu/${id}`);
   return response;
 });
 export const getRoleMenu = createAsyncThunk<
   AxiosResponse<MenuListResponse>,
-  { id: string }
+   string
 >(`/user/menu/getRoleMenu`, async (payload) => {
-  const response = await axiosInstance.get(`/user/menu/getRoleMenu/${payload}`);
+  const response = await axiosInstance.get(`/permission/getRoleMenu/${payload}`);
   return response;
 });
 export const saveUserMenuPermission = createAsyncThunk<
@@ -191,20 +192,20 @@ const authSlice = createSlice({
       })
       .addCase(getUserMenu.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          state.menuList = action.payload?.data?.menu;
+          state.updatedMenuList = action.payload?.data?.menu;
         }
         state.menuListLoading = false;
       })
       .addCase(getUserMenu.rejected, (state) => {
         state.menuListLoading = false;
-        state.menuList = null;
+        state.updatedMenuList = null;
       })
       .addCase(getRoleMenu.pending, (state) => {
         state.menuListLoading = true;
       })
       .addCase(getRoleMenu.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          state.menuList = action.payload?.data?.menu;
+          state.updatedMenuList = action.payload?.data?.menu;
         }
         state.menuListLoading = false;
       })

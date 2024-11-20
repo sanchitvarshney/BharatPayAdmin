@@ -61,9 +61,7 @@ const PermissionList: React.FC = () => {
             text: r.role_name,
           };
         });
-        // console.log("arr", arr);
-
-        setRoleOptions(arr);
+     setRoleOptions(arr);
       }
     });
     dispatch(getActiveUser()).then((res: any) => {
@@ -130,8 +128,9 @@ const PermissionList: React.FC = () => {
   // }, [localSelectedVal, localSelectedType]);
   const getlist = () => {
     const selectedVal = localStorage.getItem("selectedVal");
+    console.log(selectedVal,"okk",selectedType)
     if (selectedVal !== null) {
-      const id = { id: selectedVal };
+      const id = selectedVal ;
       if (localStorage.getItem("selectedType") == "User") {
         dispatch(getUserMenu(id)).then((res: any) => {
           console.log("response", res);

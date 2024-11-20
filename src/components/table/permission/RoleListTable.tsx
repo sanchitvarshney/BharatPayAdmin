@@ -25,7 +25,7 @@ const columns: ColDef[] = [
     flex: 1,
     cellRenderer: (params: any) => {
       return (
-        <a href={`/permission/rols/${params?.data?.role_id}`} className="text-blue-600">
+        <a href={`/role/rols/${params?.data?.role_id}`} className="text-blue-600">
           {params.value}
         </a>
       );

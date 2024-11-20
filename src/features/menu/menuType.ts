@@ -47,6 +47,7 @@ export type MenuListResponse = {
 export type MenuState = {
   createMenuLoading: boolean;
   menuListLoading: boolean;
+  updatedMenuList:MenuItemList[] | null;
   menuList: MenuItemList[] | null;
   userList: UserList[] | null;
   deleteMenuLoading: boolean;
