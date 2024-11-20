@@ -8,6 +8,7 @@ export type CreateMenuType = {
   icon: string;
   order: string;
   is_active: boolean;
+  has_parent:boolean
 };
 export type CreateMenuResponse = {
   success: boolean;

@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateMenuType } from "@/features/menu/menuType";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { createMenu } from "@/features/menu/menuSlice";
+import { createMenu, getMenuList } from "@/features/menu/menuSlice";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -69,6 +69,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
       icon: data.icon,
       order: data.order,
       is_active: true,
+      has_parent:true,
     };
   
 
@@ -76,6 +77,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
       if (res.payload.data?.success) {
         reset();
         onClose();
+        dispatch(getMenuList());
       }
     });
   };
@@ -103,7 +105,9 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add New Menu
+            Add New Menu Against <span style={{ color: '#1976d2', fontWeight: 'bold' }}>
+        {selectedRow.name}
+      </span>
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-[20px] grid grid-cols-2 max-w-[95%] gap-[30px]">
@@ -121,8 +125,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
                     render={({ field }) => (
                       <Select {...field} label="Project Name">
                         <MenuItem value={"IMS"}>IMS</MenuItem>
-                        <MenuItem value={"Spigen"}>Spigen</MenuItem>
-                        <MenuItem value={"Vans"}>Vans</MenuItem>
+                        <MenuItem value={"Admin"}>Admin</MenuItem>
                       </Select>
                     )}
                   />
@@ -142,7 +145,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Name Of Page"
+                      label="Page Name"
                       variant="standard"
                       error={!!errors.name}
                       helperText={errors.name ? errors.name.message : ""}
@@ -169,27 +172,6 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
                     <p className="text-red-600">{errors.is_parent.message}</p>
                   )}
                 </FormControl>
-              </div>
-
-              {/* Parent Menu */}
-              <div>
-                {parent === "Y" && (
-                  <div className="grid gap-2">
-                    <Controller
-                      name="parent_menu_key"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Parent Page"
-                          variant="standard"
-                          error={!!errors.url}
-                          helperText={errors.url ? errors.url.message : ""}
-                        />
-                      )}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Page URL */}

@@ -36,23 +36,23 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   // const { sheetOpen, setSheetOpen, modalRef } = uiState;
   console.log(sheetOpen);
-  const getUserMenuPermission = async () => {
-    try {
-      const response = await axiosInstance.get(
-        "user/menu/getUserMenuPermission"
-      );
+  // const getUserMenuPermission = async () => {
+  //   try {
+  //     const response = await axiosInstance.get(
+  //       "user/menu/getUserMenuPermission"
+  //     );
 
-      // Handle the response
-      console.log("Response:", response);
-      let newMenu = response.data.menu;
-      let master = response.data.masterMenu;
-      setNewMenu(newMenu);
-      setMasterMenu(master);
-      return newMenu;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  //     // Handle the response
+  //     console.log("Response:", response);
+  //     let newMenu = response.data.menu;
+  //     let master = response.data.masterMenu;
+  //     setNewMenu(newMenu);
+  //     setMasterMenu(master);
+  //     return newMenu;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
 
   // useEffect(() => {
   //   if (masterMenu && newmenu) {
@@ -69,9 +69,9 @@ const RootLayout: React.FC<Props> = ({ children }) => {
     }
     return null;
   };
-  useEffect(() => {
-    getUserMenuPermission();
-  }, []);
+  // useEffect(() => {
+  //   getUserMenuPermission();
+  // }, []);
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -424,7 +424,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
               <div>
                 <ul className="w-full pe-[10px]">
-                  <li className="w-full">
+                  {/* <li className="w-full">
                     <NavLink
                       to={"/menu/create"}
                       className={({ isActive }) =>
@@ -435,7 +435,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                         <div>Create Menu</div>
                       </ButtonBase>
                     </NavLink>
-                  </li>
+                  </li> */}
                   <li className="w-full">
                     <NavLink
                       to={"/menu/list"}
@@ -456,7 +456,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
                 <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  permissionsNew
+                  PermissionsNew
                 </h1>
               </div>
               <div>

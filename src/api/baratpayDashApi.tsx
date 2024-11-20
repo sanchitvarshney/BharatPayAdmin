@@ -31,8 +31,8 @@ axiosInstance.interceptors.request.use(async (config) => {
 
     const fingerprint = await getFingerprint();
 
-    config.headers.Authorization = `Bearer ${token}`;
-    config.headers["authorization"] = `Bearer ${token}`;
+    config.headers.Authorization = `${token}`;
+    config.headers["authorization"] = `${token}`;
     config.headers["session"] = "2024-2025";
     config.headers["x-click-token"] = uniqueid;
     config.headers["fingerprint"] = fingerprint || "unknown";

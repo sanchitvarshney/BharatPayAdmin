@@ -95,7 +95,7 @@ export const deleteMenu = createAsyncThunk<
   AxiosResponse<{ message: string; success: boolean }>,
   string
 >("menu/deleteMenu", async (id) => {
-  const response = await axiosInstance.post(`/menu/deleteMenu/${id}`);
+  const response = await axiosInstance.delete(`/menu/deleteMenu/${id}`);
   return response;
 });
 

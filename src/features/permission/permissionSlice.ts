@@ -9,11 +9,11 @@ const initialState: PermissionState = {
 };
 
 export const createRole = createAsyncThunk<AxiosResponse<CreateRoleResponse>, CreateRolePayload>("permission/createRole", async (payload) => {
-  const response = await axiosInstance.post("/menu/createRole", payload);
+  const response = await axiosInstance.post("/role/createRole", payload);
   return response;
 });
 export const getRoleList = createAsyncThunk<AxiosResponse<RolesListResponse>>("permission/getRoleList", async () => {
-  const response = await axiosInstance.get("/menu/getRoles");
+  const response = await axiosInstance.get("/role/getRoles");
   return response;
 });
 
