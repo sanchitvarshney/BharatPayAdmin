@@ -50,4 +50,5 @@ export type MenuState = {
   userList: UserList[] | null;
   deleteMenuLoading: boolean;
   disableMenuLoading: boolean;
+  isId:any
 };

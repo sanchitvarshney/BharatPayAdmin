@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight, Star } from "lucide-react";
 import Button from "@mui/material/Button";
-import { CiMenuKebab, CiSettings } from "react-icons/ci";
+import { CiSettings } from "react-icons/ci";
 import Tooltip from "@mui/material/Tooltip";
-import { IoGrid, IoHomeOutline, IoLeaf } from "react-icons/io5";
+import { IoGrid, IoHomeOutline } from "react-icons/io5";
 import { LuUser2 } from "react-icons/lu";
 import { GrShieldSecurity } from "react-icons/gr";
 import { MdHome, MdMyLocation } from "react-icons/md";
@@ -14,7 +14,6 @@ import ButtonBase from "@mui/material/ButtonBase";
 import { IoMenu } from "react-icons/io5";
 import { FaKey } from "react-icons/fa6";
 import axiosInstance from "@/api/baratpayDashApi";
-import { FaArrowLeftLong } from "react-icons/fa6";
 import { CgArrowTopRight } from "react-icons/cg";
 import {
   Accordion,
@@ -36,6 +35,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
 
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   // const { sheetOpen, setSheetOpen, modalRef } = uiState;
+  console.log(sheetOpen);
   const getUserMenuPermission = async () => {
     try {
       const response = await axiosInstance.get(
@@ -113,7 +113,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                       <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
                     </Link>
                     <CustomTooltip message="Add to favorite" side="right">
-                      <div className="h-[30px] min-w-[30px] flex justify-center items-center  hover:bg-white hover:bg-[#DBEAFE] hover:text-cyan-600 transition-all cursor-pointer rounded-md">
+                      <div className="h-[30px] min-w-[30px] flex justify-center items-center hover:bg-[#DBEAFE] hover:text-cyan-600 transition-all cursor-pointer rounded-md">
                         <Star className="h-[16px] w-[16px]" />
                       </div>
                     </CustomTooltip>
@@ -277,7 +277,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   <NavLink
                     to={"/"}
                     className={
-                      "flex gap-[10px] items-center py-[10px] group-hover:bg-[#DBEAFE]  p-[10px] rounded-md text-[#475569]  p-[10]"
+                      "flex gap-[10px] items-center py-[10px] group-hover:bg-[#DBEAFE]  p-[10px] rounded-md text-[#475569]"
                     }
                   >
                     <MdHome className="h-[20px] w-[20px]" />
@@ -285,11 +285,11 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   </NavLink>
                 </li>{" "}
                 <div className="sidebar min-w-[250px] h-full ">
-                  {masterMenu?.map((r) => (
+                  {masterMenu?.map((r:any) => (
                     <li className="group">
                       <div
                         className={
-                          "flex justify-between items-center py-[10px] hover:[#D7E2FB] p-[10px] group-hover:bg-[#DBEAFE] rounded-md cursor-pointer text-[#475569] p-[10]"
+                          "flex justify-between items-center py-[10px] hover:[#D7E2FB] p-[10px] group-hover:bg-[#DBEAFE] rounded-md cursor-pointer text-[#475569]"
                         }
                       >
                         <span className="flex gap-[10px] items-center cursor-pointer">
@@ -529,25 +529,25 @@ const Wrapper = styled.div`
   }
 `;
 export default RootLayout;
-let masteeee = [
-  {
-    menu_key: "pg-s9330sp9p85cs8s",
-    name: "Master",
-    parent_menu_key: null,
-    url: null,
-    order: 1,
-    is_active: 1,
-    icon: "fa fa-master",
-    description: "master menu",
-  },
-  {
-    menu_key: "pg-sor0e6s1s142res",
-    name: "WH",
-    parent_menu_key: null,
-    url: null,
-    order: 2,
-    is_active: 1,
-    icon: "fa fa-comp",
-    description: "master menu comp",
-  },
-];
+// let masteeee = [
+//   {
+//     menu_key: "pg-s9330sp9p85cs8s",
+//     name: "Master",
+//     parent_menu_key: null,
+//     url: null,
+//     order: 1,
+//     is_active: 1,
+//     icon: "fa fa-master",
+//     description: "master menu",
+//   },
+//   {
+//     menu_key: "pg-sor0e6s1s142res",
+//     name: "WH",
+//     parent_menu_key: null,
+//     url: null,
+//     order: 2,
+//     is_active: 1,
+//     icon: "fa fa-comp",
+//     description: "master menu comp",
+//   },
+// ];

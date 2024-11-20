@@ -3,7 +3,7 @@ import { Box, Button, InputLabel, MenuItem, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useForm, Controller, set } from "react-hook-form";
+import { useForm, Controller} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateMenuType } from "@/features/menu/menuType";
@@ -27,7 +27,12 @@ const schema = z.object({
 // Infer the form values from Zod schema
 type FormValues = z.infer<typeof schema>;
 
-const CreateMenu: React.FC = ({ open, onClose, selectedRow }:any) => {
+interface CreateMenuProps {
+  open: any;
+  onClose: () => void;
+  selectedRow: any;
+}
+const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) => {
   const dispatch = useAppDispatch();
   const { createMenuLoading } = useAppSelector((state) => state.menu);
   const {

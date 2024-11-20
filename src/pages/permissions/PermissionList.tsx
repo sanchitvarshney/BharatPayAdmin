@@ -1,4 +1,3 @@
-import MenuListTable from "@/components/table/menu/MenuListTable";
 import PermissionTable from "@/components/table/permissions/PermissionTable";
 import {
   getActiveUser,
@@ -17,12 +16,11 @@ import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getRoleList } from "@/features/permission/permissionSlice";
 import { setIsId } from "@/features/menu/isIdReducer";
-import { useSelector } from "react-redux";
 import { showToast } from "@/utills/toasterContext";
-import { log } from "console";
 const schema = z.object({
   type: z.string().nonempty("Project name is required"),
   role: z.string().nonempty("Page name is required"),
+  project:z.string().nonempty("Project name is required"),
 });
 // Infer the form values from Zod schema
 type FormValues = z.infer<typeof schema>;
@@ -30,15 +28,15 @@ type FormValues = z.infer<typeof schema>;
 const PermissionList: React.FC = () => {
   const [options, setOptions] = React.useState([]);
   const [roleOptions, setRoleOptions] = React.useState([]);
-  const [selectedVal, setSelectedVal] = React.useState("");
-  const [selectedType, setSelectedType] = React.useState("");
-  const isId = useSelector((state: RootState) => state.isId.isId);
+  const [selectedVal, setSelectedVal] = React.useState<any>("");
+  const [selectedType, setSelectedType] = React.useState<any>("");
+  // const isId = useSelector((state: RootState) => state.isId.isId);
   const {
     // handleSubmit,
     control,
-    reset,
-    watch,
-    formState: { errors },
+    // reset,
+    // watch,
+    formState: { errors},
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -57,7 +55,7 @@ const PermissionList: React.FC = () => {
     dispatch(getMenuList());
     dispatch(getRoleList()).then((res: any) => {
       if (res?.payload?.data?.success) {
-        let arr = res?.payload?.data?.roles?.map((r) => {
+        let arr = res?.payload?.data?.roles?.map((r:any) => {
           return {
             id: r.role_id,
             text: r.role_name,
@@ -130,24 +128,22 @@ const PermissionList: React.FC = () => {
   //     console.log("watchType", watchType);
   //   }
   // }, [localSelectedVal, localSelectedType]);
-
   const getlist = () => {
-    if (localStorage.getItem("selectedType") == "User") {
-      dispatch(getUserMenu(localStorage.getItem("selectedVal"))).then(
-        (res: any) => {
-          // console.log("response", res);
-        }
-      );
+    const selectedVal = localStorage.getItem("selectedVal");
+    if (selectedVal !== null) {
+      const id = { id: selectedVal };
+      if (localStorage.getItem("selectedType") == "User") {
+        dispatch(getUserMenu(id)).then((res: any) => {
+          console.log("response", res);
+        });
+      } else {
+        dispatch(getRoleMenu(id)).then((res: any) => {
+          console.log("response", res);
+        });
+      }
     } else {
-      dispatch(getRoleMenu(localStorage.getItem("selectedVal"))).then(
-        (res: any) => {
-          // console.log("response", res);
-        }
-      );
+      // Handle the case where selectedVal is null
     }
-    // dispatch(getUserMenu(selectedVal)).then((res: any) => {
-    //   console.log("response", res);
-    // });
   };
   useEffect(() => {
     if (selectedVal.length) {
@@ -180,7 +176,7 @@ const PermissionList: React.FC = () => {
               <Controller
                 name="type"
                 control={control}
-                render={({ field }) => (
+                render={() => (
                   <Select
                     className="w-[150px]"
                     onChange={(e) => {
@@ -216,7 +212,7 @@ const PermissionList: React.FC = () => {
                 <Controller
                   name="role"
                   control={control}
-                  render={({ field }) => (
+                  render={() => (
                     <Select
                       className="w-[150px]"
                       placeholder="Search"
@@ -224,7 +220,7 @@ const PermissionList: React.FC = () => {
                         setSelectedVal(e.target.value);
                       }}
                     >
-                      {options.map((option) => (
+                      {options.map((option:any) => (
                         <MenuItem
                           key={option?.id}
                           value={option?.id}
@@ -240,14 +236,14 @@ const PermissionList: React.FC = () => {
                 <Controller
                   name="role"
                   control={control}
-                  render={({ field }) => (
+                  render={() => (
                     <Select
                       className="w-[150px]"
                       onChange={(e) => {
                         setSelectedVal(e.target.value);
                       }}
                     >
-                      {roleOptions.map((option) => (
+                      {roleOptions.map((option:any) => (
                         <MenuItem
                           key={option?.id}
                           value={option?.id}

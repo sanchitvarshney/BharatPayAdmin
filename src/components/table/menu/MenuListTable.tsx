@@ -19,7 +19,6 @@ import {
 } from "@/features/menu/menuSlice";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Plus } from "lucide-react";
-import AddMenuItem from "./AddMenuItem";
 import CreateMenu from "./CreateMenu";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {

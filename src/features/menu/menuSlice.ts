@@ -19,9 +19,6 @@ const initialState: MenuState = {
   isId: null,
 };
 // Define a type for your slice state
-interface IsIdState {
-  isId: string | null;
-}
 
 export const createMenu = createAsyncThunk<
   AxiosResponse<CreateMenuResponse>,
@@ -53,8 +50,9 @@ export const getRoleMenu = createAsyncThunk<
   return response;
 });
 export const saveUserMenuPermission = createAsyncThunk<
-  AxiosResponse<MenuListResponse>
->("/user/menu/saveUserMenuPermission", async (payload) => {
+  AxiosResponse<MenuListResponse>,
+  any
+>("/user/menu/saveUserMenuPermission", async (payload: any) => {
   const response = await axiosInstance.post(
     "/user/menu/saveUserMenuPermission",
     payload
@@ -62,7 +60,7 @@ export const saveUserMenuPermission = createAsyncThunk<
   return response;
 });
 export const saveRoleMenuPermission = createAsyncThunk<
-  AxiosResponse<MenuListResponse>
+  AxiosResponse<MenuListResponse>,any
 >("/user/menu/saveRoleMenuPermission", async (payload) => {
   const response = await axiosInstance.post(
     "/user/menu/saveRoleMenuPermission",

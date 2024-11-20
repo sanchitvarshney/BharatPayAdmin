@@ -7,21 +7,12 @@ import React, {
 } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { Button, IconButton, Switch, Tooltip } from "@mui/material";
+import {useAppSelector } from "@/hooks/useReduxHook";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  deleteMenu,
-  getMenuList,
-  menustatusChange,
-  saveRoleMenuPermission,
-  saveUserMenuPermission,
-} from "@/features/menu/menuSlice";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Checkbox } from "antd";
-import { useSelector } from "react-redux";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -38,7 +29,7 @@ type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
   selectedType: string;
   selectedVal: string;
-  updateRow: void;
+  updateRow: any;
 };
 
 interface RowData {
@@ -48,6 +39,9 @@ interface RowData {
   status: React.ReactNode;
   action?: React.ReactNode;
   menu_key?: string;
+  can_edit?: boolean;
+  can_view?: boolean;
+  can_delete?: boolean;
 }
 
 // Utility function to flatten hierarchical data
@@ -57,7 +51,7 @@ const flattenMenuHierarchy = (
 ): RowData[] => {
   let result: RowData[] = [];
 
-  data.forEach((item) => {
+  data.forEach((item:any) => {
     const currentHierarchy = [...parentHierarchy, item.name];
     result.push({
       orgHierarchy: currentHierarchy,
@@ -86,12 +80,9 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   const [rowData, setRowData] = useState<RowData[]>();
   // const [isId, setIsId] = useState(selectedVal);
   // const [isId, setIsID] = useState(selectedVal);
-  const isId = useSelector((state: RootState) => state.isId.isId);
-  const { menuList, userList, menuListLoading, deleteMenuLoading } =
+  // const isId = useSelector((state: RootState) => state.isId.isId);
+  const { menuList, menuListLoading } =
     useAppSelector((state) => state.menu);
-  const [checked, setChecked] = React.useState(true);
-
-  const dispatch = useAppDispatch();
 
   const [columnDefs] = useState<ColDef[]>([
     { field: "name", headerName: "Menu Name", filter: true },
@@ -102,7 +93,7 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
       headerName: "Action",
       field: "action",
       cellRenderer: (params: any) => {
-        const [menuid, setMenuid] = useState("");
+        const [menuid] = useState("");
         const [isedit, setIsEdit] = useState(params.data?.can_edit);
         const [isView, setIsView] = useState(params.data?.can_view);
         const [isDelete, setIsDelete] = useState(params.data?.can_delete);
