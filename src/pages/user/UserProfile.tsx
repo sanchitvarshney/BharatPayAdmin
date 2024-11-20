@@ -1,0 +1,776 @@
+import { Tabs, Box, Tab, Button, SelectChangeEvent, FormControl, Select, MenuItem, Modal, Typography, TextField, LinearProgress, Popover, Switch, Checkbox, FormControlLabel } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useParams } from "react-router-dom";
+import { BellIcon, CalendarIcon } from "@radix-ui/react-icons";
+import { FaChevronDown } from "react-icons/fa";
+import { RiPencilFill } from "react-icons/ri";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa6";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
+import { useForm, Controller } from "react-hook-form";
+import { activateUser, changeuserPasword, getUserProfile, suspendUser, updateUserEmail, updateUserMobile, updateUserProfile } from "@/features/user/userSlice";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChangeUserPasswordPayload } from "@/features/user/userType";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { showToast } from "@/utills/toasterContext";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const schema = z.object({
+  new_password: z.string().min(8, "Password must be at least 8 characters"),
+  ask_password_change: z.boolean(),
+  user_id: z.string(),
+});
+type ResetPasswordType = z.infer<typeof schema>;
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+      {value === index && <Box sx={{ padding: "20px 0" }}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+const UserProfile = () => {
+  const [value, setValue] = React.useState(0);
+  const [age, setAge] = React.useState("");
+  const [alert, setAlert] = useState<boolean>(false);
+  const [resetpassword, setResetPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [mobile, setMobile] = useState<string>("");
+  const [suspend, setSuspend] = useState<boolean>(false);
+  const [updateUser, setUpdateUser] = useState<boolean>(false);
+  const [fname, setFname] = useState<string>("");
+  const [lname, setLname] = useState<string>("");
+  const [updateMobile, setUpdateMobile] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [requiredChangePass, setRequiredChangePass] = React.useState<HTMLButtonElement | null>(null);
+  const [askToVerify, setAskToVerify] = useState<boolean>(false);
+  const params = useParams();
+  const dispatch = useAppDispatch();
+  const { userProfile, getUserProfileLoading, cahngeUserPasswordLoading, suspendUserLoading, activateUserLoading, updateUserMobileLoading, updateUserEmailLoading, updateUserProfileLoading } = useAppSelector((state) => state.user);
+
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<ResetPasswordType>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      new_password: "",
+      ask_password_change: false,
+      user_id: userProfile ? userProfile[0].userID || "" : "",
+    },
+  });
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value as string);
+  };
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+    console.log(event);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const onSubmit = (data: ResetPasswordType) => {
+    const payload: ChangeUserPasswordPayload = {
+      userID: userProfile ? userProfile[0].userID || "" : "",
+      new_password: data.new_password,
+      ask_password_change: data.ask_password_change ? "yes" : "no",
+    };
+    dispatch(changeuserPasword(payload)).then((res: any) => {
+      if (res.payload.data?.success) {
+        setResetPassword(false);
+        reset();
+      }
+    });
+  };
+
+  useEffect(() => {
+    dispatch(getUserProfile(params.id || ""));
+  }, [params]);
+  return (
+    <>
+      <div>
+        <Popover
+          disableScrollLock={true}
+          id={Boolean(anchorEl) ? "simple" : undefined}
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={() => setAnchorEl(null)}
+          sx={{
+            "& .MuiPopover-paper": {
+              width: "57%", // Custom width here
+            },
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
+            <Typography>Password</Typography>
+            <div>
+              <Button onClick={() => setResetPassword(true)} variant="contained" sx={{ background: "#fff", color: "#2563eb" }}>
+                Reset Password
+              </Button>
+              <p className="text-[14px] text-zinc-400 mt-[5px] text-center">Reset Sachin's Password</p>
+            </div>
+          </div>
+          <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+            <Button onClick={() => setAnchorEl(null)}>Done</Button>
+          </div>
+        </Popover>
+      </div>
+      <div>
+        <Popover
+          disableScrollLock={true}
+          id={Boolean(requiredChangePass) ? "requiredChangePass" : undefined}
+          open={Boolean(requiredChangePass)}
+          anchorEl={requiredChangePass}
+          onClose={() => setAnchorEl(null)}
+          sx={{
+            "& .MuiPopover-paper": {
+              width: "57%", // Custom width here
+            },
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className="p-[20px] flex  gap-[50px]">
+            <p className=" text-[15px] whitespace-nowrap">Require password change</p>
+            <div>
+              <div className="flex items-center">
+                <Switch />
+                OFF
+              </div>
+              <p className="text-[14px] text-zinc-400 mt-[5px]">Turn on require password change so that this password will need to be changed once Sachin signs in.</p>
+            </div>
+          </div>
+          <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+            <Button onClick={() => setRequiredChangePass(null)}>Done</Button>
+          </div>
+        </Popover>
+      </div>
+      <Modal open={resetpassword} onClose={setResetPassword} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
+              Reset Password- {userProfile ? userProfile[0].emailID : "---"}
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="p-[30px] relative flex flex-col gap-[30px]">
+              <div className="space-y-5">
+                <Controller name="new_password" control={control} render={({ field }) => <TextField required sx={{ width: "100%" }} {...field} label="New Password" variant="standard" error={!!errors.new_password} helperText={errors.new_password?.message} />} />
+                <Controller name="ask_password_change" control={control} render={({ field }) => <FormControlLabel control={<Checkbox {...field} />} label="Change Password after first login" />} />
+              </div>
+              <div className="flex items-center justify-end gap-[10px]">
+                <Button type="button" disabled={cahngeUserPasswordLoading} onClick={() => setResetPassword(false)}>
+                  Cancle
+                </Button>
+                <Button type="submit" disabled={cahngeUserPasswordLoading} variant="contained">
+                  Continue
+                </Button>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{cahngeUserPasswordLoading && <LinearProgress />}</div>
+            </div>
+          </form>
+        </Box>
+      </Modal>
+      <Modal open={alert} onClose={setAlert} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
+              Update Email - {userProfile ? userProfile[0].emailID : "---"}
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <TextField required value={email} onChange={(e) => setEmail(e.target.value)} variant="standard" label="Email" sx={{ width: "100%" }} />
+              <FormControlLabel control={<Checkbox checked={askToVerify} onChange={(e) => setAskToVerify(e.target.checked)} />} label="Ask to Verify  Email " />
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                onClick={() => {
+                  setAlert(false);
+                  setEmail("");
+                  setAskToVerify(false);
+                }}
+                disabled={updateUserEmailLoading}
+              >
+                Cancle
+              </Button>
+              <Button
+                disabled={updateUserEmailLoading}
+                onClick={() => {
+                  if (!email) {
+                    showToast("Please enter an email", "error");
+                  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showToast("Please enter a valid email", "error");
+                  } else {
+                    dispatch(
+                      updateUserEmail({
+                        email: email,
+                        userID: userProfile ? userProfile[0].userID || "" : "",
+                        ask_to_verify: askToVerify ? "yes" : "no",
+                      })
+                    ).then((res: any) => {
+                      if (res.payload.data?.success) {
+                        setAlert(false);
+                        setEmail("");
+                        setAskToVerify(false);
+                      }
+                    });
+                  }
+                }}
+                type="submit"
+                variant="contained"
+              >
+                Continue
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserEmailLoading && <LinearProgress />}</div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal open={suspend} onClose={setSuspend} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
+              {userProfile ? (userProfile[0].status === "A" ? "Deactivate User" : "Activate User") : "---"} - sachin.maurya@mscorpres.in
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <p className="text-[14px]">
+                To confirm type "<span className="font-[500]">{userProfile ? userProfile[0].emailID : "---"}</span>" in the box below
+              </p>
+              <TextField value={email} onChange={(e) => setEmail(e.target.value)} variant="standard" label="" sx={{ width: "100%" }} placeholder="---" />
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                disabled={activateUserLoading || suspendUserLoading}
+                onClick={() => {
+                  setSuspend(false);
+                  setEmail("");
+                }}
+              >
+                Cancle
+              </Button>
+              <LoadingButton
+                disabled={activateUserLoading || suspendUserLoading || (!userProfile || userProfile[0].emailID !== email ? true : false)}
+                onClick={() => {
+                  if (userProfile) {
+                    if (userProfile[0].status === "A") {
+                      dispatch(suspendUser(userProfile ? userProfile[0]?.userID : "")).then((res: any) => {
+                        if (res.payload.data?.success) {
+                          setSuspend(false);
+                          setEmail("");
+                        }
+                      });
+                    } else {
+                      dispatch(activateUser(userProfile ? userProfile[0]?.userID : "")).then((res: any) => {
+                        if (res.payload.data?.success) {
+                          setSuspend(false);
+                          setEmail("");
+                        }
+                      });
+                    }
+                  }
+                }}
+                variant="contained"
+              >
+                Continue
+              </LoadingButton>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{(activateUserLoading || suspendUserLoading) && <LinearProgress />}</div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal open={updateMobile} onClose={setUpdateMobile} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
+              Update Mobile No. - {userProfile ? userProfile[0].emailID : "---"}
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <TextField
+                required
+                value={mobile}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (isNaN(Number(value))) {
+                    showToast("Please enter valid number", "error");
+                  } else {
+                    setMobile(value);
+                  }
+                }}
+                variant="standard"
+                label="Mobile No."
+                sx={{ width: "100%" }}
+              />
+              <FormControlLabel control={<Checkbox checked={askToVerify} onChange={(e) => setAskToVerify(e.target.checked)} />} label="Ask to Verify Mobile No. " />
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                disabled={updateUserMobileLoading}
+                onClick={() => {
+                  setUpdateMobile(false);
+                  setMobile("");
+                  setAskToVerify(false);
+                }}
+              >
+                Cancle
+              </Button>
+              <Button
+                disabled={updateUserMobileLoading}
+                onClick={() => {
+                  if (!mobile) {
+                    showToast("Please enter mobile number", "error");
+                  } else if (mobile.length < 10) {
+                    showToast("Please enter valid mobile number", "error");
+                  } else {
+                    dispatch(updateUserMobile({ userID: userProfile ? userProfile[0]?.userID : "", mobile, ask_to_verify: askToVerify ? "yes" : "no" })).then((res: any) => {
+                      if (res.payload.data?.success) {
+                        setUpdateMobile(false);
+                        setMobile("");
+                        setAskToVerify(false);
+                      }
+                    });
+                  }
+                }}
+                variant="contained"
+              >
+                Continue
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserMobileLoading && <LinearProgress />}</div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal open={updateUser} onClose={setUpdateUser} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
+              Update User - {userProfile ? userProfile[0].emailID : "---"}
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <TextField
+                value={fname}
+                onChange={(e) => {
+                  setFname(e.target.value);
+                }}
+                required
+                variant="standard"
+                label="First Name"
+                sx={{ width: "100%" }}
+              />
+              <TextField
+                value={lname}
+                onChange={(e) => {
+                  setLname(e.target.value);
+                }}
+                required
+                variant="standard"
+                label="Last Name"
+                sx={{ width: "100%" }}
+              />
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  setUpdateUser(false);
+                  setFname("");
+                  setLname("");
+                }}
+              >
+                Cancle
+              </Button>
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  if (!fname || !lname) {
+                    showToast("Please enter first and last name", "error");
+                  } else {
+                    dispatch(updateUserProfile({ userID: userProfile ? userProfile[0]?.userID : "", first_name: fname, last_name: lname })).then((res: any) => {
+                      if (res.payload.data?.success) {
+                        setUpdateUser(false);
+                        setFname("");
+                        setLname("");
+                      }
+                    });
+                  }
+                }}
+                variant="contained"
+              >
+                Continue
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserProfileLoading && <LinearProgress />}</div>
+          </div>
+        </Box>
+      </Modal>
+      <div className=" grid grid-cols-[330px_1fr]">
+        <div className="h-[calc(100vh-70px)]   overflow-y-auto p-[20px] ">
+          <div className="w-full h-full rounded-sm shadow shadow-stone-400">
+            <div className="profile p-[20px] flex overflow-hidden gap-[10px] border-b h-[200px]">
+              <Avatar className="border h-[50px] w-[50px]">
+                {getUserProfileLoading ? (
+                  <Skeleton className="w-full h-full" />
+                ) : (
+                  <>
+                    <AvatarImage src="https://avatars.githubusercontent.com/u/170425125?s=96&v=4" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </>
+                )}
+              </Avatar>
+              <div className="w-full">
+                <h1 className="text-[20px] font-[500] text-stone-700">{getUserProfileLoading ? <Skeleton className="w-full h-[25px]" /> : userProfile ? userProfile[0].fullName : "--"}</h1>
+                <p className="break-all whitespace-normal text-stone-600 text-[15px]">{getUserProfileLoading ? <Skeleton className="w-full h-[18px] mt-[5px]" /> : userProfile ? userProfile[0].emailID : "--"}</p>
+                <p className="text-green-600 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].status === "A" ? "Active" : "Inactive" : "---"}</p>
+                <p className="text-stone-500 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "Last sign in : About 19 hours ago"}</p>
+                <p className="text-stone-500 text-[13px]"> {getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? "Created: " + userProfile[0].registerDt : "Created:  --"}</p>
+              </div>
+            </div>
+            <div className="p-[20px] border-b">
+              <p className="text-[13px] text-stone-500">Organizational unit</p>
+              <h2 className="font-[500] text-stone-700">mscorpres.in</h2>
+            </div>
+            <div className={`p-[20px] relative ${!userProfile ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}`}>
+              <ul className="flex flex-col gap-[10px] font-[500]">
+                <li className="">
+                  <button disabled={!userProfile} onClick={() => setResetPassword(true)} className="text-[15px] text-stone-500 hover:text-blue-600 ">
+                    RESET PASSWORD
+                  </button>
+                </li>
+                <li className="">
+                  <button disabled={!userProfile} onClick={() => setUpdateUser(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                    UPDATE USER
+                  </button>
+                </li>
+                <li className="">
+                  <button disabled={!userProfile} onClick={() => setUpdateMobile(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                    UPDATE MOBILE NO.
+                  </button>
+                </li>
+
+                <li className="">
+                  <button disabled={!userProfile} onClick={() => setAlert(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                    UPDATE EMAIL
+                  </button>
+                </li>
+                {userProfile && userProfile[0].status === "A" ? (
+                  <li className="">
+                    <button disabled={!userProfile} onClick={() => setSuspend(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                      DEACTIVATE USER
+                    </button>
+                  </li>
+                ) : (
+                  <li className="">
+                    <button disabled={!userProfile} onClick={() => setSuspend(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                      ACTIVATE USER
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="p-[20px] h-[calc(100vh-70px)]   overflow-y-auto ">
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="User detail" {...a11yProps(0)} />
+                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="Security" {...a11yProps(1)} />
+                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="Investigate" {...a11yProps(2)} />
+              </Tabs>
+            </Box>
+            <CustomTabPanel value={value} index={0}>
+              <div className="flex flex-col gap-[10px]  px-[5px] ">
+                <div className="border flex justify-between py-[10px] px-[20px]">
+                  <div className="flex items-center gap-[3px] text-[15px]">
+                    <span className="flex items-center gap-[5px]">
+                      <BellIcon className="h-[18px] w-[18px]" />
+                      Alerts
+                    </span>
+                    <span className="text-stone-600">in the last 7 days for sachin maurya</span>
+                  </div>
+                  <Link to={"#"} className="text-[15px] text-blue-600 font-[500]">
+                    View alerts
+                  </Link>
+                </div>
+                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                  <div className="flex items-end justify-between">
+                    <p className="text-stone-500">User information</p>
+
+                    <Button
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        minWidth: 0,
+                        padding: 0,
+                      }}
+                    >
+                      {" "}
+                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                    </Button>
+                  </div>
+                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                    <div>
+                      <p>Secondary Email</p>
+                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].secondaryEmail : "--"} </p>
+                    </div>
+                    <div>
+                      <p>Phone Number | Work</p>
+                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].mobileNo : "--"} </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                  <div className="flex items-end justify-between">
+                    <p className="text-stone-500">Admin roles and privileges</p>
+                    <Button
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        minWidth: 0,
+                        padding: 0,
+                      }}
+                    >
+                      {" "}
+                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                    </Button>
+                  </div>
+                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                    <div>
+                      <p>User Role</p>
+                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].type : "--"}</p>
+                    </div>
+                    <div>
+                      <p>Phone Number | Work</p>
+                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "+91 123456789"} </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={1}>
+              <div className="flex flex-col gap-[10px] rounded-sm shadow  shadow-stone-400">
+                <div className="h-[50px] flex items-center px-[20px] bg-zinc-50 text-zinc-500 border-b">Security</div>
+                <p className="text-zinc-400 ml-[20px]">Password settings</p>
+                <button className="items-start w-full p-0 m-0 text-start" aria-describedby={Boolean(anchorEl) ? "simple" : undefined} onClick={handleClick}>
+                  <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
+                    <p>Password</p>
+                    <p className="text-zinc-400 font-[300]">Reset Sachin's PASSWORD</p>
+                    <div className="flex items-end justify-end">
+                      <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+                    </div>
+                  </div>
+                </button>
+                <button className="items-start w-full p-0 m-0 text-start" aria-describedby={Boolean(requiredChangePass) ? "requiredChangePass" : undefined} onClick={(e) => setRequiredChangePass(e.currentTarget)}>
+                  <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
+                    <p>Require password change</p>
+                    <div>
+                      <p className=" font-[300]">OFF</p>
+                      <p className="text-[13px] text-zinc-500">This password wont't to be changed once Sachin sign in.</p>
+                    </div>
+                    <div className="flex items-center justify-end">
+                      <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+                    </div>
+                  </div>
+                </button>
+                <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
+                  <p>2-step verification</p>
+                  <p className=" font-[300]">OFF</p>
+                  <div className="flex items-end justify-end">
+                    <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+                  </div>
+                </div>
+              </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+              <div>
+                <p>Check log events for issues related to this user</p>
+                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
+                  <div className="h-full pb-[40px] overflow-y-auto">
+                    <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
+                      <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
+                      <p>Calendar log events</p>
+                      <Button>View Logs</Button>
+                    </div>
+                  </div>
+                  <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
+                    <div className="">
+                      <div className="flex items-center gap-[10px]">
+                        <p className="whitespace-nowrap">Rows per page</p>
+                        <FormControl fullWidth>
+                          <Select inputProps={{ "aria-label": "Without label" }} labelId="demo-simple-select-label" sx={{ padding: "0px", height: "30px", width: "80px" }} id="demo-simple-select" value={age} label="" onChange={handleSelectChange}>
+                            <MenuItem value={10}>10</MenuItem>
+                            <MenuItem value={20}>40</MenuItem>
+                            <MenuItem value={30}>30</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                    <div>
+                      <p>1‑22 of 22</p>
+                    </div>
+                    <div className="flex items-center gap-[20px]">
+                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                        <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
+                      </Button>
+                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                        <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-[50px]">
+                <p>Audit logs related to this user</p>
+                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
+                  <div className="h-full pb-[40px] overflow-y-auto">
+                    <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
+                      <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
+                      <p>Calendar log events</p>
+                      <Button>View Logs</Button>
+                    </div>
+                  </div>
+                  <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
+                    <div className="">
+                      <div className="flex items-center gap-[10px]">
+                        <p className="whitespace-nowrap">Rows per page</p>
+                        <FormControl fullWidth>
+                          <Select inputProps={{ "aria-label": "Without label" }} labelId="demo-simple-select-label" sx={{ padding: "0px", height: "30px", width: "80px" }} id="demo-simple-select" value={age} label="" onChange={handleSelectChange}>
+                            <MenuItem value={10}>10</MenuItem>
+                            <MenuItem value={20}>40</MenuItem>
+                            <MenuItem value={30}>30</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                    <div>
+                      <p>1‑22 of 22</p>
+                    </div>
+                    <div className="flex items-center gap-[20px]">
+                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                        <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
+                      </Button>
+                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                        <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CustomTabPanel>
+          </Box>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default UserProfile;
