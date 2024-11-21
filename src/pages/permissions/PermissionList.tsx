@@ -72,12 +72,10 @@ const PermissionList: React.FC = () => {
   }, []);
   const updateRow = (
     value: any,
-
     isView: boolean,
     isedit: boolean,
     isDelete: boolean
   ) => {
-    console.log("selectedType", selectedType);
     let newtype = localStorage.getItem("selectedType");
     if (newtype == "User") {
       let payload = {

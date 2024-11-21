@@ -13,7 +13,6 @@ const initialState: MenuState = {
   createMenuLoading: false,
   menuListLoading: false,
   menuList: null,
-  updatedMenuList:null,
   userList: null,
   deleteMenuLoading: false,
   disableMenuLoading: false,
@@ -192,20 +191,20 @@ const authSlice = createSlice({
       })
       .addCase(getUserMenu.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          state.updatedMenuList = action.payload?.data?.menu;
+          state.menuList = action.payload?.data?.menu;
         }
         state.menuListLoading = false;
       })
       .addCase(getUserMenu.rejected, (state) => {
         state.menuListLoading = false;
-        state.updatedMenuList = null;
+        state.menuList = null;
       })
       .addCase(getRoleMenu.pending, (state) => {
         state.menuListLoading = true;
       })
       .addCase(getRoleMenu.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          state.updatedMenuList = action.payload?.data?.menu;
+          state.menuList = action.payload?.data?.menu;
         }
         state.menuListLoading = false;
       })
