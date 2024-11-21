@@ -30,7 +30,7 @@ const ViewUser = () => {
   ];
 
   useEffect(() => {
-    dispatch(getUserList("A"));
+    dispatch(getUserList("1"));
   }, []);
 
   return (

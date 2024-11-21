@@ -75,7 +75,7 @@ const flattenMenuHierarchy = (
 };
 
 // Example component for Tree Data Table with Menu Data
-const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
+const TreeDataMenu: React.FC<Props> = ({ updateRow }) => { 
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>();
   // const [isId, setIsId] = useState(selectedVal);

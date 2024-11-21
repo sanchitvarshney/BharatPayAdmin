@@ -40,7 +40,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   const getUserMenuPermission = async () => {
     try {
       const response = await axiosInstance.get(
-        "user/menu/getUserMenuPermission"
+        "permission/getUserMenuPermission"
       );
 
       // Handle the response
@@ -59,7 +59,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
     if (masterMenu && newmenu) {
       getUserMenuPermission();
     }
-  }, [masterMenu, newmenu]);
+  }, []);
   const location = useLocation();
   const renderIcon = (iconClass: string) => {
     console.log("iconClass", iconClass);

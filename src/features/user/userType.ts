@@ -1,15 +1,15 @@
 export type AddUserPayload = {
-  fName: string;
-  lName: string;
+  name: string;
   email: string;
-  mobile: string;
+  mobileNo: string;
   password: string;
-  gender: "m" | "f" | "other";
-  askPasswordChange: "yes" | "no";
+  gender: "F" | "M" ;
+  asktochange: "off" | "on";
   newsletterSubscription: "yes" | "no";
-  userStatus: "active" | "inactive";
-  userType: "admin" | "user" | "developer";
-  authtype: "email" | "mobile" | "bothOK" | "none";
+  // userStatus: "active" | "inactive";
+  type: "developer" | "admin" | "user";
+  verification: "E" | "M" | "1" | "0";
+  role:string
 };
 export type AdduserApiResponse = {
   message: string;
@@ -29,16 +29,15 @@ export type UserApiResponse = {
   data: UserType[];
 };
 
-export type UserProfile = {
-  status: string;
-  userID: string;
+export type UserProfileData = {
   type: string;
-  gender: string;
+  userID: string;
+  user_name: string;
   fullName: string;
-  emailID: string;
-  mobileNo: string;
-  secondaryEmail: string;
-  secondaryMobile: string;
+  email: string;
+  mobile: string;
+  status: string;
+  gender: string;
   twoFactoryAuth: string;
   registerDt: string;
   newsLetterSubscription: string; // Assuming this field is either 'YES' or 'NO'
@@ -46,7 +45,7 @@ export type UserProfile = {
 
 export type UserProfileResponse = {
   success: boolean;
-  data: UserProfile[];
+  data: any;
 };
 
 export type ChangeUserPasswordPayload = {
@@ -82,12 +81,13 @@ export type AdduserSatates = {
   userList: UserType[] | null;
   getUserListLoading: boolean;
   getUserProfileLoading: boolean;
-  userProfile: UserProfile[] | null;
+  userProfile: any;
   cahngeUserPasswordLoading: boolean;
   updateUserEmailLoading: boolean;
   updateUserMobileLoading: boolean;
   suspendUserLoading: boolean;
   activateUserLoading: boolean;
   updateUserProfileLoading: boolean;
-
+  rolelistData:any;
+  loading:boolean
 };

@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import { AdduserApiResponse, AddUserPayload, AdduserSatates, ChangePasswordResponse, ChangeUserPasswordPayload, UpdateEmailPayload, UpdateMobilePayload, UpdateuserProfilePayload, UserApiResponse, UserProfileResponse } from "./userType";
 import { showToast } from "@/utills/toasterContext";
+import { RolesListResponse } from "@/features/permission/permissionType";
 
 const initialState: AdduserSatates = {
   addUserloading: false,
@@ -16,10 +17,12 @@ const initialState: AdduserSatates = {
   suspendUserLoading: false,
   activateUserLoading: false,
   updateUserProfileLoading: false,
+  rolelistData:null,
+  loading:false,
 };
 
-export const addUser = createAsyncThunk<AxiosResponse<AdduserApiResponse>, AddUserPayload>("user/adduser", async (paylod) => {
-  const response = await axiosInstance.post("/user/add", paylod);
+export const addUser = createAsyncThunk<AxiosResponse<AdduserApiResponse>, AddUserPayload>("user/create", async (paylod) => {
+  const response = await axiosInstance.post("/user/create", paylod);
   return response;
 });
 export const getUserList = createAsyncThunk<AxiosResponse<UserApiResponse>, string>("user/getUserList", async (type) => {
@@ -27,8 +30,13 @@ export const getUserList = createAsyncThunk<AxiosResponse<UserApiResponse>, stri
   return response;
 });
 
+export const getRoleList = createAsyncThunk<AxiosResponse<RolesListResponse>>("permission/getRoleList", async () => {
+  const response = await axiosInstance.get("/role/getRoles");
+  return response;
+});
+
 export const getUserProfile = createAsyncThunk<AxiosResponse<UserProfileResponse>, string>("user/getUserProfile", async (id) => {
-  const response = await axiosInstance.get(`/user/profile/${id}`);
+  const response = await axiosInstance.get(`/user/details/${id}`);
   return response;
 });
 export const changeuserPasword = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, ChangeUserPasswordPayload>("user/changeuserPasword", async (paylod) => {
@@ -168,6 +176,19 @@ const userSlice = createSlice({
       })
       .addCase(updateUserProfile.rejected, (state) => {
         state.updateUserProfileLoading = false;
+      })
+      .addCase(getRoleList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getRoleList.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.rolelistData = action.payload.data.roles;
+        }
+        state.loading = false;
+      })
+      .addCase(getRoleList.rejected, (state) => {
+        state.loading = false;
+        state.rolelistData = [];
       });
   },
 });

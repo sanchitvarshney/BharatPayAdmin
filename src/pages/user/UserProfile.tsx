@@ -1,4 +1,21 @@
-import { Tabs, Box, Tab, Button, SelectChangeEvent, FormControl, Select, MenuItem, Modal, Typography, TextField, LinearProgress, Popover, Switch, Checkbox, FormControlLabel } from "@mui/material";
+import {
+  Tabs,
+  Box,
+  Tab,
+  Button,
+  SelectChangeEvent,
+  FormControl,
+  Select,
+  MenuItem,
+  Modal,
+  Typography,
+  TextField,
+  LinearProgress,
+  Popover,
+  Switch,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useParams } from "react-router-dom";
@@ -9,7 +26,15 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { useForm, Controller } from "react-hook-form";
-import { activateUser, changeuserPasword, getUserProfile, suspendUser, updateUserEmail, updateUserMobile, updateUserProfile } from "@/features/user/userSlice";
+import {
+  activateUser,
+  changeuserPasword,
+  getUserProfile,
+  suspendUser,
+  updateUserEmail,
+  updateUserMobile,
+  updateUserProfile,
+} from "@/features/user/userSlice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChangeUserPasswordPayload } from "@/features/user/userType";
 import { z } from "zod";
@@ -33,7 +58,13 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
       {value === index && <Box sx={{ padding: "20px 0" }}>{children}</Box>}
     </div>
   );
@@ -57,12 +88,24 @@ const UserProfile = () => {
   const [fname, setFname] = useState<string>("");
   const [lname, setLname] = useState<string>("");
   const [updateMobile, setUpdateMobile] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const [requiredChangePass, setRequiredChangePass] = React.useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+  const [requiredChangePass, setRequiredChangePass] =
+    React.useState<HTMLButtonElement | null>(null);
   const [askToVerify, setAskToVerify] = useState<boolean>(false);
   const params = useParams();
   const dispatch = useAppDispatch();
-  const { userProfile, getUserProfileLoading, cahngeUserPasswordLoading, suspendUserLoading, activateUserLoading, updateUserMobileLoading, updateUserEmailLoading, updateUserProfileLoading } = useAppSelector((state) => state.user);
+  const {
+    userProfile,
+    getUserProfileLoading,
+    cahngeUserPasswordLoading,
+    suspendUserLoading,
+    activateUserLoading,
+    updateUserMobileLoading,
+    updateUserEmailLoading,
+    updateUserProfileLoading,
+  } = useAppSelector((state) => state.user);
 
   const {
     handleSubmit,
@@ -74,7 +117,7 @@ const UserProfile = () => {
     defaultValues: {
       new_password: "",
       ask_password_change: false,
-      user_id: userProfile ? userProfile[0].userID || "" : "",
+      user_id: userProfile ? userProfile[0]?.userID || "" : "",
     },
   });
 
@@ -84,16 +127,15 @@ const UserProfile = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    console.log(event);
+    console.log(event)
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
   const onSubmit = (data: ResetPasswordType) => {
     const payload: ChangeUserPasswordPayload = {
-      userID: userProfile ? userProfile[0].userID || "" : "",
+      userID: userProfile ? userProfile[0]?.userID || "" : "",
       new_password: data.new_password,
       ask_password_change: data.ask_password_change ? "yes" : "no",
     };
@@ -134,10 +176,16 @@ const UserProfile = () => {
           <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
             <Typography>Password</Typography>
             <div>
-              <Button onClick={() => setResetPassword(true)} variant="contained" sx={{ background: "#fff", color: "#2563eb" }}>
+              <Button
+                onClick={() => setResetPassword(true)}
+                variant="contained"
+                sx={{ background: "#fff", color: "#2563eb" }}
+              >
                 Reset Password
               </Button>
-              <p className="text-[14px] text-zinc-400 mt-[5px] text-center">Reset Sachin's Password</p>
+              <p className="text-[14px] text-zinc-400 mt-[5px] text-center">
+                Reset Sachin's Password
+              </p>
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
@@ -167,13 +215,18 @@ const UserProfile = () => {
           }}
         >
           <div className="p-[20px] flex  gap-[50px]">
-            <p className=" text-[15px] whitespace-nowrap">Require password change</p>
+            <p className=" text-[15px] whitespace-nowrap">
+              Require password change
+            </p>
             <div>
               <div className="flex items-center">
                 <Switch />
                 OFF
               </div>
-              <p className="text-[14px] text-zinc-400 mt-[5px]">Turn on require password change so that this password will need to be changed once Sachin signs in.</p>
+              <p className="text-[14px] text-zinc-400 mt-[5px]">
+                Turn on require password change so that this password will need
+                to be changed once Sachin signs in.
+              </p>
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
@@ -181,7 +234,12 @@ const UserProfile = () => {
           </div>
         </Popover>
       </div>
-      <Modal open={resetpassword} onClose={setResetPassword} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={resetpassword}
+        onClose={setResetPassword}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -196,31 +254,72 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
-              Reset Password- {userProfile ? userProfile[0].emailID : "---"}
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Reset Password- {userProfile ? userProfile?.email : "---"}
             </h2>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="p-[30px] relative flex flex-col gap-[30px]">
               <div className="space-y-5">
-                <Controller name="new_password" control={control} render={({ field }) => <TextField required sx={{ width: "100%" }} {...field} label="New Password" variant="standard" error={!!errors.new_password} helperText={errors.new_password?.message} />} />
-                <Controller name="ask_password_change" control={control} render={({ field }) => <FormControlLabel control={<Checkbox {...field} />} label="Change Password after first login" />} />
+                <Controller
+                  name="new_password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      required
+                      sx={{ width: "100%" }}
+                      {...field}
+                      label="New Password"
+                      variant="standard"
+                      error={!!errors.new_password}
+                      helperText={errors.new_password?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  name="ask_password_change"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Checkbox {...field} />}
+                      label="Change Password after first login"
+                    />
+                  )}
+                />
               </div>
               <div className="flex items-center justify-end gap-[10px]">
-                <Button type="button" disabled={cahngeUserPasswordLoading} onClick={() => setResetPassword(false)}>
-                  Cancle
+                <Button
+                  type="button"
+                  disabled={cahngeUserPasswordLoading}
+                  onClick={() => setResetPassword(false)}
+                >
+                  Cancel
                 </Button>
-                <Button type="submit" disabled={cahngeUserPasswordLoading} variant="contained">
+                <Button
+                  type="submit"
+                  disabled={cahngeUserPasswordLoading}
+                  variant="contained"
+                >
                   Continue
                 </Button>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{cahngeUserPasswordLoading && <LinearProgress />}</div>
+              <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+                {cahngeUserPasswordLoading && <LinearProgress />}
+              </div>
             </div>
           </form>
         </Box>
       </Modal>
-      <Modal open={alert} onClose={setAlert} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={alert}
+        onClose={setAlert}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -235,15 +334,33 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
-              Update Email - {userProfile ? userProfile[0].emailID : "---"}
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Update Email - {userProfile ? userProfile?.email : "---"}
             </h2>
           </div>
 
           <div className="p-[30px] relative flex flex-col gap-[30px]">
             <div className="space-y-5">
-              <TextField required value={email} onChange={(e) => setEmail(e.target.value)} variant="standard" label="Email" sx={{ width: "100%" }} />
-              <FormControlLabel control={<Checkbox checked={askToVerify} onChange={(e) => setAskToVerify(e.target.checked)} />} label="Ask to Verify  Email " />
+              <TextField
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                variant="standard"
+                label="Email"
+                sx={{ width: "100%" }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={askToVerify}
+                    onChange={(e) => setAskToVerify(e.target.checked)}
+                  />
+                }
+                label="Ask to Verify  Email "
+              />
             </div>
             <div className="flex items-center justify-end gap-[10px]">
               <Button
@@ -254,7 +371,7 @@ const UserProfile = () => {
                 }}
                 disabled={updateUserEmailLoading}
               >
-                Cancle
+                Cancel
               </Button>
               <Button
                 disabled={updateUserEmailLoading}
@@ -285,11 +402,18 @@ const UserProfile = () => {
                 Continue
               </Button>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserEmailLoading && <LinearProgress />}</div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {updateUserEmailLoading && <LinearProgress />}
+            </div>
           </div>
         </Box>
       </Modal>
-      <Modal open={suspend} onClose={setSuspend} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={suspend}
+        onClose={setSuspend}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -304,17 +428,36 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
-              {userProfile ? (userProfile[0].status === "A" ? "Deactivate User" : "Activate User") : "---"} - sachin.maurya@mscorpres.in
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              {userProfile
+                ? userProfile[0]?.status === "A"
+                  ? "Deactivate User"
+                  : "Activate User"
+                : "---"}{" "}
+              - sachin.maurya@mscorpres.in
             </h2>
           </div>
 
           <div className="p-[30px] relative flex flex-col gap-[30px]">
             <div className="space-y-5">
               <p className="text-[14px]">
-                To confirm type "<span className="font-[500]">{userProfile ? userProfile[0].emailID : "---"}</span>" in the box below
+                To confirm type "
+                <span className="font-[500]">
+                  {userProfile ? userProfile?.email : "---"}
+                </span>
+                " in the box below
               </p>
-              <TextField value={email} onChange={(e) => setEmail(e.target.value)} variant="standard" label="" sx={{ width: "100%" }} placeholder="---" />
+              <TextField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                variant="standard"
+                label=""
+                sx={{ width: "100%" }}
+                placeholder="---"
+              />
             </div>
             <div className="flex items-center justify-end gap-[10px]">
               <Button
@@ -324,21 +467,29 @@ const UserProfile = () => {
                   setEmail("");
                 }}
               >
-                Cancle
+                Cancel
               </Button>
               <LoadingButton
-                disabled={activateUserLoading || suspendUserLoading || (!userProfile || userProfile[0].emailID !== email ? true : false)}
+                disabled={
+                  activateUserLoading ||
+                  suspendUserLoading ||
+                  (!userProfile || userProfile?.email !== email ? true : false)
+                }
                 onClick={() => {
                   if (userProfile) {
-                    if (userProfile[0].status === "A") {
-                      dispatch(suspendUser(userProfile ? userProfile[0]?.userID : "")).then((res: any) => {
+                    if (userProfile[0]?.status === "A") {
+                      dispatch(
+                        suspendUser(userProfile ? userProfile[0]?.userID : "")
+                      ).then((res: any) => {
                         if (res.payload.data?.success) {
                           setSuspend(false);
                           setEmail("");
                         }
                       });
                     } else {
-                      dispatch(activateUser(userProfile ? userProfile[0]?.userID : "")).then((res: any) => {
+                      dispatch(
+                        activateUser(userProfile ? userProfile[0]?.userID : "")
+                      ).then((res: any) => {
                         if (res.payload.data?.success) {
                           setSuspend(false);
                           setEmail("");
@@ -352,11 +503,20 @@ const UserProfile = () => {
                 Continue
               </LoadingButton>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{(activateUserLoading || suspendUserLoading) && <LinearProgress />}</div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {(activateUserLoading || suspendUserLoading) && (
+                <LinearProgress />
+              )}
+            </div>
           </div>
         </Box>
       </Modal>
-      <Modal open={updateMobile} onClose={setUpdateMobile} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={updateMobile}
+        onClose={setUpdateMobile}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -371,8 +531,12 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
-              Update Mobile No. - {userProfile ? userProfile[0].emailID : "---"}
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Update Mobile No. -{" "}
+              {userProfile ? userProfile[0]?.emailID : "---"}
             </h2>
           </div>
 
@@ -393,7 +557,15 @@ const UserProfile = () => {
                 label="Mobile No."
                 sx={{ width: "100%" }}
               />
-              <FormControlLabel control={<Checkbox checked={askToVerify} onChange={(e) => setAskToVerify(e.target.checked)} />} label="Ask to Verify Mobile No. " />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={askToVerify}
+                    onChange={(e) => setAskToVerify(e.target.checked)}
+                  />
+                }
+                label="Ask to Verify Mobile No. "
+              />
             </div>
             <div className="flex items-center justify-end gap-[10px]">
               <Button
@@ -404,7 +576,7 @@ const UserProfile = () => {
                   setAskToVerify(false);
                 }}
               >
-                Cancle
+                Cancel
               </Button>
               <Button
                 disabled={updateUserMobileLoading}
@@ -414,7 +586,13 @@ const UserProfile = () => {
                   } else if (mobile.length < 10) {
                     showToast("Please enter valid mobile number", "error");
                   } else {
-                    dispatch(updateUserMobile({ userID: userProfile ? userProfile[0]?.userID : "", mobile, ask_to_verify: askToVerify ? "yes" : "no" })).then((res: any) => {
+                    dispatch(
+                      updateUserMobile({
+                        userID: userProfile ? userProfile[0]?.userID : "",
+                        mobile,
+                        ask_to_verify: askToVerify ? "yes" : "no",
+                      })
+                    ).then((res: any) => {
                       if (res.payload.data?.success) {
                         setUpdateMobile(false);
                         setMobile("");
@@ -428,11 +606,18 @@ const UserProfile = () => {
                 Continue
               </Button>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserMobileLoading && <LinearProgress />}</div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {updateUserMobileLoading && <LinearProgress />}
+            </div>
           </div>
         </Box>
       </Modal>
-      <Modal open={updateUser} onClose={setUpdateUser} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      <Modal
+        open={updateUser}
+        onClose={setUpdateUser}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -447,8 +632,11 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2 className="text-white text-[17px] font-[500]" id="modal-modal-title">
-              Update User - {userProfile ? userProfile[0].emailID : "---"}
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Update User - {userProfile ? userProfile[0]?.emailID : "---"}
             </h2>
           </div>
 
@@ -484,7 +672,7 @@ const UserProfile = () => {
                   setLname("");
                 }}
               >
-                Cancle
+                Cancel
               </Button>
               <Button
                 disabled={updateUserProfileLoading}
@@ -492,7 +680,13 @@ const UserProfile = () => {
                   if (!fname || !lname) {
                     showToast("Please enter first and last name", "error");
                   } else {
-                    dispatch(updateUserProfile({ userID: userProfile ? userProfile[0]?.userID : "", first_name: fname, last_name: lname })).then((res: any) => {
+                    dispatch(
+                      updateUserProfile({
+                        userID: userProfile ? userProfile[0]?.userID : "",
+                        first_name: fname,
+                        last_name: lname,
+                      })
+                    ).then((res: any) => {
                       if (res.payload.data?.success) {
                         setUpdateUser(false);
                         setFname("");
@@ -506,7 +700,9 @@ const UserProfile = () => {
                 Continue
               </Button>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">{updateUserProfileLoading && <LinearProgress />}</div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {updateUserProfileLoading && <LinearProgress />}
+            </div>
           </div>
         </Box>
       </Modal>
@@ -525,49 +721,122 @@ const UserProfile = () => {
                 )}
               </Avatar>
               <div className="w-full">
-                <h1 className="text-[20px] font-[500] text-stone-700">{getUserProfileLoading ? <Skeleton className="w-full h-[25px]" /> : userProfile ? userProfile[0].fullName : "--"}</h1>
-                <p className="break-all whitespace-normal text-stone-600 text-[15px]">{getUserProfileLoading ? <Skeleton className="w-full h-[18px] mt-[5px]" /> : userProfile ? userProfile[0].emailID : "--"}</p>
-                <p className="text-green-600 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].status === "A" ? "Active" : "Inactive" : "---"}</p>
-                <p className="text-stone-500 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "Last sign in : About 19 hours ago"}</p>
-                <p className="text-stone-500 text-[13px]"> {getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? "Created: " + userProfile[0].registerDt : "Created:  --"}</p>
+                <h1 className="text-[20px] font-[500] text-stone-700">
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[25px]" />
+                  ) : userProfile ? (
+                    userProfile[0]?.fullName
+                  ) : (
+                    "--"
+                  )}
+                </h1>
+                <p className="break-all whitespace-normal text-stone-600 text-[15px]">
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[18px] mt-[5px]" />
+                  ) : userProfile ? (
+                    userProfile[0]?.emailID
+                  ) : (
+                    "--"
+                  )}
+                </p>
+                <p className="text-green-600 text-[13px]">
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[13px] mt-[5px]" />
+                  ) : userProfile ? (
+                    userProfile[0]?.status === "A" ? (
+                      "Active"
+                    ) : (
+                      "Inactive"
+                    )
+                  ) : (
+                    "---"
+                  )}
+                </p>
+                <p className="text-stone-500 text-[13px]">
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[13px] mt-[5px]" />
+                  ) : (
+                    "Last sign in : About 19 hours ago"
+                  )}
+                </p>
+                <p className="text-stone-500 text-[13px]">
+                  {" "}
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[13px] mt-[5px]" />
+                  ) : userProfile ? (
+                    "Created: " + userProfile[0]?.registerDt
+                  ) : (
+                    "Created:  --"
+                  )}
+                </p>
               </div>
             </div>
             <div className="p-[20px] border-b">
               <p className="text-[13px] text-stone-500">Organizational unit</p>
               <h2 className="font-[500] text-stone-700">mscorpres.in</h2>
             </div>
-            <div className={`p-[20px] relative ${!userProfile ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}`}>
+            <div
+              className={`p-[20px] relative ${
+                !userProfile
+                  ? "opacity-60 cursor-not-allowed pointer-events-none"
+                  : ""
+              }`}
+            >
               <ul className="flex flex-col gap-[10px] font-[500]">
                 <li className="">
-                  <button disabled={!userProfile} onClick={() => setResetPassword(true)} className="text-[15px] text-stone-500 hover:text-blue-600 ">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setResetPassword(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600 "
+                  >
                     RESET PASSWORD
                   </button>
                 </li>
                 <li className="">
-                  <button disabled={!userProfile} onClick={() => setUpdateUser(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setUpdateUser(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600"
+                  >
                     UPDATE USER
                   </button>
                 </li>
                 <li className="">
-                  <button disabled={!userProfile} onClick={() => setUpdateMobile(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setUpdateMobile(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600"
+                  >
                     UPDATE MOBILE NO.
                   </button>
                 </li>
 
                 <li className="">
-                  <button disabled={!userProfile} onClick={() => setAlert(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setAlert(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600"
+                  >
                     UPDATE EMAIL
                   </button>
                 </li>
-                {userProfile && userProfile[0].status === "A" ? (
+                {userProfile && userProfile[0]?.status === "A" ? (
                   <li className="">
-                    <button disabled={!userProfile} onClick={() => setSuspend(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                    <button
+                      disabled={!userProfile}
+                      onClick={() => setSuspend(true)}
+                      className="text-[15px] text-stone-500 hover:text-blue-600"
+                    >
                       DEACTIVATE USER
                     </button>
                   </li>
                 ) : (
                   <li className="">
-                    <button disabled={!userProfile} onClick={() => setSuspend(true)} className="text-[15px] text-stone-500 hover:text-blue-600">
+                    <button
+                      disabled={!userProfile}
+                      onClick={() => setSuspend(true)}
+                      className="text-[15px] text-stone-500 hover:text-blue-600"
+                    >
                       ACTIVATE USER
                     </button>
                   </li>
@@ -579,10 +848,38 @@ const UserProfile = () => {
         <div className="p-[20px] h-[calc(100vh-70px)]   overflow-y-auto ">
           <Box sx={{ width: "100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="User detail" {...a11yProps(0)} />
-                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="Security" {...a11yProps(1)} />
-                <Tab sx={{ textTransform: "capitalize", fontWeight: "bold", color: "#78716c" }} label="Investigate" {...a11yProps(2)} />
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+              >
+                <Tab
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                    color: "#78716c",
+                  }}
+                  label="User detail"
+                  {...a11yProps(0)}
+                />
+                <Tab
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                    color: "#78716c",
+                  }}
+                  label="Security"
+                  {...a11yProps(1)}
+                />
+                <Tab
+                  sx={{
+                    textTransform: "capitalize",
+                    fontWeight: "bold",
+                    color: "#78716c",
+                  }}
+                  label="Investigate"
+                  {...a11yProps(2)}
+                />
               </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
@@ -593,9 +890,14 @@ const UserProfile = () => {
                       <BellIcon className="h-[18px] w-[18px]" />
                       Alerts
                     </span>
-                    <span className="text-stone-600">in the last 7 days for sachin maurya</span>
+                    <span className="text-stone-600">
+                      in the last 7 days
+                    </span>
                   </div>
-                  <Link to={"#"} className="text-[15px] text-blue-600 font-[500]">
+                  <Link
+                    to={"#"}
+                    className="text-[15px] text-blue-600 font-[500]"
+                  >
                     View alerts
                   </Link>
                 </div>
@@ -616,65 +918,161 @@ const UserProfile = () => {
                       <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
                     </Button>
                   </div>
-                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
-                    <div>
-                      <p>Secondary Email</p>
-                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].secondaryEmail : "--"} </p>
-                    </div>
-                    <div>
-                      <p>Phone Number | Work</p>
-                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].mobileNo : "--"} </p>
+                  <div className="mt-[20px] py-[10px] space-y-[10px]">
+                    <div className="flex justify-between items-center gap-[30px]">
+                      <p className="font-medium text-gray-700">User Name</p>
+                      <p className="text-sm text-stone-500">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-[150px] h-[13px]" />
+                        ) : userProfile ? (
+                          userProfile.user_name
+                        ) : (
+                          "--"
+                        )}
+                      </p>
                     </div>
                   </div>
-                </div>
-                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
-                  <div className="flex items-end justify-between">
-                    <p className="text-stone-500">Admin roles and privileges</p>
-                    <Button
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        minWidth: 0,
-                        padding: 0,
-                      }}
-                    >
-                      {" "}
-                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
-                    </Button>
-                  </div>
-                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
-                    <div>
-                      <p>User Role</p>
-                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0].type : "--"}</p>
+                  <div className="mt-[20px] py-[10px] space-y-[10px]">
+                    <div className="flex justify-between items-center gap-[30px]">
+                      <p className="font-medium text-gray-700">Email</p>
+                      <p className="text-sm text-stone-500">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-[150px] h-[13px]" />
+                        ) : userProfile ? (
+                          userProfile.email
+                        ) : (
+                          "--"
+                        )}
+                      </p>
                     </div>
-                    <div>
-                      <p>Phone Number | Work</p>
-                      <p className="text-stone-500 text-[14px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "+91 123456789"} </p>
+                  </div>
+
+                  <div className="mt-[10px] py-[5px]">
+                    <div className="flex justify-between items-center gap-[20px]">
+                      <p className="font-medium text-gray-700">Phone Number</p>
+                      <p className="text-sm text-stone-500">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-[150px] h-[13px]" />
+                        ) : userProfile ? (
+                          userProfile?.mobile
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-[10px] py-[5px]">
+                    <div className="flex justify-between items-center gap-[20px]">
+                      <p className="font-medium text-gray-700">Gender</p>
+                      <p className="text-sm text-stone-500">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-[150px] h-[13px]" />
+                        ) : userProfile ? (
+                          userProfile?.gender
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-[10px] py-[5px]">
+                    <div className="flex justify-between items-center gap-[20px]">
+                      <p className="font-medium text-gray-700">User Type</p>
+                      <p className="text-sm text-stone-500">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-[150px] h-[13px]" />
+                        ) : userProfile ? (
+                          userProfile?.type
+                        ) : (
+                          "--"
+                        )}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                <div className="flex items-end justify-between">
+                  <p className="text-stone-500">Admin roles and privileges</p>
+                  <Button
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      minWidth: 0,
+                      padding: 0,
+                    }}
+                  >
+                    {" "}
+                    <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                  </Button>
+                </div>
+                <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                  <div>
+                    <p>User Role</p>
+                    <p className="text-stone-500 text-[14px]">
+                      {getUserProfileLoading ? (
+                        <Skeleton className="w-full h-[13px] mt-[5px]" />
+                      ) : userProfile ? (
+                        userProfile?.type
+                      ) : (
+                        "--"
+                      )}
+                    </p>
+                  </div>
+                  <div>
+                    <p>Phone Number | Work</p>
+                    <p className="text-stone-500 text-[14px]">
+                      {getUserProfileLoading ? (
+                        <Skeleton className="w-full h-[13px] mt-[5px]" />
+                      ) : userProfile ? (
+                        userProfile?.mobile
+                      ) : (
+                        "--"
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* </div> */}
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               <div className="flex flex-col gap-[10px] rounded-sm shadow  shadow-stone-400">
-                <div className="h-[50px] flex items-center px-[20px] bg-zinc-50 text-zinc-500 border-b">Security</div>
+                <div className="h-[50px] flex items-center px-[20px] bg-zinc-50 text-zinc-500 border-b">
+                  Security
+                </div>
                 <p className="text-zinc-400 ml-[20px]">Password settings</p>
-                <button className="items-start w-full p-0 m-0 text-start" aria-describedby={Boolean(anchorEl) ? "simple" : undefined} onClick={handleClick}>
+                <button
+                  className="items-start w-full p-0 m-0 text-start"
+                  aria-describedby={Boolean(anchorEl) ? "simple" : undefined}
+                  onClick={handleClick}
+                >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Password</p>
-                    <p className="text-zinc-400 font-[300]">Reset Sachin's PASSWORD</p>
+                    <p className="text-zinc-400 font-[300]">
+                      Reset Sachin's PASSWORD
+                    </p>
                     <div className="flex items-end justify-end">
                       <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
                     </div>
                   </div>
                 </button>
-                <button className="items-start w-full p-0 m-0 text-start" aria-describedby={Boolean(requiredChangePass) ? "requiredChangePass" : undefined} onClick={(e) => setRequiredChangePass(e.currentTarget)}>
+                <button
+                  className="items-start w-full p-0 m-0 text-start"
+                  aria-describedby={
+                    Boolean(requiredChangePass)
+                      ? "requiredChangePass"
+                      : undefined
+                  }
+                  onClick={(e) => setRequiredChangePass(e.currentTarget)}
+                >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
                     <div>
                       <p className=" font-[300]">OFF</p>
-                      <p className="text-[13px] text-zinc-500">This password wont't to be changed once Sachin sign in.</p>
+                      <p className="text-[13px] text-zinc-500">
+                        This password wont't to be changed once Sachin sign in.
+                      </p>
                     </div>
                     <div className="flex items-center justify-end">
                       <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
@@ -706,7 +1104,19 @@ const UserProfile = () => {
                       <div className="flex items-center gap-[10px]">
                         <p className="whitespace-nowrap">Rows per page</p>
                         <FormControl fullWidth>
-                          <Select inputProps={{ "aria-label": "Without label" }} labelId="demo-simple-select-label" sx={{ padding: "0px", height: "30px", width: "80px" }} id="demo-simple-select" value={age} label="" onChange={handleSelectChange}>
+                          <Select
+                            inputProps={{ "aria-label": "Without label" }}
+                            labelId="demo-simple-select-label"
+                            sx={{
+                              padding: "0px",
+                              height: "30px",
+                              width: "80px",
+                            }}
+                            id="demo-simple-select"
+                            value={age}
+                            label=""
+                            onChange={handleSelectChange}
+                          >
                             <MenuItem value={10}>10</MenuItem>
                             <MenuItem value={20}>40</MenuItem>
                             <MenuItem value={30}>30</MenuItem>
@@ -718,10 +1128,24 @@ const UserProfile = () => {
                       <p>1‑22 of 22</p>
                     </div>
                     <div className="flex items-center gap-[20px]">
-                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          width: "30px",
+                          minWidth: "0px",
+                          height: "30px",
+                        }}
+                      >
                         <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
                       </Button>
-                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          width: "30px",
+                          minWidth: "0px",
+                          height: "30px",
+                        }}
+                      >
                         <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
                       </Button>
                     </div>
@@ -743,7 +1167,19 @@ const UserProfile = () => {
                       <div className="flex items-center gap-[10px]">
                         <p className="whitespace-nowrap">Rows per page</p>
                         <FormControl fullWidth>
-                          <Select inputProps={{ "aria-label": "Without label" }} labelId="demo-simple-select-label" sx={{ padding: "0px", height: "30px", width: "80px" }} id="demo-simple-select" value={age} label="" onChange={handleSelectChange}>
+                          <Select
+                            inputProps={{ "aria-label": "Without label" }}
+                            labelId="demo-simple-select-label"
+                            sx={{
+                              padding: "0px",
+                              height: "30px",
+                              width: "80px",
+                            }}
+                            id="demo-simple-select"
+                            value={age}
+                            label=""
+                            onChange={handleSelectChange}
+                          >
                             <MenuItem value={10}>10</MenuItem>
                             <MenuItem value={20}>40</MenuItem>
                             <MenuItem value={30}>30</MenuItem>
@@ -755,10 +1191,24 @@ const UserProfile = () => {
                       <p>1‑22 of 22</p>
                     </div>
                     <div className="flex items-center gap-[20px]">
-                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          width: "30px",
+                          minWidth: "0px",
+                          height: "30px",
+                        }}
+                      >
                         <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
                       </Button>
-                      <Button sx={{ padding: "0px", width: "30px", minWidth: "0px", height: "30px" }}>
+                      <Button
+                        sx={{
+                          padding: "0px",
+                          width: "30px",
+                          minWidth: "0px",
+                          height: "30px",
+                        }}
+                      >
                         <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
                       </Button>
                     </div>

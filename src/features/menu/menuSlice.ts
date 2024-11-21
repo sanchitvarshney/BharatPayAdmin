@@ -55,7 +55,7 @@ export const saveUserMenuPermission = createAsyncThunk<
   any
 >("/user/menu/saveUserMenuPermission", async (payload: any) => {
   const response = await axiosInstance.post(
-    "/user/menu/saveUserMenuPermission",
+    "/permission/saveUserMenuPermission",
     payload
   );
   return response;
