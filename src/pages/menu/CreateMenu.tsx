@@ -5,19 +5,15 @@ import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateMenuType } from "@/features/menu/menuType";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { createMenu } from "@/features/menu/menuSlice";
+import { createMasterMenu } from "@/features/menu/menuSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 // Define Zod schema
 const schema = z.object({
   project: z.string().nonempty("Project name is required"),
   name: z.string().nonempty("Page name is required"),
-  is_parent: z.string().nonempty("Please select if it's a parent"),
-  parent_menu_key: z.string().optional(),
-  url: z.string().nonempty("Page URL is required"),
-  icon: z.string().nonempty("Icon is required"),
+  icon: z.string().optional(),
   order: z.string().min(1, "Order must be at least 1"),
   description: z.string().nonempty("Description is required"),
 });
@@ -32,38 +28,30 @@ const CreateMenu: React.FC = () => {
     handleSubmit,
     control,
     reset,
-    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       project: "",
       name: "",
-      is_parent: "N",
-      parent_menu_key: "",
-      url: "",
       icon: "",
       order: undefined,
       description: "",
     },
   });
 
-  const parent = watch("is_parent");
-
   const onSubmit = (data: FormValues) => {
-    const payload: CreateMenuType = {
+    const payload: any = {
       project: data.project,
       name: data.name,
-      is_parent: data.is_parent === "N" ? false : true,
-      parent_menu_key: data.parent_menu_key || "",
-      url: data.url,
+      is_parent: true,
+      has_parent:false,
       description: data.description,
       icon: data.icon,
       order: data.order,
       is_active: true,
-      has_parent:true,
     };
-    dispatch(createMenu(payload)).then((res: any) => {
+    dispatch(createMasterMenu(payload)).then((res: any) => {
       if (res.payload.data?.success) {
         reset();
       }
@@ -86,8 +74,7 @@ const CreateMenu: React.FC = () => {
                   render={({ field }) => (
                     <Select {...field} label="Project Name">
                       <MenuItem value={"IMS"}>IMS</MenuItem>
-                      <MenuItem value={"Spigen"}>Spigen</MenuItem>
-                      <MenuItem value={"Vans"}>Vans</MenuItem>
+                      <MenuItem value={"Admin"}>Admin</MenuItem>
                     </Select>
                   )}
                 />
@@ -97,54 +84,7 @@ const CreateMenu: React.FC = () => {
 
             {/* Page Name */}
             <div className="grid gap-2">
-              <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Name Of Page" variant="standard" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
-            </div>
-
-            {/* Is Parent */}
-            <div className="grid gap-2">
-              <FormControl variant="standard" error={!!errors.is_parent}>
-                <InputLabel>Is Parent?</InputLabel>
-                <Controller
-                  name="is_parent"
-                  control={control}
-                  render={({ field }) => (
-                    <Select {...field} label="Is Parent?">
-                      <MenuItem value={"Y"}>Yes</MenuItem>
-                      <MenuItem value={"N"}>No</MenuItem>
-                    </Select>
-                  )}
-                />
-                {errors.is_parent && <p className="text-red-600">{errors.is_parent.message}</p>}
-              </FormControl>
-            </div>
-
-            {/* Parent Menu */}
-            <div>
-              {parent === "Y" && (
-                <div>
-                  <FormControl variant="standard" sx={{ width: "100%" }}>
-                    <InputLabel>Parent Page</InputLabel>
-                    <Controller
-                      name="parent_menu_key"
-                      control={control}
-                      render={({ field }) => (
-                        <Select {...field} label="Parent Page">
-                          <MenuItem value={"location"}>Location</MenuItem>
-                          <MenuItem value={"menu"}>Menu</MenuItem>
-                          <MenuItem value={"user"}>User</MenuItem>
-                          <MenuItem value={"permission"}>Permission</MenuItem>
-                          <MenuItem value={"setting"}>Setting</MenuItem>
-                        </Select>
-                      )}
-                    />
-                  </FormControl>
-                </div>
-              )}
-            </div>
-
-            {/* Page URL */}
-            <div className="grid gap-2">
-              <Controller name="url" control={control} render={({ field }) => <TextField {...field} label="Page URL" variant="standard" error={!!errors.url} helperText={errors.url ? errors.url.message : ""} />} />
+              <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Page Name" variant="standard" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
             </div>
 
             {/* Icon */}

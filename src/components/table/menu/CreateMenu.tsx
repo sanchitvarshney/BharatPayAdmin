@@ -3,12 +3,16 @@ import { Box, Button, InputLabel, MenuItem, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useForm, Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateMenuType } from "@/features/menu/menuType";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { createMenu, getMenuList } from "@/features/menu/menuSlice";
+import {
+  createMenu,
+  getMenuList,
+  updateUserMenu,
+} from "@/features/menu/menuSlice";
 import Typography from "@mui/material/Typography";
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -31,9 +35,19 @@ interface CreateMenuProps {
   open: any;
   onClose: () => void;
   selectedRow: any;
+  data?: any;
+  menuId?: any;
 }
-const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) => {
+
+const CreateMenu: React.FC<CreateMenuProps> = ({
+  open,
+  onClose,
+  selectedRow,
+  data,
+  menuId,
+}) => {
   const dispatch = useAppDispatch();
+
   const { createMenuLoading } = useAppSelector((state) => state.menu);
   const {
     handleSubmit,
@@ -58,28 +72,36 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
   }, [parent]);
 
   const onSubmit = (data: FormValues) => {
-
     const payload: CreateMenuType = {
       project: data.project,
       name: data.name,
       is_parent: data.is_parent === "N" ? false : true,
-      parent_menu_key: selectedRow.menu_key || "",
+      parent_menu_key: menuId ? menuId : selectedRow.menu_key,
       url: data.url,
       description: data.description,
       icon: data.icon,
       order: data.order,
       is_active: true,
-      has_parent:true,
+      has_parent: true,
     };
-  
 
-    dispatch(createMenu(payload)).then((res: any) => {
-      if (res.payload.data?.success) {
-        reset();
-        onClose();
-        dispatch(getMenuList());
-      }
-    });
+    if (menuId) {
+      dispatch(updateUserMenu(payload)).then((res: any) => {
+        if (res.payload.data?.success) {
+          reset();
+          onClose();
+          dispatch(getMenuList());
+        }
+      });
+    } else {
+      dispatch(createMenu(payload)).then((res: any) => {
+        if (res.payload.data?.success) {
+          reset();
+          onClose();
+          dispatch(getMenuList());
+        }
+      });
+    }
   };
   const style = {
     position: "absolute",
@@ -95,6 +117,19 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
     p: 4,
   };
 
+  useEffect(() => {
+    if (data && menuId) {
+      setValue("project", data.project_name);
+      setValue("parent_menu_key", selectedRow.menu_key);
+      setValue("is_parent", data?.url ? "Y" : "N");
+      setValue("name", data?.name);
+      setValue("url", data.url);
+      setValue("description", data.description);
+      setValue("icon", data.icon);
+      setValue("order", data.order + "");
+    }
+  }, [data]);
+
   return (
     <>
       <Modal
@@ -105,9 +140,10 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add New Menu Against <span style={{ color: '#1976d2', fontWeight: 'bold' }}>
-        {selectedRow.name}
-      </span>
+            Add New Menu Against{" "}
+            <span style={{ color: "#1976d2", fontWeight: "bold" }}>
+              {selectedRow.name}
+            </span>
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-[20px] grid grid-cols-2 max-w-[95%] gap-[30px]">
@@ -185,7 +221,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow }) =
                       label="Page URL"
                       variant="standard"
                       error={!!errors.url}
-                      helperText={errors.url ? errors.url.message : ""}
+                      // helperText={errors.username?.message}
                     />
                   )}
                 />
