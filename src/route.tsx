@@ -41,11 +41,11 @@ export const router = createBrowserRouter([
         element: <UserProfile />,
       },
       {
-        path: "/role/rols",
+        path: "/role/list",
         element: <UserRols />,
       },
       {
-        path: "/role/rols/:id",
+        path: "/role/view-role/:id",
         element: <ViewRoleDetails />,
       },
       {

@@ -97,7 +97,7 @@ const AddNewUser: React.FC = () => {
   useEffect(() => {
     dispatch(getRoleList());
   }, []);
-  console.log(rolelistData);
+
   return (
     <div className="p-[20px] overflow-y-auto h-[calc(100vh-70px)]">
       <div className="rounded-sm shadow shadow-stone-400 p-[20px]">

@@ -6,6 +6,7 @@ const initialState: PermissionState = {
   createRoleLoading: false,
   rolelistData: null,
   roleListLoading: false,
+  userRoleList:null
 };
 
 export const createRole = createAsyncThunk<AxiosResponse<CreateRoleResponse>, CreateRolePayload>("permission/createRole", async (payload) => {
@@ -14,6 +15,19 @@ export const createRole = createAsyncThunk<AxiosResponse<CreateRoleResponse>, Cr
 });
 export const getRoleList = createAsyncThunk<AxiosResponse<RolesListResponse>>("permission/getRoleList", async () => {
   const response = await axiosInstance.get("/role/getRoles");
+  return response;
+});
+
+export const getUserRole = createAsyncThunk<
+  AxiosResponse<any>,
+  string
+>(`/role/getUserMenu`, async (id) => {
+  const response = await axiosInstance.get(`/role/users/${id}`);
+  return response;
+});
+
+export const assignRole = createAsyncThunk<AxiosResponse<any>, any>("permission/assignRole", async (payload) => {
+  const response = await axiosInstance.post("/role/assignRole", payload);
   return response;
 });
 
@@ -45,7 +59,20 @@ const permissionSlice = createSlice({
       })
       .addCase(getRoleList.rejected, (state) => {
         state.roleListLoading = false;
-        state.rolelistData = [];
+        state.userRoleList = [];
+      })
+      .addCase(getUserRole.pending, (state) => {
+        state.roleListLoading = true;
+      })
+      .addCase(getUserRole.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.userRoleList = action.payload.data.data;
+        }
+        state.roleListLoading = false;
+      })
+      .addCase(getUserRole.rejected, (state) => {
+        state.roleListLoading = false;
+        state.userRoleList = [];
       });
   },
 });

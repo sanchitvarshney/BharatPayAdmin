@@ -38,7 +38,7 @@ type Props = {
 
 interface RowData {
   orgHierarchy: string[];
-  name: string;
+  order: any;
   url: string | null;
   status: React.ReactNode;
   action?: React.ReactNode;
@@ -56,7 +56,7 @@ const flattenMenuHierarchy = (
     const currentHierarchy = [...parentHierarchy, item.name];
     result.push({
       orgHierarchy: currentHierarchy,
-      name: item.name,
+      order: item.order,
       url: item.url,
       status: item.is_active === 1 ? "ACTIVE" : "INACTIVE",
       menu_key: item.menu_key,
@@ -78,15 +78,14 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [rowData, setRowData] = useState<RowData[]>();
   const [open, setOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
-  const { menuList, menuListLoading, deleteMenuLoading } = useAppSelector(
+  const { menuList, menuListLoading } = useAppSelector(
     (state) => state.menu
   );
   const handleOpenmodal = () => setOpen(true);
   const handleClosemodal = () => setOpen(false);
-  console.log("...............", deleteMenuLoading);
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
-    { field: "name", headerName: "Menu Name", filter: true },
+    { field: "order", headerName: "Order", filter: true },
     { field: "url", headerName: "URL" },
     { field: "minuKey", headerName: "Menu Key", hide: true },
     {

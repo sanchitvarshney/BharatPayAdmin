@@ -24,9 +24,16 @@ const columns: ColDef[] = [
     field: "role_name",
     flex: 1,
     cellRenderer: (params: any) => {
+      // Get the role_name and role_id from the row data
+      const roleName = params?.data?.role_name;
+      const roleId = params?.data?.role_id;
+      
+      // Encode the role_name to make it URL-safe
+      const encodedRoleName = encodeURIComponent(roleName);
+      
       return (
-        <a href={`/role/rols/${params?.data?.role_id}`} className="text-blue-600">
-          {params.value}
+        <a href={`/role/view-role/${roleId}?role_name=${encodedRoleName}`} className="text-blue-600">
+          {roleName}
         </a>
       );
     },

@@ -42,9 +42,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       const response = await axiosInstance.get(
         "permission/getUserMenuPermission"
       );
-
-      // Handle the response
-      console.log("Response:", response);
       let newMenu = response.data.menu;
       let master = response.data.masterMenu;
       setNewMenu(newMenu);
@@ -62,17 +59,11 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   }, []);
   const location = useLocation();
   const renderIcon = (iconClass: string) => {
-    console.log("iconClass", iconClass);
-
-    // Ensure that the icon class string is valid and split it
     if (iconClass) {
       return <i className={"fa fa-university"}></i>; // Render the <i> element with the icon class
     }
     return null;
   };
-  // useEffect(() => {
-  //   getUserMenuPermission();
-  // }, []);
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -215,7 +206,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             </Tooltip>
             <Tooltip title="Permission" placement="right" arrow>
               <Button
-                onClick={() => setTab("permissions")}
+                onClick={() => setTab("permission")}
                 sx={{
                   width: 40,
                   height: 40,
@@ -223,7 +214,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   minWidth: 0,
                   padding: 0,
                   backgroundColor: `${
-                    tab === "permissions" ? "#dbeafe" : ""
+                    tab === "permission" ? "#dbeafe" : ""
                   }`,
                 }}
               >
@@ -404,7 +395,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                 <ul className="w-full pe-[10px]">
                   <li className="w-full">
                     <NavLink
-                      to={"/role/rols"}
+                      to={"/role/list"}
                       className={({ isActive }) =>
                         isActive ? "active navlink " : "navlink rounded-e-md"
                       }
@@ -453,7 +444,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
             </div>
           )}
-          {tab === "permissions" && (
+          {tab === "permission" && (
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
                 <h1 className="text-[20px] text-blue-600 font-[500] ">
