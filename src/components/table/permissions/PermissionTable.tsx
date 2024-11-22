@@ -67,33 +67,41 @@ const flattenMenuHierarchy = (
 
   return result;
 };
-
+const CustomHeader = () => (
+  <div style={{ display: 'flex', gap: '45px', fontWeight: 'bold' }}>
+    <span>View</span>
+    <span>Edit</span>
+    <span>Add</span>
+    <span>Delete</span>
+  </div>
+);
 const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
 
   const [columnDefs] = useState<ColDef[]>([
-    { field: "name", headerName: "Menu Name", filter: true },
-    { field: "url", headerName: "URL" },
+    { field: "name", headerName: "Menu Name", filter: true,maxWidth: 300,
+      minWidth: 150,
+      autoHeight: true, },
+    // { field: "url", headerName: "URL",maxWidth: 300,
+    //   minWidth: 150,
+    //   autoHeight: true, },
     { field: "menuKey", headerName: "Menu Key", hide: true },
     {
-      headerName: "Permissions",
+      headerComponent: CustomHeader,
       field: "action",
       cellRenderer: (params: any) => {
         const [isEdit, setIsEdit] = useState<boolean>(params.data?.can_edit || false);
         const [isAdd, setIsAdd] = useState<boolean>(params.data?.can_add || false);
         const [isView, setIsView] = useState<boolean>(params.data?.can_view || false);
         const [isDelete, setIsDelete] = useState<boolean>(params.data?.can_delete || false);
-
-        // const { deleteMenuLoading } = useAppSelector((state) => state.menu);
-
-        // Check if menu is available and display checkboxes only when necessary
+    
         if (!params.data?.url) return null;
-
+    
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div className="permissions-group">
+            <div className="permissions-group" style={{ display: 'flex', gap: '45px' }}>
               <Tooltip title="View">
                 <Checkbox
                   className="permission-checkbox"
@@ -107,7 +115,7 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
                   onChange={(e) => setIsEdit(e.target.checked)}
                   checked={isEdit}
                 />
-              </Tooltip> 
+              </Tooltip>
               <Tooltip title="Add">
                 <Checkbox
                   className="permission-checkbox"
@@ -130,8 +138,9 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
               variant="contained"
               color="primary"
               style={{
-                marginLeft: '10px', // Add space between checkboxes and the button
-                visibility: params.data ? 'visible' : 'hidden', // Ensure button is visible when needed
+                marginLeft: '50px',
+                visibility: params.data ? 'visible' : 'hidden',
+                
               }}
             >
               Update
@@ -141,8 +150,9 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
       },
       sortable: false,
       filter: false,
-      maxWidth: 290,
-    },
+      maxWidth: 800,
+    }
+    
   ]);
 
   const defaultColDef = useMemo<ColDef>(
@@ -157,7 +167,9 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   const autoGroupColumnDef = useMemo<ColDef>(
     () => ({
       headerName: "Menu Hierarchy",
-      minWidth: 300,
+      maxWidth: 300,
+      minWidth: 200,
+      autoHeight: true,
       cellRendererParams: {
         suppressCount: true,
       },

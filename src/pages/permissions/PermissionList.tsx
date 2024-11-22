@@ -43,13 +43,8 @@ const PermissionList: React.FC = () => {
       role: "",
     },
   });
-  console.log("selectedType", selectedType);
 
   const dispatch = useAppDispatch();
-  // const watchRole = watch("role");
-  // var watchType = watch("type");
-  // var localSelectedType = localStorage.getItem("selectedType");
-  // var localSelectedVal = localStorage.getItem("selectedVal");
   useEffect(() => {
     // dispatch(getMenuList());
     dispatch(getRoleList()).then((res: any) => {
@@ -86,9 +81,6 @@ const PermissionList: React.FC = () => {
         canAdd: isAdd,
         canDelete: isDelete,
       };
-      // console.log("payload", payload);
-
-      // return;
       dispatch(saveUserMenuPermission(payload)).then((res: any) => {
         if (res?.payload?.data?.success) {
           getlist();
@@ -123,7 +115,6 @@ const PermissionList: React.FC = () => {
   
   const getlist = () => {
     const selectedVal = localStorage.getItem("selectedVal");
-    console.log(selectedVal,"okk",selectedType)
     if (selectedVal !== null) {
       const id = selectedVal ;
       if (localStorage.getItem("selectedType") == "User") {

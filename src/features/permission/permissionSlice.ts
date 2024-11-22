@@ -26,6 +26,11 @@ export const getUserRole = createAsyncThunk<
   return response;
 });
 
+export const assignRole = createAsyncThunk<AxiosResponse<any>, any>("permission/assignRole", async (payload) => {
+  const response = await axiosInstance.post("/role/assignRole", payload);
+  return response;
+});
+
 const permissionSlice = createSlice({
   name: "permission",
   initialState,
@@ -60,7 +65,6 @@ const permissionSlice = createSlice({
         state.roleListLoading = true;
       })
       .addCase(getUserRole.fulfilled, (state, action) => {
-        console.log(action)
         if (action.payload.data.success) {
           state.userRoleList = action.payload.data.data;
         }
