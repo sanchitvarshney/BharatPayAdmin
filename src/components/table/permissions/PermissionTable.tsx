@@ -1,18 +1,11 @@
-import React, {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
-import {useAppSelector } from "@/hooks/useReduxHook";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { useAppSelector } from "@/hooks/useReduxHook";
+import { Button, Tooltip, Checkbox } from "@mui/material";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { Checkbox } from "antd";
+
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -25,6 +18,7 @@ interface MenuData {
   order: number;
   icon: string | null;
 }
+
 type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
   selectedType: string;
@@ -42,6 +36,7 @@ interface RowData {
   can_edit?: boolean;
   can_view?: boolean;
   can_delete?: boolean;
+  can_add?:boolean
 }
 
 // Utility function to flatten hierarchical data
@@ -51,7 +46,7 @@ const flattenMenuHierarchy = (
 ): RowData[] => {
   let result: RowData[] = [];
 
-  data.forEach((item:any) => {
+  data.forEach((item: any) => {
     const currentHierarchy = [...parentHierarchy, item.name];
     result.push({
       orgHierarchy: currentHierarchy,
@@ -60,101 +55,90 @@ const flattenMenuHierarchy = (
       status: item.is_active === 1 ? "ACTIVE" : "INACTIVE",
       menu_key: item.menu_key,
       can_edit: item.can_edit == 1 ? true : false,
+      can_add: item.can_add == 1 ? true : false,
       can_delete: item.can_delete == 1 ? true : false,
       can_view: item.can_view == 1 ? true : false,
     });
 
     if (item.children && item.children.length > 0) {
-      result = result.concat(
-        flattenMenuHierarchy(item.children, currentHierarchy)
-      );
+      result = result.concat(flattenMenuHierarchy(item.children, currentHierarchy));
     }
   });
 
   return result;
 };
 
-// Example component for Tree Data Table with Menu Data
-const TreeDataMenu: React.FC<Props> = ({ updateRow }) => { 
+const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   const gridRef = useRef<AgGridReact>(null);
-  const [rowData, setRowData] = useState<RowData[]>();
-  // const [isId, setIsId] = useState(selectedVal);
-  // const [isId, setIsID] = useState(selectedVal);
-  // const isId = useSelector((state: RootState) => state.isId.isId);
-  const { menuList, menuListLoading } =
-    useAppSelector((state) => state.menu);
+  const [rowData, setRowData] = useState<RowData[]>([]);
+  const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
+
   const [columnDefs] = useState<ColDef[]>([
     { field: "name", headerName: "Menu Name", filter: true },
     { field: "url", headerName: "URL" },
-    { field: "minuKey", headerName: "Menu Key", hide: true },
-
+    { field: "menuKey", headerName: "Menu Key", hide: true },
     {
-      headerName: "Action",
+      headerName: "Permissions",
       field: "action",
       cellRenderer: (params: any) => {
-        const [menuid] = useState("");
-        const [isedit, setIsEdit] = useState(params.data?.can_edit);
-        const [isView, setIsView] = useState(params.data?.can_view);
-        const [isDelete, setIsDelete] = useState(params.data?.can_delete);
+        const [isEdit, setIsEdit] = useState<boolean>(params.data?.can_edit || false);
+        const [isAdd, setIsAdd] = useState<boolean>(params.data?.can_add || false);
+        const [isView, setIsView] = useState<boolean>(params.data?.can_view || false);
+        const [isDelete, setIsDelete] = useState<boolean>(params.data?.can_delete || false);
 
-        const { deleteMenuLoading } = useAppSelector((state) => state.menu);
-        return menuid === params.data?.menu_key &&
-          // params.data?.can_view &&
+        // const { deleteMenuLoading } = useAppSelector((state) => state.menu);
 
-          deleteMenuLoading ? (
-          <IconButton aria-label="delete" size="small">
-            <ReloadIcon className="animate-spin" fontSize="small" />
-          </IconButton>
-        ) : params.data?.url ? (
-          <>
-            <Tooltip title="View">
-              <>
+        // Check if menu is available and display checkboxes only when necessary
+        if (!params.data?.url) return null;
+
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="permissions-group">
+              <Tooltip title="View">
                 <Checkbox
-                  className="m-[5px]"
-                  onChange={(e) => {
-                    setIsView(e.target.checked); // Update `isView` on checkbox change
-                  }}
-                  checked={isView} // Checkbox is controlled by `isView`
+                  className="permission-checkbox"
+                  onChange={(e) => setIsView(e.target.checked)}
+                  checked={isView}
                 />
-              </>
-            </Tooltip>
-            <Tooltip title="Edit">
-              <>
+              </Tooltip>
+              <Tooltip title="Edit">
                 <Checkbox
-                  className="m-[5px]"
-                  onChange={(e) => {
-                    setIsEdit(e.target.checked);
-                  }}
-                  checked={isedit}
-                  // defaultChecked={params.data?.can_edit}
+                  className="permission-checkbox"
+                  onChange={(e) => setIsEdit(e.target.checked)}
+                  checked={isEdit}
                 />
-              </>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <>
+              </Tooltip> 
+              <Tooltip title="Add">
                 <Checkbox
-                  className="m-[5px]"
-                  onChange={(e) => {
-                    setIsDelete(e.target.checked);
-                  }}
+                  className="permission-checkbox"
+                  onChange={(e) => setIsAdd(e.target.checked)}
+                  checked={isAdd}
+                />
+              </Tooltip>
+              <Tooltip title="Delete">
+                <Checkbox
+                  className="permission-checkbox"
+                  onChange={(e) => setIsDelete(e.target.checked)}
                   checked={isDelete}
-                  // defaultChecked={params.data?.can_delete}
                 />
-              </>
-            </Tooltip>
+              </Tooltip>
+            </div>
             <Button
               onClick={() => {
-                updateRow(params, isView, isedit, isDelete);
+                updateRow(params, isView, isEdit, isAdd, isDelete);
+              }}
+              variant="contained"
+              color="primary"
+              style={{
+                marginLeft: '10px', // Add space between checkboxes and the button
+                visibility: params.data ? 'visible' : 'hidden', // Ensure button is visible when needed
               }}
             >
               Update
             </Button>
-          </>
-        ) : (
-          <></>
+          </div>
         );
       },
-
       sortable: false,
       filter: false,
       maxWidth: 290,
@@ -186,7 +170,10 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   }, []);
 
   useEffect(() => {
-    menuList&&setRowData(flattenMenuHierarchy(menuList));
+    // Only set the rowData when menuList is not empty
+    if (menuList && Array.isArray(menuList)) {
+      setRowData(flattenMenuHierarchy(menuList));
+    }
   }, [menuList]);
 
   return (

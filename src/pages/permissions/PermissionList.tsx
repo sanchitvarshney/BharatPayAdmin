@@ -1,7 +1,6 @@
 import PermissionTable from "@/components/table/permissions/PermissionTable";
 import {
   getActiveUser,
-  getMenuList,
   getRoleMenu,
   getUserMenu,
   saveRoleMenuPermission,
@@ -52,7 +51,7 @@ const PermissionList: React.FC = () => {
   // var localSelectedType = localStorage.getItem("selectedType");
   // var localSelectedVal = localStorage.getItem("selectedVal");
   useEffect(() => {
-    dispatch(getMenuList());
+    // dispatch(getMenuList());
     dispatch(getRoleList()).then((res: any) => {
       if (res?.payload?.data?.success) {
         let arr = res?.payload?.data?.roles?.map((r:any) => {
@@ -74,6 +73,7 @@ const PermissionList: React.FC = () => {
     value: any,
     isView: boolean,
     isedit: boolean,
+    isAdd: boolean,
     isDelete: boolean
   ) => {
     let newtype = localStorage.getItem("selectedType");
@@ -83,6 +83,7 @@ const PermissionList: React.FC = () => {
         menu_key: value.data.menu_key,
         canView: isView,
         canEdit: isedit,
+        canAdd: isAdd,
         canDelete: isDelete,
       };
       // console.log("payload", payload);
@@ -103,6 +104,7 @@ const PermissionList: React.FC = () => {
         menu_key: value.data.menu_key,
         canView: isView,
         canEdit: isedit,
+        canAdd: isAdd,
         canDelete: isDelete,
       };
       // console.log("payload", payload);
@@ -118,12 +120,7 @@ const PermissionList: React.FC = () => {
       });
     }
   };
-  // useEffect(() => {
-  //   if (watchRole) {
-  //     console.log("watchRole", watchRole);
-  //     console.log("watchType", watchType);
-  //   }
-  // }, [localSelectedVal, localSelectedType]);
+  
   const getlist = () => {
     const selectedVal = localStorage.getItem("selectedVal");
     console.log(selectedVal,"okk",selectedType)
@@ -204,7 +201,7 @@ const PermissionList: React.FC = () => {
               sx={{ minWidth: 200 }}
               error={!!errors.project}
             >
-              <InputLabel>Role</InputLabel>{" "}
+              <InputLabel>{selectedType ? selectedType : 'Select an option'}</InputLabel>
               {selectedType === "User" ? (
                 <Controller
                   name="role"
