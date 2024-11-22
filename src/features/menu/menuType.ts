@@ -25,6 +25,7 @@ type MenuItemList = {
   icon: string;
   description: string;
   children?: MenuItemList[]; // Optional because not all menu items may have children
+  project_name:string
 };
 type UserList = {
   menu_key: string;

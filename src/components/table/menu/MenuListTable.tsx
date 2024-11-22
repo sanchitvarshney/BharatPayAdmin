@@ -18,7 +18,7 @@ import {
   menustatusChange,
 } from "@/features/menu/menuSlice";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Plus } from "lucide-react";
+import { Edit2Icon, Plus } from "lucide-react";
 import CreateMenu from "./CreateMenu";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
@@ -31,6 +31,7 @@ interface MenuData {
   parent_menu_key: string | null;
   order: number;
   icon: string | null;
+  project_name:string
 }
 type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,6 +44,10 @@ interface RowData {
   status: React.ReactNode;
   action?: React.ReactNode;
   menu_key?: string;
+  name: string;
+  description: string;
+  icon: string | null;
+  project_name:string
 }
 
 // Utility function to flatten hierarchical data
@@ -60,6 +65,10 @@ const flattenMenuHierarchy = (
       url: item.url,
       status: item.is_active === 1 ? "ACTIVE" : "INACTIVE",
       menu_key: item.menu_key,
+      name: item.name,
+      description: item.description,
+      icon: item.icon,
+      project_name:item.project_name
     });
 
     if (item.children && item.children.length > 0) {
@@ -83,6 +92,9 @@ const TreeDataMenu: React.FC<Props> = () => {
   );
   const handleOpenmodal = () => setOpen(true);
   const handleClosemodal = () => setOpen(false);
+  const [edit , setEdit] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [menuId,setMenuId] = useState("");
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
     { field: "order", headerName: "Order", filter: true },
@@ -167,6 +179,19 @@ const TreeDataMenu: React.FC<Props> = () => {
             >
               <Plus className="onclick-animate-spin" fontSize="small" />
             </IconButton>
+            <IconButton
+              onClick={() => {
+                setMenuid(params.data?.menu_key || "");
+                setEditData(params.data);
+                setEdit(true);
+                setMenuId(params.data?.menu_key || "");
+                console.log(params.data);
+              }}
+              aria-label="delete"
+              size="small"
+            >
+              <Edit2Icon fontSize="small" />
+            </IconButton>
           </>
         );
       },
@@ -227,6 +252,7 @@ const TreeDataMenu: React.FC<Props> = () => {
       {open == true && (
         <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} />
       )}
+      <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data = {editData} menuId={menuId}/>
     </div>
   );
 };

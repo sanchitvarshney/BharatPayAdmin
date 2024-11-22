@@ -28,6 +28,22 @@ export const createMenu = createAsyncThunk<
   return response;
 });
 
+export const createMasterMenu = createAsyncThunk<
+  AxiosResponse<CreateMenuResponse>,
+  CreateMenuType
+>("menu/createMenu", async (payload) => {
+  const response = await axiosInstance.post("/menu/createMenu", payload);
+  return response;
+});
+
+export const updateUserMenu = createAsyncThunk<
+  AxiosResponse<CreateMenuResponse>,
+  CreateMenuType
+>("menu/createMenu", async (payload) => {
+  const response = await axiosInstance.put(`/menu/updateMenu/${payload.parent_menu_key}`, payload);
+  return response;
+});
+
 export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>(
   "menu/getMenuList",
   async () => {

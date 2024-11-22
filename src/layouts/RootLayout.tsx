@@ -416,7 +416,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
               <div>
                 <ul className="w-full pe-[10px]">
-                  {/* <li className="w-full">
+                  <li className="w-full">
                     <NavLink
                       to={"/menu/create"}
                       className={({ isActive }) =>
@@ -424,10 +424,10 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                       }
                     >
                       <ButtonBase className="w-full link">
-                        <div>Create Menu</div>
+                        <div>Create Master Menu</div>
                       </ButtonBase>
                     </NavLink>
-                  </li> */}
+                  </li>
                   <li className="w-full">
                     <NavLink
                       to={"/menu/list"}
