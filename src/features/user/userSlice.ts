@@ -59,8 +59,8 @@ export const activateUser = createAsyncThunk<AxiosResponse<ChangePasswordRespons
   const response = await axiosInstance.put(`/user/${paylod}/activate`);
   return response;
 });
-export const updateUserProfile = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, UpdateuserProfilePayload>("user/updateUserProfile", async (paylod) => {
-  const response = await axiosInstance.put(`/edit/profile`, paylod);
+export const updateUserProfile = createAsyncThunk<AxiosResponse<any>, UpdateuserProfilePayload>("user/updateUserProfile", async (paylod) => {
+  const response = await axiosInstance.put(`/user/update`, paylod);
   return response;
 });
 
@@ -123,7 +123,7 @@ const userSlice = createSlice({
       .addCase(updateUserEmail.fulfilled, (state, action) => {
         state.updateUserEmailLoading = false;
         if (action.payload.data.success) {
-          showToast(action.payload?.data?.message || "Email updated successfully", "success");
+          showToast(action.payload?.data?.message || "User updated successfully", "success");
         }
       })
       .addCase(updateUserEmail.rejected, (state) => {

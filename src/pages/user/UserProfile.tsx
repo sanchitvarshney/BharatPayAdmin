@@ -15,6 +15,9 @@ import {
   Switch,
   Checkbox,
   FormControlLabel,
+  Radio,
+  RadioGroup,
+  FormLabel,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,6 +50,13 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+const verificationTypes = [
+  { label: "Email", value: "E" },
+  { label: "Mobile", value: "M" },
+  { label: "Both OK", value: "1" },
+  { label: "None", value: "0" },
+];
 
 const schema = z.object({
   new_password: z.string().min(8, "Password must be at least 8 characters"),
@@ -83,10 +93,12 @@ const UserProfile = () => {
   const [resetpassword, setResetPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [mobile, setMobile] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [verification, setVerification] = useState<string>("");
   const [suspend, setSuspend] = useState<boolean>(false);
   const [updateUser, setUpdateUser] = useState<boolean>(false);
-  const [fname, setFname] = useState<string>("");
-  const [lname, setLname] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [updateMobile, setUpdateMobile] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -127,7 +139,7 @@ const UserProfile = () => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    console.log(event)
+    console.log(event);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -173,7 +185,7 @@ const UserProfile = () => {
             horizontal: "center",
           }}
         >
-          <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
+          {/* <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
             <Typography>Password</Typography>
             <div>
               <Button
@@ -187,7 +199,7 @@ const UserProfile = () => {
                 Reset Sachin's Password
               </p>
             </div>
-          </div>
+          </div> */}
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
             <Button onClick={() => setAnchorEl(null)}>Done</Button>
           </div>
@@ -636,40 +648,121 @@ const UserProfile = () => {
               className="text-white text-[17px] font-[500]"
               id="modal-modal-title"
             >
-              Update User - {userProfile ? userProfile[0]?.emailID : "---"}
+              Update User - {userProfile ? userProfile?.user_name : "---"}
             </h2>
           </div>
 
           <div className="p-[30px] relative flex flex-col gap-[30px]">
             <div className="space-y-5">
               <TextField
-                value={fname}
+                value={name}
                 onChange={(e) => {
-                  setFname(e.target.value);
+                  setName(e.target.value);
                 }}
                 required
                 variant="standard"
-                label="First Name"
+                label="Name"
                 sx={{ width: "100%" }}
               />
               <TextField
-                value={lname}
-                onChange={(e) => {
-                  setLname(e.target.value);
-                }}
                 required
+                value={mobile}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (isNaN(Number(value))) {
+                    showToast("Please enter valid number", "error");
+                  } else {
+                    setMobile(value);
+                  }
+                }}
                 variant="standard"
-                label="Last Name"
+                label="Mobile No."
                 sx={{ width: "100%" }}
               />
+              {/* <TextField
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                variant="standard"
+                label="Email"
+                sx={{ width: "100%" }}
+              /> */}
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                sx={{
+                  display: "flex",
+                  alignItems: "center", // Ensures vertical alignment
+                  gap: 2, // Adds spacing between elements
+                }}
+              >
+                <Typography sx={{ marginRight: 2 }}>Gender</Typography>
+                <FormControlLabel
+                  value="M"
+                  control={<Radio />}
+                  label="Male"
+                  checked={gender === "M"}
+                  onChange={() => setGender("M")}
+                  sx={{ marginRight: 2 }} // Space between options
+                />
+                <FormControlLabel
+                  value="F"
+                  control={<Radio />}
+                  label="Female"
+                  checked={gender === "F"}
+                  onChange={() => setGender("F")}
+                />
+              </RadioGroup>
+
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                sx={{
+                  display: "flex",
+                  alignItems: "center", // Ensures vertical alignment
+                  gap: 2, // Adds spacing between elements
+                }}
+              >
+                <Typography sx={{ marginRight: 2 }}>Status</Typography>
+                <FormControlLabel
+                  value="1"
+                  control={<Radio />}
+                  label="Active"
+                  checked={status === "1"}
+                  onChange={() => setStatus("1")}
+                />
+                <FormControlLabel
+                  value="0"
+                  control={<Radio />}
+                  label="Inactive"
+                  checked={status === "0"}
+                  onChange={() => setStatus("0")}
+                />
+              </RadioGroup>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <FormLabel sx={{ marginBottom: 1 }}>Verification</FormLabel>
+                <Select
+                  value={verification}
+                  onChange={(e) => setVerification(e.target.value)}
+                  sx={{ width: 200 }} // You can adjust the width as needed
+                >
+                  {verificationTypes.map((type) => (
+                    <MenuItem key={type.value} value={type.value}>
+                      {type.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
             </div>
             <div className="flex items-center justify-end gap-[10px]">
               <Button
                 disabled={updateUserProfileLoading}
                 onClick={() => {
                   setUpdateUser(false);
-                  setFname("");
-                  setLname("");
+                  setName("");
                 }}
               >
                 Cancel
@@ -677,20 +770,23 @@ const UserProfile = () => {
               <Button
                 disabled={updateUserProfileLoading}
                 onClick={() => {
-                  if (!fname || !lname) {
+                  if (!name) {
                     showToast("Please enter first and last name", "error");
                   } else {
                     dispatch(
                       updateUserProfile({
-                        userID: userProfile ? userProfile[0]?.userID : "",
-                        first_name: fname,
-                        last_name: lname,
+                        userId: userProfile ? userProfile?.id : "",
+                        name: name,
+                        mobileNo: mobile,
+                        gender: gender,
+                        status: status,
+                        verification: verification,
                       })
                     ).then((res: any) => {
                       if (res.payload.data?.success) {
                         setUpdateUser(false);
-                        setFname("");
-                        setLname("");
+                        setName("");
+                        dispatch(getUserProfile(params.id || ""));
                       }
                     });
                   }
@@ -786,61 +882,12 @@ const UserProfile = () => {
                 <li className="">
                   <button
                     disabled={!userProfile}
-                    onClick={() => setResetPassword(true)}
-                    className="text-[15px] text-stone-500 hover:text-blue-600 "
-                  >
-                    RESET PASSWORD
-                  </button>
-                </li>
-                <li className="">
-                  <button
-                    disabled={!userProfile}
                     onClick={() => setUpdateUser(true)}
                     className="text-[15px] text-stone-500 hover:text-blue-600"
                   >
                     UPDATE USER
                   </button>
                 </li>
-                <li className="">
-                  <button
-                    disabled={!userProfile}
-                    onClick={() => setUpdateMobile(true)}
-                    className="text-[15px] text-stone-500 hover:text-blue-600"
-                  >
-                    UPDATE MOBILE NO.
-                  </button>
-                </li>
-
-                <li className="">
-                  <button
-                    disabled={!userProfile}
-                    onClick={() => setAlert(true)}
-                    className="text-[15px] text-stone-500 hover:text-blue-600"
-                  >
-                    UPDATE EMAIL
-                  </button>
-                </li>
-                {userProfile && userProfile[0]?.status === "A" ? (
-                  <li className="">
-                    <button
-                      disabled={!userProfile}
-                      onClick={() => setSuspend(true)}
-                      className="text-[15px] text-stone-500 hover:text-blue-600"
-                    >
-                      DEACTIVATE USER
-                    </button>
-                  </li>
-                ) : (
-                  <li className="">
-                    <button
-                      disabled={!userProfile}
-                      onClick={() => setSuspend(true)}
-                      className="text-[15px] text-stone-500 hover:text-blue-600"
-                    >
-                      ACTIVATE USER
-                    </button>
-                  </li>
-                )}
               </ul>
             </div>
           </div>
@@ -890,9 +937,7 @@ const UserProfile = () => {
                       <BellIcon className="h-[18px] w-[18px]" />
                       Alerts
                     </span>
-                    <span className="text-stone-600">
-                      in the last 7 days
-                    </span>
+                    <span className="text-stone-600">in the last 7 days</span>
                   </div>
                   <Link
                     to={"#"}
