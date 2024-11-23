@@ -1,7 +1,7 @@
 export type CreateMenuType = {
   project: string;
   name: string;
-  is_parent: boolean;
+  isParent: boolean;
   parent_menu_key: string;
   url: string;
   description: string;

@@ -8,7 +8,7 @@ import { FiUser } from "react-icons/fi";
 import { CiSettings } from "react-icons/ci";
 import { LuLogOut } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import { logout } from "@/features/authentication/authSlice";
 
@@ -38,7 +38,7 @@ const Navigation: React.FC = () => {
       <div className="px-[10px]">
         <p className="font-[500]">Notification(8)</p>
       </div>
-      <div className="w-[300px] mt-[20px] max-h-[300px] overflow-y-auto">
+      {/* <div className="w-[300px] mt-[20px] max-h-[300px] overflow-y-auto">
         <ul>
           {Array.from({ length: 5 }).map((_, i) => (
             <li key={i} className="flex items-center hover:bg-zinc-100 gap-[5px] px-[10px]  py-[10px]">
@@ -56,7 +56,7 @@ const Navigation: React.FC = () => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
   return (

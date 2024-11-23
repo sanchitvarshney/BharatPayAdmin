@@ -237,7 +237,7 @@ const UserProfile = () => {
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
                 Turn on require password change so that this password will need
-                to be changed once Sachin signs in.
+                to be changed.
               </p>
             </div>
           </div>
@@ -445,11 +445,10 @@ const UserProfile = () => {
               id="modal-modal-title"
             >
               {userProfile
-                ? userProfile[0]?.status === "A"
+                ? userProfile?.status === "A"
                   ? "Deactivate User"
                   : "Activate User"
                 : "---"}{" "}
-              - sachin.maurya@mscorpres.in
             </h2>
           </div>
 
@@ -1095,7 +1094,7 @@ const UserProfile = () => {
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Password</p>
                     <p className="text-zinc-400 font-[300]">
-                      Reset Sachin's PASSWORD
+                      Reset PASSWORD
                     </p>
                     <div className="flex items-end justify-end">
                       <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
@@ -1116,7 +1115,7 @@ const UserProfile = () => {
                     <div>
                       <p className=" font-[300]">OFF</p>
                       <p className="text-[13px] text-zinc-500">
-                        This password wont't to be changed once Sachin sign in.
+                        This password wont't to be changed once sign in.
                       </p>
                     </div>
                     <div className="flex items-center justify-end">
