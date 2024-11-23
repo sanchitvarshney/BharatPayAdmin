@@ -70,9 +70,12 @@ export type UpdateMobilePayload = {
   ask_to_verify: string;
 };
 export type UpdateuserProfilePayload = {
-  userID: string;
-  first_name: string;
-  last_name: string;
+  userId: any,
+  name: string,
+  mobileNo: string,
+  gender: string,
+  status: string,
+  verification: string
 };
 
 
