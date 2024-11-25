@@ -20,6 +20,7 @@ import {
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Edit2Icon, Plus } from "lucide-react";
 import CreateMenu from "./CreateMenu";
+import SharedDialog from "@/components/shared/SharedDialog";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -95,6 +96,8 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [edit , setEdit] = useState(false);
   const [editData, setEditData] = useState({});
   const [menuId,setMenuId] = useState("");
+  const [menuToDelete, setMenuToDelete] = useState<string | null>(null);
+  const [openDelete, setOpenDelete] = useState(false);
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
     { field: "order", headerName: "Order", filter: true },
@@ -143,14 +146,16 @@ const TreeDataMenu: React.FC<Props> = () => {
             <IconButton
               onClick={() => {
                 setMenuid(params.data?.menu_key || "");
-                dispatch(deleteMenu(params.data?.menu_key || "")).then(
-                  (res: any) => {
-                    if (res?.payload?.data?.success) {
-                      dispatch(getMenuList());
-                      setMenuid("");
-                    }
-                  }
-                );
+                setMenuToDelete(params.data?.menu_key || "");
+                setOpenDelete(true);
+                // dispatch(deleteMenu(params.data?.menu_key || "")).then(
+                //   (res: any) => {
+                //     if (res?.payload?.data?.success) {
+                //       dispatch(getMenuList());
+                //       setMenuid("");
+                //     }
+                //   }
+                // );
               }}
               aria-label="delete"
               size="small"
@@ -253,6 +258,24 @@ const TreeDataMenu: React.FC<Props> = () => {
         <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} />
       )}
       <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data = {editData} menuId={menuId}/>
+      <SharedDialog
+        open={openDelete}
+        title="Delete Menu Item"
+        content="Are you sure you want to delete this menu item? This action cannot be undone."
+        onClose={() => setOpenDelete(false)}  // Close dialog without action
+        onConfirm={() => {
+          if (menuToDelete) {
+            dispatch(deleteMenu(menuToDelete)).then((res: any) => {
+              if (res?.payload?.data?.success) {
+                dispatch(getMenuList());
+                setOpenDelete(false);
+              }
+            });
+          }
+        }}  // Confirm delete action
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 };
