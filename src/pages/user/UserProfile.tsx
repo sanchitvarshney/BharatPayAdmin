@@ -887,6 +887,24 @@ const UserProfile = () => {
                     UPDATE USER
                   </button>
                 </li>
+                <li className="">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setUpdateUser(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600"
+                  >
+                    VERIFICATION
+                  </button>
+                </li>
+                <li className="">
+                  <button
+                    disabled={!userProfile}
+                    onClick={() => setUpdateUser(true)}
+                    className="text-[15px] text-stone-500 hover:text-blue-600"
+                  >
+                    STATUS
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
@@ -1093,9 +1111,7 @@ const UserProfile = () => {
                 >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Password</p>
-                    <p className="text-zinc-400 font-[300]">
-                      Reset PASSWORD
-                    </p>
+                    <p className="text-zinc-400 font-[300]">Reset PASSWORD</p>
                     <div className="flex items-end justify-end">
                       <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
                     </div>
