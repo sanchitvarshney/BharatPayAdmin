@@ -40,15 +40,15 @@ export const getUserProfile = createAsyncThunk<AxiosResponse<UserProfileResponse
   return response;
 });
 export const changeuserPasword = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, ChangeUserPasswordPayload>("user/changeuserPasword", async (paylod) => {
-  const response = await axiosInstance.put(`/user/edit/password`, paylod);
+  const response = await axiosInstance.put(`/user/change-user-password`, paylod);
   return response;
 });
 export const updateUserEmail = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, UpdateEmailPayload>("user/updateUserEmail", async (paylod) => {
-  const response = await axiosInstance.put(`/edit/email/E/yes`, paylod);
+  const response = await axiosInstance.put(`/user/update-email-id`, paylod);
   return response;
 });
 export const updateUserMobile = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, UpdateMobilePayload>("user/updateUserMobile", async (paylod) => {
-  const response = await axiosInstance.put(`/edit/mobile/M/no`, paylod);
+  const response = await axiosInstance.put(`/user/update-user-mobile-no`, paylod);
   return response;
 });
 export const suspendUser = createAsyncThunk<AxiosResponse<ChangePasswordResponse>, string>("user/suspendUser", async (paylod) => {
