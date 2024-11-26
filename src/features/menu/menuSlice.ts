@@ -17,6 +17,7 @@ const initialState: MenuState = {
   deleteMenuLoading: false,
   disableMenuLoading: false,
   isId: null,
+  menuTabList:null,
 };
 // Define a type for your slice state
 
@@ -112,6 +113,13 @@ export const deleteMenu = createAsyncThunk<
   string
 >("menu/deleteMenu", async (id) => {
   const response = await axiosInstance.delete(`/menu/deleteMenu/${id}`);
+  return response;
+});
+export const getMenuTabList = createAsyncThunk<
+  AxiosResponse<any>,
+  string
+>("menu/getMenuTabList", async (id) => {
+  const response = await axiosInstance.get(`/menuTab/list/${id}`);
   return response;
 });
 
@@ -225,6 +233,19 @@ const authSlice = createSlice({
         state.menuListLoading = false;
       })
       .addCase(getRoleMenu.rejected, (state) => {
+        state.menuListLoading = false;
+        state.menuList = null;
+      })
+      .addCase(getMenuTabList.pending, (state) => {
+        state.menuListLoading = true;
+      })
+      .addCase(getMenuTabList.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.menuTabList = action.payload?.data?.menu;
+        }
+        state.menuListLoading = false;
+      })
+      .addCase(getMenuTabList.rejected, (state) => {
         state.menuListLoading = false;
         state.menuList = null;
       })
