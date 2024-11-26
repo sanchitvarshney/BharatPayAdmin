@@ -64,6 +64,20 @@ export const updateUserProfile = createAsyncThunk<AxiosResponse<any>, Updateuser
   return response;
 });
 
+export const requirePasswordChange = createAsyncThunk<AxiosResponse<any>, any>("user/requirePasswordChange", async (paylod) => {
+  const response = await axiosInstance.put(`/user/require-password-change`, paylod);
+  return response;
+});
+
+export const updateUserStatus = createAsyncThunk<AxiosResponse<any>, any>("user/updateUserStatus", async (paylod) => {
+  const response = await axiosInstance.put(`/user/update-user-status`, paylod);
+  return response;
+});
+export const updateUserVerification = createAsyncThunk<AxiosResponse<any>, any>("user/updateUserVerification", async (paylod) => {
+  const response = await axiosInstance.put(`/user/update-user-verification-status`, paylod);
+  return response;
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,

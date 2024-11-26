@@ -33,10 +33,13 @@ import {
   activateUser,
   changeuserPasword,
   getUserProfile,
+  requirePasswordChange,
   suspendUser,
   updateUserEmail,
   updateUserMobile,
   updateUserProfile,
+  updateUserStatus,
+  updateUserVerification,
 } from "@/features/user/userSlice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChangeUserPasswordPayload } from "@/features/user/userType";
@@ -105,6 +108,9 @@ const UserProfile = () => {
   );
   const [requiredChangePass, setRequiredChangePass] =
     React.useState<HTMLButtonElement | null>(null);
+  const [passwordChange, setPasswordChange] = useState<boolean>(false);
+  const [updateStatus, setUpdateStatus] = useState<boolean>(false);
+  const [updateVerification, setUpdateVerification] = useState<boolean>(false);
   const [askToVerify, setAskToVerify] = useState<boolean>(false);
   const params = useParams();
   const dispatch = useAppDispatch();
@@ -155,6 +161,22 @@ const UserProfile = () => {
       if (res.payload.data?.success) {
         setResetPassword(false);
         reset();
+      }
+    });
+  };
+
+  const handleRequirePasswordChange = (status: any) => {
+    setRequiredChangePass(status);
+    console.log(userProfile);
+    // setResetPassword(true);
+    const payload = {
+      userId: userProfile ? userProfile?.id || "" : "",
+      requirePasswordChange: passwordChange ? "Y" : "N",
+    };
+    setRequiredChangePass(null);
+    dispatch(requirePasswordChange(payload)).then((res: any) => {
+      if (res?.payload?.data?.success) {
+        showToast(res.payload.data.message, "success");
       }
     });
   };
@@ -232,8 +254,8 @@ const UserProfile = () => {
             </p>
             <div>
               <div className="flex items-center">
-                <Switch />
-                OFF
+                <Switch onChange={(e) => setPasswordChange(e.target.checked)} />
+                {passwordChange ? "Yes" : "No"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
                 Turn on require password change so that this password will need
@@ -242,7 +264,9 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => setRequiredChangePass(null)}>Done</Button>
+            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
+              Done
+            </Button>
           </div>
         </Popover>
       </div>
@@ -783,12 +807,182 @@ const UserProfile = () => {
                       })
                     ).then((res: any) => {
                       if (res.payload.data?.success) {
+                        showToast(res.payload.data.message, "success");
                         setUpdateUser(false);
                         setName("");
                         dispatch(getUserProfile(params.id || ""));
                       }
                     });
                   }
+                }}
+                variant="contained"
+              >
+                Continue
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {updateUserProfileLoading && <LinearProgress />}
+            </div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={updateStatus}
+        onClose={setUpdateStatus}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Update Status of user -{" "}
+              {userProfile ? userProfile?.user_name : "---"}
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <Typography sx={{ marginRight: 2 }}>Status</Typography>
+              <FormControlLabel
+                value="1"
+                control={<Radio />}
+                label="Active"
+                checked={status === "1"}
+                onChange={() => setStatus("1")}
+              />
+              <FormControlLabel
+                value="0"
+                control={<Radio />}
+                label="Inactive"
+                checked={status === "0"}
+                onChange={() => setStatus("0")}
+              />
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  setUpdateStatus(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  dispatch(
+                    updateUserStatus({
+                      userId: userProfile ? userProfile?.id : "",
+
+                      status: status,
+                    })
+                  ).then((res: any) => {
+                    if (res.payload.data?.success) {
+                      showToast(res.payload.data.message, "success");
+                      setUpdateStatus(false);
+                      setName("");
+                      dispatch(getUserProfile(params.id || ""));
+                    }
+                  });
+                }}
+                variant="contained"
+              >
+                Continue
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
+              {updateUserProfileLoading && <LinearProgress />}
+            </div>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={updateVerification}
+        onClose={setUpdateVerification}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "5px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
+            <h2
+              className="text-white text-[17px] font-[500]"
+              id="modal-modal-title"
+            >
+              Update Status of user -{" "}
+              {userProfile ? userProfile?.user_name : "---"}
+            </h2>
+          </div>
+
+          <div className="p-[30px] relative flex flex-col gap-[30px]">
+            <div className="space-y-5">
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <FormLabel sx={{ marginBottom: 1 }}>Verification</FormLabel>
+                <Select
+                  value={verification}
+                  onChange={(e) => setVerification(e.target.value)}
+                  sx={{ width: 200 }} // You can adjust the width as needed
+                >
+                  {verificationTypes.map((type) => (
+                    <MenuItem key={type.value} value={type.value}>
+                      {type.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            </div>
+            <div className="flex items-center justify-end gap-[10px]">
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  setUpdateStatus(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={updateUserProfileLoading}
+                onClick={() => {
+                  dispatch(
+                    updateUserVerification({
+                      userId: userProfile ? userProfile?.id : "",
+
+                      status: verification,
+                    })
+                  ).then((res: any) => {
+                    if (res.payload.data?.success) {
+                      showToast(res.payload.data.message, "success");
+                      setUpdateVerification(false);
+                      setName("");
+                      dispatch(getUserProfile(params.id || ""));
+                    }
+                  });
                 }}
                 variant="contained"
               >
@@ -890,19 +1084,19 @@ const UserProfile = () => {
                 <li className="">
                   <button
                     disabled={!userProfile}
-                    onClick={() => setUpdateUser(true)}
+                    onClick={() => setUpdateVerification(true)}
                     className="text-[15px] text-stone-500 hover:text-blue-600"
                   >
-                    VERIFICATION
+                    UPDATE VERIFICATION
                   </button>
                 </li>
                 <li className="">
                   <button
                     disabled={!userProfile}
-                    onClick={() => setUpdateUser(true)}
+                    onClick={() => setUpdateStatus(true)}
                     className="text-[15px] text-stone-500 hover:text-blue-600"
                   >
-                    STATUS
+                    UPDATE STATUS
                   </button>
                 </li>
               </ul>
