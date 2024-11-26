@@ -2,6 +2,7 @@ import axiosInstance from "@/api/baratpayDashApi";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import {
+  AddTabType,
   CreateMenuResponse,
   CreateMenuType,
   MenuListResponse,
@@ -26,6 +27,14 @@ export const createMenu = createAsyncThunk<
   CreateMenuType
 >("menu/createMenu", async (payload) => {
   const response = await axiosInstance.post("/menu/createMenu", payload);
+  return response;
+});
+
+export const addTab = createAsyncThunk<
+  AxiosResponse<any>,
+  AddTabType
+>("menu/addTab", async (payload) => {
+  const response = await axiosInstance.post("/menuTab/add", payload);
   return response;
 });
 
