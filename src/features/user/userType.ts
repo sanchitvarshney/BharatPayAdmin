@@ -49,8 +49,8 @@ export type UserProfileResponse = {
 };
 
 export type ChangeUserPasswordPayload = {
-  userID: string;
-  new_password: string;
+  userId: string;
+  password: string;
   ask_password_change: string;
 };
 export type ChangePasswordResponse = {
@@ -59,15 +59,15 @@ export type ChangePasswordResponse = {
 };
 
 export type UpdateEmailPayload = {
-  userID: string;
-  email: string;
-  ask_to_verify: string;
+  userId: string;
+  emailId: string;
+  isVarified: string;
 };
 
 export type UpdateMobilePayload = {
-  userID: string;
-  mobile: string;
-  ask_to_verify: string;
+  userId: string;
+  mobileNo: string;
+  isVarified: string;
 };
 export type UpdateuserProfilePayload = {
   userId: any,

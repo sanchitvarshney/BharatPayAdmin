@@ -21,7 +21,7 @@ interface TabDetailsDialogProps {
   onClose: () => void;
   data: any;
   title: string;
-  loading: boolean
+  loading: boolean;
 }
 
 const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
@@ -31,7 +31,7 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
   loading,
 }) => {
   const gridRef = useRef<AgGridReact>(null);
-const [rowData , setRowData] = React.useState<TabData[]>([])
+  const [rowData, setRowData] = React.useState<TabData[]>([]);
   const columnDefs: ColDef[] = [
     { headerName: "Tab ID", field: "tabId" },
     { headerName: "Name", field: "name" },
@@ -42,7 +42,8 @@ const [rowData , setRowData] = React.useState<TabData[]>([])
     {
       headerName: "Status",
       field: "status",
-      cellRenderer: (params: any) => (params.value === 1 ? "Active" : "Inactive"),
+      cellRenderer: (params: any) =>
+        params.value === 1 ? "Active" : "Inactive",
     },
   ];
 
@@ -73,9 +74,9 @@ const [rowData , setRowData] = React.useState<TabData[]>([])
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          {data ? "Update Menu" : "Add New Menu"}
+          Tab Data
         </Typography>
-        <div className="ag-theme-quartz h-[calc(100vh-110px)]">
+        <div className="ag-theme-quartz h-[calc(100vh-110px)]"style={{ border: "1px solid #ccc" }}>
           <AgGridReact
             overlayNoRowsTemplate={OverlayNoRowsTemplate}
             loading={loading}
@@ -92,9 +93,10 @@ const [rowData , setRowData] = React.useState<TabData[]>([])
           />
         </div>
         <div className="mt-[20px] justify-end flex gap-[10px]">
-             
-              <Button onClick={() => onClose()} variant="contained">Close</Button>
-            </div>
+          <Button onClick={() => onClose()} variant="contained">
+            Close
+          </Button>
+        </div>
       </Box>
     </Modal>
   );

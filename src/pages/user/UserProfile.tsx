@@ -62,7 +62,7 @@ const verificationTypes = [
 ];
 
 const schema = z.object({
-  new_password: z.string().min(8, "Password must be at least 8 characters"),
+password: z.string().min(8, "Password must be at least 8 characters"),
   ask_password_change: z.boolean(),
   user_id: z.string(),
 });
@@ -108,6 +108,10 @@ const UserProfile = () => {
   );
   const [requiredChangePass, setRequiredChangePass] =
     React.useState<HTMLButtonElement | null>(null);
+  const [changePhone, setChangePhone] =
+    React.useState<HTMLButtonElement | null>(null);
+  const [changeEmail, setChangeEmail] =
+    React.useState<HTMLButtonElement | null>(null);
   const [passwordChange, setPasswordChange] = useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateVerification, setUpdateVerification] = useState<boolean>(false);
@@ -133,7 +137,7 @@ const UserProfile = () => {
   } = useForm<ResetPasswordType>({
     resolver: zodResolver(schema),
     defaultValues: {
-      new_password: "",
+      password: "",
       ask_password_change: false,
       user_id: userProfile ? userProfile[0]?.userID || "" : "",
     },
@@ -153,8 +157,9 @@ const UserProfile = () => {
   };
   const onSubmit = (data: ResetPasswordType) => {
     const payload: ChangeUserPasswordPayload = {
-      userID: userProfile ? userProfile[0]?.userID || "" : "",
-      new_password: data.new_password,
+      userId: userProfile ? userProfile?.id || "" : "",
+      
+      password: data.password,
       ask_password_change: data.ask_password_change ? "yes" : "no",
     };
     dispatch(changeuserPasword(payload)).then((res: any) => {
@@ -207,7 +212,7 @@ const UserProfile = () => {
             horizontal: "center",
           }}
         >
-          {/* <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
+          <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
             <Typography>Password</Typography>
             <div>
               <Button
@@ -217,13 +222,89 @@ const UserProfile = () => {
               >
                 Reset Password
               </Button>
-              <p className="text-[14px] text-zinc-400 mt-[5px] text-center">
+              {/* <p className="text-[14px] text-zinc-400 mt-[5px] text-center">
                 Reset Sachin's Password
-              </p>
+              </p> */}
             </div>
-          </div> */}
+          </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
             <Button onClick={() => setAnchorEl(null)}>Done</Button>
+          </div>
+        </Popover>
+      </div>
+      <div>
+        <Popover
+          disableScrollLock={true}
+          id={Boolean(changePhone) ? "simple" : undefined}
+          open={Boolean(changePhone)}
+          anchorEl={changePhone}
+          onClose={() => setChangePhone(null)}
+          sx={{
+            "& .MuiPopover-paper": {
+              width: "57%", // Custom width here
+            },
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
+            <Typography>Phone Number</Typography>
+            <div>
+              <Button
+                onClick={() => setUpdateMobile(true)}
+                variant="contained"
+                sx={{ background: "#fff", color: "#2563eb" }}
+              >
+                Update Phone Number
+              </Button>
+            </div>
+          </div>
+          <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+            <Button onClick={() => setChangePhone(null)}>Done</Button>
+          </div>
+        </Popover>
+      </div>
+      <div>
+        <Popover
+          disableScrollLock={true}
+          id={Boolean(changeEmail) ? "simple" : undefined}
+          open={Boolean(changeEmail)}
+          anchorEl={changeEmail}
+          onClose={() => setChangePhone(null)}
+          sx={{
+            "& .MuiPopover-paper": {
+              width: "57%", // Custom width here
+            },
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className="flex items-start gap-[300px] py-[30px] px-[20px]">
+            <Typography>Email</Typography>
+            <div>
+              <Button
+                onClick={() => setAlert(true)}
+                variant="contained"
+                sx={{ background: "#fff", color: "#2563eb" }}
+              >
+                Update Email
+              </Button>
+            </div>
+          </div>
+          <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+            <Button onClick={() => setChangeEmail(null)}>Done</Button>
           </div>
         </Popover>
       </div>
@@ -302,7 +383,7 @@ const UserProfile = () => {
             <div className="p-[30px] relative flex flex-col gap-[30px]">
               <div className="space-y-5">
                 <Controller
-                  name="new_password"
+                  name="password"
                   control={control}
                   render={({ field }) => (
                     <TextField
@@ -311,8 +392,8 @@ const UserProfile = () => {
                       {...field}
                       label="New Password"
                       variant="standard"
-                      error={!!errors.new_password}
-                      helperText={errors.new_password?.message}
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
                     />
                   )}
                 />
@@ -338,7 +419,7 @@ const UserProfile = () => {
                 <Button
                   type="submit"
                   disabled={cahngeUserPasswordLoading}
-                  variant="contained"
+                  variant="contained"          
                 >
                   Continue
                 </Button>
@@ -395,7 +476,7 @@ const UserProfile = () => {
                     onChange={(e) => setAskToVerify(e.target.checked)}
                   />
                 }
-                label="Ask to Verify  Email "
+                label="Ask to Verify Email "
               />
             </div>
             <div className="flex items-center justify-end gap-[10px]">
@@ -419,15 +500,17 @@ const UserProfile = () => {
                   } else {
                     dispatch(
                       updateUserEmail({
-                        email: email,
-                        userID: userProfile ? userProfile[0].userID || "" : "",
-                        ask_to_verify: askToVerify ? "yes" : "no",
+                        emailId: email,
+                        userId: userProfile ? userProfile.id || "" : "",
+                        isVarified: askToVerify ? "1" : "0",
                       })
                     ).then((res: any) => {
                       if (res.payload.data?.success) {
                         setAlert(false);
                         setEmail("");
                         setAskToVerify(false);
+                        setChangeEmail(null);
+                        dispatch(getUserProfile(params.id || ""));
                       }
                     });
                   }
@@ -570,8 +653,7 @@ const UserProfile = () => {
               className="text-white text-[17px] font-[500]"
               id="modal-modal-title"
             >
-              Update Mobile No. -{" "}
-              {userProfile ? userProfile[0]?.emailID : "---"}
+              Update Mobile No. -{userProfile ? userProfile?.name : "---"}
             </h2>
           </div>
 
@@ -623,15 +705,17 @@ const UserProfile = () => {
                   } else {
                     dispatch(
                       updateUserMobile({
-                        userID: userProfile ? userProfile[0]?.userID : "",
-                        mobile,
-                        ask_to_verify: askToVerify ? "yes" : "no",
+                        userId: userProfile ? userProfile?.id : "",
+                        mobileNo: mobile,
+                        isVarified: askToVerify ? "1" : "0",
                       })
                     ).then((res: any) => {
                       if (res.payload.data?.success) {
                         setUpdateMobile(false);
                         setMobile("");
                         setAskToVerify(false);
+                        setChangePhone(null);
+                        dispatch(getUserProfile(params.id || ""));
                       }
                     });
                   }
@@ -961,7 +1045,7 @@ const UserProfile = () => {
               <Button
                 disabled={updateUserProfileLoading}
                 onClick={() => {
-                  setUpdateStatus(false);
+                  setUpdateVerification(false);
                 }}
               >
                 Cancel
@@ -1140,7 +1224,7 @@ const UserProfile = () => {
                 />
               </Tabs>
             </Box>
-            <CustomTabPanel value={value} index={0}>
+            <CustomTabPanel value={value} index={0} >
               <div className="flex flex-col gap-[10px]  px-[5px] ">
                 <div className="border flex justify-between py-[10px] px-[20px]">
                   <div className="flex items-center gap-[3px] text-[15px]">
@@ -1247,49 +1331,111 @@ const UserProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
-                <div className="flex items-end justify-between">
-                  <p className="text-stone-500">Admin roles and privileges</p>
-                  <Button
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      minWidth: 0,
-                      padding: 0,
-                    }}
-                  >
-                    {" "}
-                    <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
-                  </Button>
-                </div>
-                <div className="mt-[20px] py-[10px] flex gap-[100px]">
-                  <div>
-                    <p>User Role</p>
-                    <p className="text-stone-500 text-[14px]">
-                      {getUserProfileLoading ? (
-                        <Skeleton className="w-full h-[13px] mt-[5px]" />
-                      ) : userProfile ? (
-                        userProfile?.type
-                      ) : (
-                        "--"
-                      )}
-                    </p>
+
+              <button
+                className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
+                aria-describedby={
+                  Boolean(changePhone) ? "requiredChangePass" : undefined
+                }
+                onClick={(e) => setChangePhone(e.currentTarget)}
+              >
+                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                  <div className="flex items-end justify-between">
+                    <p className="text-stone-500">Update Phone Number</p>
+                    <Button
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        minWidth: 0,
+                        padding: 0,
+                      }}
+                    >
+                      {" "}
+                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                    </Button>
                   </div>
-                  <div>
-                    <p>Phone Number | Work</p>
-                    <p className="text-stone-500 text-[14px]">
-                      {getUserProfileLoading ? (
-                        <Skeleton className="w-full h-[13px] mt-[5px]" />
-                      ) : userProfile ? (
-                        userProfile?.mobile
-                      ) : (
-                        "--"
-                      )}
-                    </p>
+                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                    {/* <div>
+                      <p>User Role</p>
+                      <p className="text-stone-500 text-[14px]">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-full h-[13px] mt-[5px]" />
+                        ) : userProfile ? (
+                          userProfile?.type
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div> */}
+                    <div>
+                      <p>Phone Number | Work</p>
+                      <p className="text-stone-500 text-[14px]">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-full h-[13px] mt-[5px]" />
+                        ) : userProfile ? (
+                          userProfile?.mobile
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div>
+                    <RiPencilFill className="h-[20px] w-[20px]" />
                   </div>
                 </div>
-              </div>
+              </button>
+              <button
+                className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
+                aria-describedby={
+                  Boolean(changeEmail) ? "requiredChangePass" : undefined
+                }
+                onClick={(e) => setChangeEmail(e.currentTarget)}
+              >
+                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                  <div className="flex items-end justify-between">
+                    <p className="text-stone-500">Update Email</p>
+                    <Button
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        minWidth: 0,
+                        padding: 0,
+                      }}
+                    >
+                      {" "}
+                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                    </Button>
+                  </div>
+                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                    {/* <div>
+                      <p>User Role</p>
+                      <p className="text-stone-500 text-[14px]">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-full h-[13px] mt-[5px]" />
+                        ) : userProfile ? (
+                          userProfile?.type
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div> */}
+                    <div>
+                      <p>Email</p>
+                      <p className="text-stone-500 text-[14px]">
+                        {getUserProfileLoading ? (
+                          <Skeleton className="w-full h-[13px] mt-[5px]" />
+                        ) : userProfile ? (
+                          userProfile?.email
+                        ) : (
+                          "--"
+                        )}
+                      </p>
+                    </div>
+                    <RiPencilFill className="h-[20px] w-[20px]" />
+                  </div>
+                </div>
+              </button>
               {/* </div> */}
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
