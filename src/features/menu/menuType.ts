@@ -1,7 +1,7 @@
 export type CreateMenuType = {
   project: string;
   name: string;
-  is_parent: boolean;
+  isParent: boolean;
   parent_menu_key: string;
   url: string;
   description: string;
@@ -26,6 +26,7 @@ type MenuItemList = {
   description: string;
   children?: MenuItemList[]; // Optional because not all menu items may have children
   project_name:string
+  hasTab:boolean
 };
 type UserList = {
   menu_key: string;
@@ -53,4 +54,5 @@ export type MenuState = {
   deleteMenuLoading: boolean;
   disableMenuLoading: boolean;
   isId:any
+  menuTabList:any
 };

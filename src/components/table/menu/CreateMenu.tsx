@@ -65,6 +65,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
   });
 
   const parent = watch("is_parent");
+  
   useEffect(() => {
     if (parent == "Y") {
       setValue("parent_menu_key", selectedRow.name);
@@ -75,7 +76,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
     const payload: CreateMenuType = {
       project: data.project,
       name: data.name,
-      is_parent: data.is_parent === "N" ? false : true,
+      isParent: data.is_parent === "N" ? false : true,
       parent_menu_key: menuId ? menuId : selectedRow.menu_key,
       url: data.url,
       description: data.description,
@@ -121,7 +122,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
     if (data && menuId) {
       setValue("project", data.project_name);
       setValue("parent_menu_key", selectedRow.menu_key);
-      setValue("is_parent", data?.url ? "Y" : "N");
+      setValue("is_parent", data?.url ? "N" : "Y");
       setValue("name", data?.name);
       setValue("url", data.url);
       setValue("description", data.description);
@@ -140,10 +141,11 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add New Menu Against{" "}
+            {data?"Update Menu" :"Add New Menu" }
+            {/* Against
             <span style={{ color: "#1976d2", fontWeight: "bold" }}>
               {selectedRow.name}
-            </span>
+            </span> */}
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mt-[20px] grid grid-cols-2 max-w-[95%] gap-[30px]">

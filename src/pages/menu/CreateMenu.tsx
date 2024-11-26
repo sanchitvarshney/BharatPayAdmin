@@ -44,7 +44,7 @@ const CreateMenu: React.FC = () => {
     const payload: any = {
       project: data.project,
       name: data.name,
-      is_parent: true,
+      isParent: true,
       has_parent:false,
       description: data.description,
       icon: data.icon,

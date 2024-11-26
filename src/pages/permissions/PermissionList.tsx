@@ -7,10 +7,9 @@ import {
   saveUserMenuPermission,
 } from "@/features/menu/menuSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
-import { FormControl, InputLabel, MenuItem } from "@mui/material";
+import { Autocomplete, FormControl, TextField } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Select from "@mui/material/Select";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getRoleList } from "@/features/permission/permissionSlice";
@@ -19,7 +18,7 @@ import { showToast } from "@/utills/toasterContext";
 const schema = z.object({
   type: z.string().nonempty("Project name is required"),
   role: z.string().nonempty("Page name is required"),
-  project:z.string().nonempty("Project name is required"),
+  project: z.string().nonempty("Project name is required"),
 });
 // Infer the form values from Zod schema
 type FormValues = z.infer<typeof schema>;
@@ -35,7 +34,7 @@ const PermissionList: React.FC = () => {
     control,
     // reset,
     // watch,
-    formState: { errors},
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -49,13 +48,13 @@ const PermissionList: React.FC = () => {
     // dispatch(getMenuList());
     dispatch(getRoleList()).then((res: any) => {
       if (res?.payload?.data?.success) {
-        let arr = res?.payload?.data?.roles?.map((r:any) => {
+        let arr = res?.payload?.data?.roles?.map((r: any) => {
           return {
             id: r.role_id,
             text: r.role_name,
           };
         });
-     setRoleOptions(arr);
+        setRoleOptions(arr);
       }
     });
     dispatch(getActiveUser()).then((res: any) => {
@@ -112,11 +111,11 @@ const PermissionList: React.FC = () => {
       });
     }
   };
-  
+
   const getlist = () => {
     const selectedVal = localStorage.getItem("selectedVal");
     if (selectedVal !== null) {
-      const id = selectedVal ;
+      const id = selectedVal;
       if (localStorage.getItem("selectedType") == "User") {
         dispatch(getUserMenu(id)).then((res: any) => {
           console.log("response", res);
@@ -144,6 +143,15 @@ const PermissionList: React.FC = () => {
     { id: "Role", text: "Role" },
   ];
 
+  const handleTypeChange = (newValue: any) => {
+    setSelectedType(newValue?.id || "");
+    setSelectedVal(""); // Clear selected value when changing the type
+  };
+
+  const handleRoleChange = (newValue: any) => {
+    setSelectedVal(newValue?.id || ""); // Update selected role or user value
+  };
+
   return (
     <div className="p-[20px] ">
       <form
@@ -151,34 +159,42 @@ const PermissionList: React.FC = () => {
       >
         <div className="mt-[20px] flex max-w-[70%] gap-[30px]">
           {/* Project Name */}
-          <div className="gap-4">
+          <div className=" flex gap-4">
             <FormControl
               variant="standard"
               sx={{ minWidth: 200 }}
               error={!!errors.project}
             >
-              <InputLabel>Type</InputLabel>
+              {/* <InputLabel>Type</InputLabel> */}
               <Controller
                 name="type"
                 control={control}
-                render={() => (
-                  <Select
-                    className="w-[150px]"
-                    onChange={(e) => {
-                      setSelectedType(e.target.value);
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={type} // Options for the type selection
+                    getOptionLabel={(option) => option.text} // How to display the options in the dropdown
+                    onChange={(e, newValue) => {
+                      handleTypeChange(newValue); // Update selected type by its id
+                      console.log(e);
                     }}
-                    placeholder="Search"
-                  >
-                    {type.map((option) => (
-                      <MenuItem
-                        key={option?.id}
-                        value={option?.id}
-                        // defaultValue={option[0]}
-                      >
-                        {option?.text}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                    // Set the value based on the selected type id or undefined if not selected
+                    value={
+                      type.find((option) => option.id === selectedType) ||
+                      undefined
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Search Type"
+                        variant="outlined"
+                      />
+                    )}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    } // Compare option and selected value based on id
+                    disableClearable // Prevent clearing of the input field
+                  />
                 )}
               />
               {errors.project && (
@@ -192,52 +208,77 @@ const PermissionList: React.FC = () => {
               sx={{ minWidth: 200 }}
               error={!!errors.project}
             >
-              <InputLabel>{selectedType ? selectedType : 'Select an option'}</InputLabel>
+              {/* <InputLabel>{selectedType ? selectedType : 'Select an option'}</InputLabel> */}
               {selectedType === "User" ? (
                 <Controller
                   name="role"
                   control={control}
-                  render={() => (
-                    <Select
-                      className="w-[150px]"
-                      placeholder="Search"
-                      onChange={(e) => {
-                        setSelectedVal(e.target.value);
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={options} // Options for the role selection
+                      getOptionLabel={(option: any) => option.text} // Define how to display the option in the dropdown
+                      onChange={(e, newValue: any) => {
+                        handleRoleChange(newValue); // Update selected value
+                        console.log(e);
                       }}
-                    >
-                      {options.map((option:any) => (
-                        <MenuItem
-                          key={option?.id}
-                          value={option?.id}
-                          // defaultValue={option[0]}
-                        >
-                          {option?.text}
-                        </MenuItem>
-                      ))}
-                    </Select>
+                      value={
+                        options.find(
+                          (option: any) => option.id === selectedVal
+                        ) || null
+                      } // Set selected value based on the id
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label={
+                            selectedType
+                              ? `Search ${selectedType}`
+                              : "Select an option"
+                          }
+                          variant="outlined"
+                        />
+                      )}
+                      isOptionEqualToValue={(option, value) =>
+                        option.id === value.id
+                      } // Compare option and selected value based on id
+                      disableClearable // Prevent clearing of the input
+                    />
                   )}
                 />
               ) : (
                 <Controller
                   name="role"
                   control={control}
-                  render={() => (
-                    <Select
-                      className="w-[150px]"
-                      onChange={(e) => {
-                        setSelectedVal(e.target.value);
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={roleOptions} // Options for the role selection
+                      getOptionLabel={(option: any) => option.text} // How to display options in the dropdown
+                      onChange={(e, newValue) => {
+                        handleRoleChange(newValue); // Update selected role by its id
+                        console.log(e);
                       }}
-                    >
-                      {roleOptions.map((option:any) => (
-                        <MenuItem
-                          key={option?.id}
-                          value={option?.id}
-                          //   defaultValue={option[0]}
-                        >
-                          {option?.text}
-                        </MenuItem>
-                      ))}
-                    </Select>
+                      value={
+                        roleOptions.find(
+                          (option: any) => option.id === selectedVal
+                        ) || null
+                      } // Set selected value based on id
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label={
+                            selectedType
+                              ? `Search ${selectedType}`
+                              : "Select an option"
+                          }
+                          variant="outlined"
+                        />
+                      )}
+                      isOptionEqualToValue={(option, value) =>
+                        option.id === value.id
+                      } // Ensures correct comparison
+                      disableClearable // Prevent clearing of the selected role
+                    />
                   )}
                 />
               )}
@@ -250,14 +291,19 @@ const PermissionList: React.FC = () => {
           </div>
         </div>
       </form>
-      <div className=" mt-[20px] rounded-sm shadow shadow-stone-400 ">
-        {/* {selectedType && ( */}
-        <PermissionTable
-          selectedVal={selectedVal}
-          selectedType={selectedType}
-          updateRow={updateRow}
-        />
-        {/* )} */}
+      <div className="mt-[20px] rounded-sm shadow shadow-stone-400">
+        {selectedType && selectedVal ? (
+          <PermissionTable
+            selectedVal={selectedVal}
+            selectedType={selectedType}
+            updateRow={updateRow}
+          />
+        ) : (
+          // <div className="text-center text-gray-500 w-full">Please select a type and role to view permissions.</div>
+          <div className="text-center text-gray-500 w-full p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition duration-200">
+            Please select a type and {selectedType} to view permissions.
+          </div>
+        )}
       </div>
     </div>
   );

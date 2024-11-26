@@ -3,7 +3,7 @@ import React, {
   useMemo,
   useRef,
   useState,
-  useEffect,
+  useEffect, 
 } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
@@ -12,14 +12,18 @@ import { IconButton, Switch } from "@mui/material";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ViewListIcon from '@mui/icons-material/ViewList';
 import {
   deleteMenu,
   getMenuList,
+  getMenuTabList,
   menustatusChange,
 } from "@/features/menu/menuSlice";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Edit2Icon, Plus } from "lucide-react";
 import CreateMenu from "./CreateMenu";
+import SharedDialog from "@/components/shared/SharedDialog";
+import TabDetailsDialog from "@/features/menu/TabDetailsDialog";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -32,6 +36,7 @@ interface MenuData {
   order: number;
   icon: string | null;
   project_name:string
+  hasTab:boolean
 }
 type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,6 +53,7 @@ interface RowData {
   description: string;
   icon: string | null;
   project_name:string
+  hasTab:boolean
 }
 
 // Utility function to flatten hierarchical data
@@ -68,7 +74,8 @@ const flattenMenuHierarchy = (
       name: item.name,
       description: item.description,
       icon: item.icon,
-      project_name:item.project_name
+      project_name:item.project_name,
+      hasTab:item.hasTab,
     });
 
     if (item.children && item.children.length > 0) {
@@ -87,7 +94,7 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [rowData, setRowData] = useState<RowData[]>();
   const [open, setOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
-  const { menuList, menuListLoading } = useAppSelector(
+  const { menuList, menuListLoading , menuTabList } = useAppSelector(
     (state) => state.menu
   );
   const handleOpenmodal = () => setOpen(true);
@@ -95,6 +102,9 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [edit , setEdit] = useState(false);
   const [editData, setEditData] = useState({});
   const [menuId,setMenuId] = useState("");
+  const [menuToDelete, setMenuToDelete] = useState<string | null>(null);
+  const [showTabDialog, setShowTabDialog] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
     { field: "order", headerName: "Order", filter: true },
@@ -132,6 +142,7 @@ const TreeDataMenu: React.FC<Props> = () => {
       headerName: "Action",
       field: "action",
       cellRenderer: (params: any) => {
+        console.log(params.data)
         const [menuid, setMenuid] = useState("");
         const { deleteMenuLoading } = useAppSelector((state) => state.menu);
         return menuid === params.data?.menu_key && deleteMenuLoading ? (
@@ -143,14 +154,16 @@ const TreeDataMenu: React.FC<Props> = () => {
             <IconButton
               onClick={() => {
                 setMenuid(params.data?.menu_key || "");
-                dispatch(deleteMenu(params.data?.menu_key || "")).then(
-                  (res: any) => {
-                    if (res?.payload?.data?.success) {
-                      dispatch(getMenuList());
-                      setMenuid("");
-                    }
-                  }
-                );
+                setMenuToDelete(params.data?.menu_key || "");
+                setOpenDelete(true);
+                // dispatch(deleteMenu(params.data?.menu_key || "")).then(
+                //   (res: any) => {
+                //     if (res?.payload?.data?.success) {
+                //       dispatch(getMenuList());
+                //       setMenuid("");
+                //     }
+                //   }
+                // );
               }}
               aria-label="delete"
               size="small"
@@ -192,6 +205,26 @@ const TreeDataMenu: React.FC<Props> = () => {
             >
               <Edit2Icon fontSize="small" />
             </IconButton>
+            {(!!params.data.hasTab) && <IconButton
+              onClick={() => {
+                setMenuid(params.data?.menu_key || "");
+                setMenuId(params.data?.menu_key || "");
+                console.log(params.data);
+                setShowTabDialog(true);
+                dispatch(getMenuTabList(params.data?.menu_key || "")).then(
+                  (res: any) => {
+                    console.log(res)
+                    if (res?.payload?.data?.success) {
+                     console.log(res.payload.data.data);
+                    }
+                  }
+                )
+              }}
+              aria-label="delete"
+              size="small"
+            >
+              <ViewListIcon fontSize="small" />
+            </IconButton>}
           </>
         );
       },
@@ -253,6 +286,30 @@ const TreeDataMenu: React.FC<Props> = () => {
         <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} />
       )}
       <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data = {editData} menuId={menuId}/>
+      <SharedDialog
+        open={openDelete}
+        title="Delete Menu Item"
+        content="Are you sure you want to delete this menu item? This action cannot be undone."
+        onClose={() => setOpenDelete(false)}  // Close dialog without action
+        onConfirm={() => {
+          if (menuToDelete) {
+            dispatch(deleteMenu(menuToDelete)).then((res: any) => {
+              if (res?.payload?.data?.success) {
+                dispatch(getMenuList());
+                setOpenDelete(false);
+              }
+            });
+          }
+        }}  // Confirm delete action
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+       <TabDetailsDialog
+        open={showTabDialog}
+        onClose={() => setShowTabDialog(false)}
+        data={menuTabList}
+        title="Tab Details"
+      />
     </div>
   );
 };
