@@ -95,7 +95,8 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [rowData, setRowData] = useState<RowData[]>();
   const [open, setOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
-  const { menuList, menuListLoading, menuTabList } = useAppSelector(
+  const[tabData , setTabData] = useState<RowData[]>([])
+  const { menuList, menuListLoading } = useAppSelector(
     (state) => state.menu
   );
   const handleOpenmodal = () => setOpen(true);
@@ -211,6 +212,7 @@ const TreeDataMenu: React.FC<Props> = () => {
                     (res: any) => {
                       console.log(res);
                       if (res?.payload?.data?.success) {
+                        setTabData(res.payload.data.data);
                         console.log(res.payload.data.data);
                       }
                     }
@@ -314,8 +316,9 @@ const TreeDataMenu: React.FC<Props> = () => {
       <TabDetailsDialog
         open={showTabDialog}
         onClose={() => setShowTabDialog(false)}
-        data={menuTabList}
+        data={tabData}
         title="Tab Details"
+        loading={menuListLoading}
       />
       <AddTab
         open={addTabModal}
@@ -328,3 +331,4 @@ const TreeDataMenu: React.FC<Props> = () => {
 };
 
 export default TreeDataMenu;
+
