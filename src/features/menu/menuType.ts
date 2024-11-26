@@ -8,7 +8,17 @@ export type CreateMenuType = {
   icon: string;
   order: string;
   is_active: boolean;
-  has_parent:boolean
+  has_parent: boolean;
+};
+
+export type AddTabType = {
+  menuId: string;
+  name: string;
+  url: string;
+  icon: string;
+  order: string;
+  description: string;
+  status: string;
 };
 export type CreateMenuResponse = {
   success: boolean;
@@ -25,8 +35,8 @@ type MenuItemList = {
   icon: string;
   description: string;
   children?: MenuItemList[]; // Optional because not all menu items may have children
-  project_name:string
-  hasTab:boolean
+  project_name: string;
+  hasTab: boolean;
 };
 type UserList = {
   menu_key: string;
@@ -53,6 +63,6 @@ export type MenuState = {
   userList: UserList[] | null;
   deleteMenuLoading: boolean;
   disableMenuLoading: boolean;
-  isId:any
-  menuTabList:any
+  isId: any;
+  menuTabList: any;
 };
