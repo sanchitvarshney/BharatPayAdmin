@@ -12,6 +12,7 @@ import MenuList from "./pages/menu/MenuList";
 import Login from "./pages/authentication/Login";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import PermissionList from "./pages/permissions/PermissionList";
+import LocationList from "@/pages/location/LocationList";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "/menu/list",
         element: <MenuList />,
+      },
+      {
+        path: "/location/list",
+        element: <LocationList />,
       },
       {
         path: "/permission/list",

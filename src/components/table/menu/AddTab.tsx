@@ -52,10 +52,14 @@ const AddTab: React.FC<AddTabProps> = ({
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    // defaultValues: {
-    //   role: "",
-    //   type: "",
-    // },
+    defaultValues: {
+      name: '',
+      url: '',
+      icon: '',
+      order: '',
+      description: '',
+      status: '', // Ensure default values are set correctly
+    },
   });
 
   const onSubmit = (data: FormValues) => {

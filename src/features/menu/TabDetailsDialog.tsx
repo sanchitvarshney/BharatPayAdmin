@@ -32,18 +32,17 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
 }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = React.useState<TabData[]>([]);
+
   const columnDefs: ColDef[] = [
-    { headerName: "Tab ID", field: "tabId" },
-    { headerName: "Name", field: "name" },
-    { headerName: "URL", field: "url" },
-    { headerName: "Order", field: "order" },
-    { headerName: "Icon", field: "icon" },
-    { headerName: "Description", field: "description" },
+    { headerName: "Name", field: "name",filter: true },
+    { headerName: "URL", field: "url",filter: true },
+    { headerName: "Order", field: "order",filter: true },
+    { headerName: "Icon", field: "icon",filter: true },
+    { headerName: "Description", field: "description",filter: true },
     {
       headerName: "Status",
       field: "status",
-      cellRenderer: (params: any) =>
-        params.value === 1 ? "Active" : "Inactive",
+      cellRenderer: (params: any) => (params.value === 1 ? "Active" : "Inactive"),
     },
   ];
 
@@ -54,15 +53,17 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
   }, [data]);
 
   const style = {
-    position: "absolute",
+    position: "absolute" as "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     bgcolor: "background.paper",
-    fontSize: "11px",
+    fontSize: "12px",
     boxShadow: 24,
     width: "80%",
+    maxWidth: "1200px", // Limit max width for better responsiveness
     p: 4,
+    borderRadius: "8px", // Rounded corners
   };
 
   return (
@@ -73,10 +74,10 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Tab Data
+        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+          Tab Details
         </Typography>
-        <div className="ag-theme-quartz h-[calc(100vh-110px)]"style={{ border: "1px solid #ccc" }}>
+        <div className="ag-theme-quartz" style={{ height: "calc(100vh - 250px)", border: "1px solid #ccc", borderRadius: "8px" }}>
           <AgGridReact
             overlayNoRowsTemplate={OverlayNoRowsTemplate}
             loading={loading}
@@ -90,13 +91,14 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
             pagination
             paginationPageSize={10}
             paginationPageSizeSelector={[10, 25, 50]}
+            // domLayout="autoHeight" // This makes the grid dynamically adjust its height based on the number of rows
           />
         </div>
-        <div className="mt-[20px] justify-end flex gap-[10px]">
-          <Button onClick={() => onClose()} variant="contained">
+        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Button onClick={onClose} variant="contained" color="primary" sx={{ paddingX: 3 }}>
             Close
           </Button>
-        </div>
+        </Box>
       </Box>
     </Modal>
   );
