@@ -490,6 +490,19 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                       </ButtonBase>
                     </NavLink>
                   </li>
+
+                  <li className="w-full">
+                    <NavLink
+                      to={"/location/alloted-location"}
+                      className={({ isActive }) =>
+                        isActive ? "active navlink " : "navlink rounded-e-md"
+                      }
+                    >
+                      <ButtonBase className="w-full link">
+                        <div>Location Alloted Module  </div>
+                      </ButtonBase>
+                    </NavLink>
+                  </li>
                   
                 </ul>
               </div>

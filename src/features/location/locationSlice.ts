@@ -1,7 +1,7 @@
 import axiosInstance from "@/api/baratpayDashApi";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
-import { AddTabType, LocationListResponse, LocationState } from "@/features/location/locationTypes";
+import { AddTabType, AllotLocationListResponse, AllotLocationType, LocationListResponse, LocationState } from "@/features/location/locationTypes";
 
 
 const initialState: LocationState = {
@@ -12,7 +12,7 @@ const initialState: LocationState = {
   deleteMenuLoading: false,
   disableMenuLoading: false,
   isId: null,
-  menuTabList: null,
+  allotLocationList: null,
 };
 // Define a type for your slice state
 
@@ -25,20 +25,20 @@ const initialState: LocationState = {
 // });
 
 export const addTab = createAsyncThunk<AxiosResponse<any>, AddTabType>(
-  "menu/addTab",
+  "location/addTab",
   async (payload) => {
     const response = await axiosInstance.post("/location/add", payload);
     return response;
   }
 );
 
-// export const createMasterMenu = createAsyncThunk<
-//   AxiosResponse<CreateMenuResponse>,
-//   CreateMenuType
-// >("menu/createMenu", async (payload) => {
-//   const response = await axiosInstance.post("/menu/createMenu", payload);
-//   return response;
-// });
+export const allotLocation = createAsyncThunk<
+  AxiosResponse<AllotLocationListResponse>,
+  AllotLocationType
+>("location/allotLocation", async (payload) => {
+  const response = await axiosInstance.post("/location/location_allotted", payload);
+  return response;
+});
 
 // export const updateUserMenu = createAsyncThunk<
 //   AxiosResponse<CreateMenuResponse>,
@@ -53,7 +53,7 @@ export const addTab = createAsyncThunk<AxiosResponse<any>, AddTabType>(
 
 export const getLocationList = createAsyncThunk<
   AxiosResponse<LocationListResponse>
->("menu/getLocationList", async () => {
+>("location/getLocationList", async () => {
   const response = await axiosInstance.get("/location/list");
   return response;
 });

@@ -36,11 +36,11 @@ export type CreateMenuType = {
     code: string;
   }
   
-//   type AllotedLocationItemList = {
-//     loc_all_key: string;
-//     module_description: string;
-//     module_name:string;
-//   };
+  export type AllotLocationType = {
+    locations: String[];
+    module_description: string;
+    module_name:string;
+  };
   type UserList = {
     menu_key: string;
     name: string;
@@ -67,7 +67,7 @@ export type CreateMenuType = {
     deleteMenuLoading: boolean;
     disableMenuLoading: boolean;
     isId: any;
-    menuTabList: any;
+    allotLocationList: any;
     loading: boolean
   };
   
