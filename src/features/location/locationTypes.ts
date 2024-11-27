@@ -24,20 +24,23 @@ export type CreateMenuType = {
     success: boolean;
     message: string;
   };
+
+  export type LocationListResponse = {
+    success: boolean;
+    data: LocationItemList[];
+    code: number;
+  };
   
   type LocationItemList = {
-    menu_key: string;
-    name: string;
-    parent_menu_key: string | null;
-    url: string | null;
-    order: number;
-    is_active: number;
-    icon: string;
-    description: string;
-    children?: LocationItemList[]; // Optional because not all menu items may have children
-    project_name: string;
-    hasTab: boolean;
-  };
+    name: string;   
+    code: string;
+  }
+  
+//   type AllotedLocationItemList = {
+//     loc_all_key: string;
+//     module_description: string;
+//     module_name:string;
+//   };
   type UserList = {
     menu_key: string;
     name: string;
@@ -49,10 +52,11 @@ export type CreateMenuType = {
     description: string;
     children?: LocationItemList[]; // Optional because not all menu items may have children
   };
+
   
-  export type LocationListResponse = {
+  export type AllotLocationListResponse = {
     success: boolean;
-    menu: LocationItemList[];
+    data: LocationItemList[];
     code: number;
   };
   

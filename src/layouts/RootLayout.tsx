@@ -486,7 +486,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                       }
                     >
                       <ButtonBase className="w-full link">
-                        <div>Location Alloted Module</div>
+                        <div>Allot Location </div>
                       </ButtonBase>
                     </NavLink>
                   </li>

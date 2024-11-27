@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import { AddTabType, LocationListResponse, LocationState } from "@/features/location/locationTypes";
 
+
 const initialState: LocationState = {
   createMenuLoading: false,
   loading: false,
@@ -53,7 +54,7 @@ export const addTab = createAsyncThunk<AxiosResponse<any>, AddTabType>(
 export const getLocationList = createAsyncThunk<
   AxiosResponse<LocationListResponse>
 >("menu/getLocationList", async () => {
-  const response = await axiosInstance.get("/location/fetch_loc_all");
+  const response = await axiosInstance.get("/location/list");
   return response;
 });
 // export const getUserMenu = createAsyncThunk<
@@ -156,7 +157,7 @@ const locationSlice = createSlice({
       })
       .addCase(getLocationList.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          state.locationList = action.payload?.data?.menu;
+          state.locationList = action.payload?.data?.data;
         }
         state.loading = false;
       })
