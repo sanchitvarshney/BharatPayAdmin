@@ -166,19 +166,6 @@ const TreeDataMenu: React.FC<Props> = () => {
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Add">
-              <IconButton
-                onClick={() => {
-                  // dispatch(setMenuData(params.data));
-                  handleOpenmodal();
-                  setSelectedRow(params.data);
-                }}
-                aria-label="add"
-                size="small"
-              >
-                <Plus className="onclick-animate-spin" fontSize="small" />
-              </IconButton>
-            </Tooltip>
             <Tooltip title="Edit">
               <IconButton
                 onClick={() => {
@@ -207,6 +194,21 @@ const TreeDataMenu: React.FC<Props> = () => {
                 <CopyPlus className="onclick-animate-spin" fontSize="small" />
               </IconButton>
             </Tooltip>
+            {params?.data?.url === null && (
+              <Tooltip title="Add Menu">
+                <IconButton
+                  onClick={() => {
+                    // dispatch(setMenuData(params.data));
+                    handleOpenmodal();
+                    setSelectedRow(params.data);
+                  }}
+                  aria-label="add"
+                  size="small"
+                >
+                  <Plus className="onclick-animate-spin" fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
             {!!params.data.hasTab && (
               <Tooltip title="View Tab">
                 <IconButton

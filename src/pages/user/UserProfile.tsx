@@ -771,29 +771,7 @@ const UserProfile = () => {
                 label="Name"
                 sx={{ width: "100%" }}
               />
-              <TextField
-                required
-                value={mobile}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (isNaN(Number(value))) {
-                    showToast("Please enter valid number", "error");
-                  } else {
-                    setMobile(value);
-                  }
-                }}
-                variant="standard"
-                label="Mobile No."
-                sx={{ width: "100%" }}
-              />
-              {/* <TextField
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                variant="standard"
-                label="Email"
-                sx={{ width: "100%" }}
-              /> */}
+              
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -821,48 +799,6 @@ const UserProfile = () => {
                   onChange={() => setGender("F")}
                 />
               </RadioGroup>
-
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                sx={{
-                  display: "flex",
-                  alignItems: "center", // Ensures vertical alignment
-                  gap: 2, // Adds spacing between elements
-                }}
-              >
-                <Typography sx={{ marginRight: 2 }}>Status</Typography>
-                <FormControlLabel
-                  value="1"
-                  control={<Radio />}
-                  label="Active"
-                  checked={status === "1"}
-                  onChange={() => setStatus("1")}
-                />
-                <FormControlLabel
-                  value="0"
-                  control={<Radio />}
-                  label="Inactive"
-                  checked={status === "0"}
-                  onChange={() => setStatus("0")}
-                />
-              </RadioGroup>
-
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <FormLabel sx={{ marginBottom: 1 }}>Verification</FormLabel>
-                <Select
-                  value={verification}
-                  onChange={(e) => setVerification(e.target.value)}
-                  sx={{ width: 200 }} // You can adjust the width as needed
-                >
-                  {verificationTypes.map((type) => (
-                    <MenuItem key={type.value} value={type.value}>
-                      {type.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Box>
             </div>
             <div className="flex items-center justify-end gap-[10px]">
               <Button
@@ -884,10 +820,7 @@ const UserProfile = () => {
                       updateUserProfile({
                         userId: userProfile ? userProfile?.id : "",
                         name: name,
-                        mobileNo: mobile,
                         gender: gender,
-                        status: status,
-                        verification: verification,
                       })
                     ).then((res: any) => {
                       if (res.payload.data?.success) {

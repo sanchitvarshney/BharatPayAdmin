@@ -7,7 +7,7 @@ import { IoGrid, IoHomeOutline } from "react-icons/io5";
 import { LuUser2 } from "react-icons/lu";
 import { GrShieldSecurity } from "react-icons/gr";
 import { MdHome, MdMyLocation } from "react-icons/md";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Navigation from "@/components/shared/Navigation";
 import ButtonBase from "@mui/material/ButtonBase";
@@ -24,12 +24,14 @@ import {
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import { Separator } from "@/components/ui/separator";
 import axiosInstance from "@/api/baratpayDashApi";
+import { FiUser } from "react-icons/fi";
 
 type Props = {
   children: React.ReactNode;
 };
 
 const RootLayout: React.FC<Props> = ({ children }) => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<string>("dashboard");
   const [newmenu, setNewMenu] = useState([]);
   const [masterMenu, setMasterMenu] = useState([]);
@@ -131,7 +133,10 @@ const RootLayout: React.FC<Props> = ({ children }) => {
           <div className="h-[calc(100vh-160px)] flex flex-col items-center gap-[5px] py-[20px] ">
             <Tooltip title="Dashboard" placement="right" arrow>
               <Button
-                onClick={() => setTab("dashboard")}
+                onClick={() => {
+                  setTab("dashboard");
+                  navigate("/");
+                }}
                 sx={{
                   width: 40,
                   height: 40,
@@ -161,7 +166,10 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             </Tooltip>
             <Tooltip title="Role" placement="right" arrow>
               <Button
-                onClick={() => setTab("role")}
+                onClick={() => {
+                  setTab("role");
+                  navigate("/role/list");
+                }}
                 sx={{
                   width: 40,
                   height: 40,
@@ -213,9 +221,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   borderRadius: "50%",
                   minWidth: 0,
                   padding: 0,
-                  backgroundColor: `${
-                    tab === "permission" ? "#dbeafe" : ""
-                  }`,
+                  backgroundColor: `${tab === "permission" ? "#dbeafe" : ""}`,
                 }}
               >
                 <FaKey className="h-[20px] w-[20px] text-slate-500" />
@@ -237,22 +243,45 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </Button>
             </Tooltip> */}
           </div>
-          <div className="h-[50px]  flex items-center justify-center">
-            <Tooltip title="Setting" placement="right" arrow>
-              <Button
-                onClick={() => setTab("setting")}
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  minWidth: 0,
-                  padding: 0,
-                  backgroundColor: "#dbeafe",
-                }}
-              >
-                <CiSettings className="h-[20px] w-[20px] text-slate-600" />
-              </Button>
-            </Tooltip>
+          <div className="flex flex-col gap-4 mt-auto">
+            <div className="h-[20px] flex items-center justify-center pb-6">
+              <Tooltip title="Profile" placement="right" arrow>
+                <Button
+                  onClick={() => {
+                    setTab("profile");
+                    navigate("/profile");
+                  }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    minWidth: 0,
+                    padding: 0,
+                    backgroundColor: `${tab === "profile" ? "#dbeafe" : ""}`,
+                  }}
+                >
+                  <FiUser className="h-[20px] w-[20px] text-slate-600" />
+                </Button>
+              </Tooltip>
+            </div>
+
+            <div className="h-[50px] flex items-center justify-center pb-10">
+              <Tooltip title="Settings" placement="right" arrow>
+                <Button
+                  onClick={() => setTab("setting")}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    minWidth: 0,
+                    padding: 0,
+                    backgroundColor: `${tab === "setting" ? "#dbeafe" : ""}`,
+                  }}
+                >
+                  <CiSettings className="h-[20px] w-[20px] text-slate-600" />
+                </Button>
+              </Tooltip>
+            </div>
           </div>
         </div>
         {/* <div className=" min-w-[350px] h-full"> */}
@@ -277,7 +306,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   </NavLink>
                 </li>{" "}
                 <div className="sidebar min-w-[250px] h-full ">
-                  {masterMenu?.map((r:any) => (
+                  {masterMenu?.map((r: any) => (
                     <li className="group">
                       <div
                         className={
@@ -321,204 +350,207 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             </div>
           </div>
         )}
-        {/* </div> */}
-        {/* sd */}
-        <div className="sidebar2 min-w-[250px] h-full ">
-          {tab === "dashboard" && (
-            <div>
-              <div className="h-[80px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Dashboard
-                </h1>
-              </div>
-              <div className="w-full">
-                <ul className="w-full">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink" : "navlink"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Home</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )}
-          {tab === "user" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">User</h1>
-              </div>
+        {tab !== "role" && tab !== "dashboard" && tab !== "profile" && (
+          <div className="sidebar2 min-w-[250px] h-full ">
+            {tab === "dashboard" && (
               <div>
-                <ul className="w-full pe-[10px]">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/user/add-user"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Add New User</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                  <li className="w-full">
-                    <NavLink
-                      to={"/user/view-user"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink" : "navlink"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>View Users</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                </ul>
+                <div className="h-[80px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Dashboard
+                  </h1>
+                </div>
+                <div className="w-full">
+                  <ul className="w-full">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink" : "navlink"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Home</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          )}
-          {tab === "role" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Role
-                </h1>
-              </div>
+            )}
+            {tab === "user" && (
               <div>
-                <ul className="w-full pe-[10px]">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/role/list"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div> User Roles</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                </ul>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    User
+                  </h1>
+                </div>
+                <div>
+                  <ul className="w-full pe-[10px]">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/user/add-user"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Add New User</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                    <li className="w-full">
+                      <NavLink
+                        to={"/user/view-user"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink" : "navlink"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>View Users</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          )}
-          {tab === "menu" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">Menu</h1>
-              </div>
+            )}
+            {tab === "role" && (
               <div>
-                <ul className="w-full pe-[10px]">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/menu/create"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Create Master Menu</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                  <li className="w-full">
-                    <NavLink
-                      to={"/menu/list"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Menu List</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                </ul>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Role
+                  </h1>
+                </div>
+                <div>
+                  <ul className="w-full pe-[10px]">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/role/list"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div> User Roles</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          )}
-          {tab === "permission" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Permissions
-                </h1>
-              </div>
+            )}
+            {tab === "menu" && (
               <div>
-                <ul className="w-full pe-[10px]">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/permission/list"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Permissions List</div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                </ul>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Menu
+                  </h1>
+                </div>
+                <div>
+                  <ul className="w-full pe-[10px]">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/menu/create"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Create Master Menu</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                    <li className="w-full">
+                      <NavLink
+                        to={"/menu/list"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Menu List</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          )}
-          {tab === "location" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Location
-                </h1>
-              </div>
+            )}
+            {tab === "permission" && (
               <div>
-                <ul className="w-full pe-[10px]">
-                  <li className="w-full">
-                    <NavLink
-                      to={"/location/list"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Allot Location </div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Permissions
+                  </h1>
+                </div>
+                <div>
+                  <ul className="w-full pe-[10px]">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/permission/list"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Permissions List</div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            {tab === "location" && (
+              <div>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Location
+                  </h1>
+                </div>
+                <div>
+                  <ul className="w-full pe-[10px]">
+                    <li className="w-full">
+                      <NavLink
+                        to={"/location/list"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Allot Location </div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
 
-                  <li className="w-full">
-                    <NavLink
-                      to={"/location/alloted-location"}
-                      className={({ isActive }) =>
-                        isActive ? "active navlink " : "navlink rounded-e-md"
-                      }
-                    >
-                      <ButtonBase className="w-full link">
-                        <div>Location Alloted Module  </div>
-                      </ButtonBase>
-                    </NavLink>
-                  </li>
-                  
-                </ul>
+                    <li className="w-full">
+                      <NavLink
+                        to={"/location/alloted-location"}
+                        className={({ isActive }) =>
+                          isActive ? "active navlink " : "navlink rounded-e-md"
+                        }
+                      >
+                        <ButtonBase className="w-full link">
+                          <div>Location Alloted Module </div>
+                        </ButtonBase>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          )}
-          {tab === "setting" && (
-            <div>
-              <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Setting
-                </h1>
+            )}
+            {tab === "setting" && (
+              <div>
+                <div className="h-[100px] flex items-center px-[10px]">
+                  <h1 className="text-[20px] text-blue-600 font-[500] ">
+                    Setting
+                  </h1>
+                </div>
+                <div></div>
               </div>
-              <div></div>
-            </div>
-          )}
-        </div>{" "}
+            )}
+          </div>
+        )}
         <div className="w-full body">
           <Navigation />
           <div>{children}</div>

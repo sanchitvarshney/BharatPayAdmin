@@ -38,10 +38,10 @@ const SharedDialog: React.FC<SharedDialogProps> = ({
         <Button
           onClick={onConfirm}
           sx={{
-            backgroundColor: confirmText === "Delete" ? "red" : "primary.main",
+            backgroundColor: confirmText === "Delete"||"Logout" ? "red" : "primary.main",
             color: "white", // White text color
             "&:hover": {
-              backgroundColor: confirmText === "Delete" ? "#d32f2f" : "#1976d2",
+              backgroundColor: confirmText === "Delete"||"Logout" ? "#d32f2f" : "#1976d2",
             },
           }}
         >
