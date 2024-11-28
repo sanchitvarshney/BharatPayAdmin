@@ -24,6 +24,7 @@ import {
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import { Separator } from "@/components/ui/separator";
 import axiosInstance from "@/api/baratpayDashApi";
+import { FiUser } from "react-icons/fi";
 
 type Props = {
   children: React.ReactNode;
@@ -213,9 +214,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   borderRadius: "50%",
                   minWidth: 0,
                   padding: 0,
-                  backgroundColor: `${
-                    tab === "permission" ? "#dbeafe" : ""
-                  }`,
+                  backgroundColor: `${tab === "permission" ? "#dbeafe" : ""}`,
                 }}
               >
                 <FaKey className="h-[20px] w-[20px] text-slate-500" />
@@ -237,22 +236,42 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </Button>
             </Tooltip> */}
           </div>
-          <div className="h-[50px]  flex items-center justify-center">
-            <Tooltip title="Setting" placement="right" arrow>
-              <Button
-                onClick={() => setTab("setting")}
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  minWidth: 0,
-                  padding: 0,
-                  backgroundColor: "#dbeafe",
-                }}
-              >
-                <CiSettings className="h-[20px] w-[20px] text-slate-600" />
-              </Button>
-            </Tooltip>
+          <div className="flex flex-col gap-4 mt-auto">
+            <div className="h-[20px] flex items-center justify-center pb-6">
+              <Tooltip title="Profile" placement="right" arrow>
+                <Button
+                  onClick={() => setTab("profile")}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    minWidth: 0,
+                    padding: 0,
+                    backgroundColor: "#dbeafe",
+                  }}
+                >
+                  <FiUser className="h-[20px] w-[20px] text-slate-600" />
+                </Button>
+              </Tooltip>
+            </div>
+
+            <div className="h-[50px] flex items-center justify-center pb-10">
+              <Tooltip title="Settings" placement="right" arrow>
+                <Button
+                  onClick={() => setTab("setting")}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    minWidth: 0,
+                    padding: 0,
+                    backgroundColor: "#dbeafe",
+                  }}
+                >
+                  <CiSettings className="h-[20px] w-[20px] text-slate-600" />
+                </Button>
+              </Tooltip>
+            </div>
           </div>
         </div>
         {/* <div className=" min-w-[350px] h-full"> */}
@@ -277,7 +296,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   </NavLink>
                 </li>{" "}
                 <div className="sidebar min-w-[250px] h-full ">
-                  {masterMenu?.map((r:any) => (
+                  {masterMenu?.map((r: any) => (
                     <li className="group">
                       <div
                         className={
@@ -387,9 +406,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
           {tab === "role" && (
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
-                <h1 className="text-[20px] text-blue-600 font-[500] ">
-                  Role
-                </h1>
+                <h1 className="text-[20px] text-blue-600 font-[500] ">Role</h1>
               </div>
               <div>
                 <ul className="w-full pe-[10px]">
@@ -499,11 +516,10 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                       }
                     >
                       <ButtonBase className="w-full link">
-                        <div>Location Alloted Module  </div>
+                        <div>Location Alloted Module </div>
                       </ButtonBase>
                     </NavLink>
                   </li>
-                  
                 </ul>
               </div>
             </div>

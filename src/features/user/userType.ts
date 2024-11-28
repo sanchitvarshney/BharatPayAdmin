@@ -72,10 +72,7 @@ export type UpdateMobilePayload = {
 export type UpdateuserProfilePayload = {
   userId: any,
   name: string,
-  mobileNo: string,
   gender: string,
-  status: string,
-  verification: string
 };
 
 

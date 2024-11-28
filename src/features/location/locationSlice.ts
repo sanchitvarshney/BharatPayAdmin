@@ -57,13 +57,21 @@ export const getLocationList = createAsyncThunk<
   const response = await axiosInstance.get("/location/list");
   return response;
 });
-// export const getUserMenu = createAsyncThunk<
-//   AxiosResponse<MenuListResponse>,
-//   string
-// >(`/user/menu/getUserMenu`, async (id) => {
-//   const response = await axiosInstance.get(`/permission/getUserMenu/${id}`);
-//   return response;
-// });
+
+export const getAllocatedLocationList = createAsyncThunk<
+  AxiosResponse<LocationListResponse>
+>("location/getAllocatedLocationList", async () => {
+  const response = await axiosInstance.get("/location/fetch_loc_all");
+  return response;
+});
+
+export const fetchlocationUpdate = createAsyncThunk<
+  AxiosResponse<any>,
+  string
+>(`/location/fetchlocationUpdate`, async (id) => {
+  const response = await axiosInstance.get(`/location/fetch_location_all_update/${id}`);
+  return response;
+});
 // export const getRoleMenu = createAsyncThunk<
 //   AxiosResponse<MenuListResponse>,
 //   string
@@ -164,7 +172,7 @@ const locationSlice = createSlice({
       .addCase(getLocationList.rejected, (state) => {
         state.loading = false;
         state.locationList = null;
-      });
+      })
       // .addCase(getActiveUser.pending, (state) => {
       //   state.loading = true;
       // })
@@ -247,19 +255,19 @@ const locationSlice = createSlice({
       // .addCase(getMenuTabList.pending, (state) => {
       //   state.menuListLoading = true;
       // })
-      // .addCase(getMenuTabList.fulfilled, (state, action) => {
-      //   if (action.payload.data.success) {
-      //     state.menuTabList = action.payload?.data?.menu;
-      //   }
-      //   state.menuListLoading = false;
-      // })
-      // .addCase(getMenuTabList.rejected, (state) => {
-      //   state.menuListLoading = false;
-      //   state.menuList = null;
-      // })
-      // .addCase(menustatusChange.pending, (state) => {
-      //   state.disableMenuLoading = true;
-      // })
+      .addCase(getAllocatedLocationList.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.allotLocationList = action.payload?.data?.data;
+        }
+        state.loading = false;
+      })
+      .addCase(getAllocatedLocationList.rejected, (state) => {
+        state.loading = false;
+        state.allotLocationList = null;
+      })
+      .addCase(getAllocatedLocationList.pending, (state) => {
+        state.disableMenuLoading = true;
+      });
       // .addCase(menustatusChange.fulfilled, (state, action) => {
       //   if (action.payload.data.success) {
       //     showToast(

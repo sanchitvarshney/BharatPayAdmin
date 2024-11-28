@@ -13,6 +13,7 @@ import Login from "./pages/authentication/Login";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import PermissionList from "./pages/permissions/PermissionList";
 import LocationList from "@/pages/location/LocationList";
+import AllocatedLocationTable from "@/components/table/location/AllocatedLocationTable";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
       {
         path: "/location/list",
         element: <LocationList />,
+      },
+      {
+        path: "/location/alloted-location",
+        element: <AllocatedLocationTable />,
       },
       {
         path: "/permission/list",

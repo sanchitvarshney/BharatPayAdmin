@@ -3,7 +3,7 @@ export type CreateMenuType = {
   name: string;
   isParent: boolean;
   parent_menu_key: string;
-  url: string;
+  url: any;
   description: string;
   icon: string;
   order: string;
