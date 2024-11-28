@@ -4,6 +4,7 @@ import userReducer from "@/features/user/userSlice";
 import permissionReducer from "@/features/permission/permissionSlice";
 import menuReducer from "@/features/menu/menuSlice";
 import isIdReducer from "@/features/menu/isIdReducer";
+import locationSlice from "@/features/location/locationSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -11,6 +12,7 @@ export const store = configureStore({
     permission: permissionReducer,
     menu: menuReducer,
     isId: isIdReducer,
+    location: locationSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

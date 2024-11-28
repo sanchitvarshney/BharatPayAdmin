@@ -25,6 +25,7 @@ import CreateMenu from "./CreateMenu";
 import SharedDialog from "@/components/shared/SharedDialog";
 import TabDetailsDialog from "@/features/menu/TabDetailsDialog";
 import AddTab from "@/components/table/menu/AddTab";
+import { Tooltip } from "@mui/material";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -95,10 +96,8 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [rowData, setRowData] = useState<RowData[]>();
   const [open, setOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
-  const[tabData , setTabData] = useState<RowData[]>([])
-  const { menuList, menuListLoading } = useAppSelector(
-    (state) => state.menu
-  );
+  const [tabData, setTabData] = useState<RowData[]>([]);
+  const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
   const handleOpenmodal = () => setOpen(true);
   const handleClosemodal = () => setOpen(false);
   const [edit, setEdit] = useState(false);
@@ -154,75 +153,84 @@ const TreeDataMenu: React.FC<Props> = () => {
           </IconButton>
         ) : (
           <>
-            <IconButton
-              onClick={() => {
-                setMenuid(params.data?.menu_key || "");
-                setMenuToDelete(params.data?.menu_key || "");
-                setOpenDelete(true);
-              }}
-              aria-label="delete"
-              size="small"
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                // dispatch(setMenuData(params.data));
-                handleOpenmodal();
-                setSelectedRow(params.data);
-              }}
-              aria-label="delete"
-              size="small"
-            >
-              <Plus className="onclick-animate-spin" fontSize="small" />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                setMenuid(params.data?.menu_key || "");
-                setEditData(params.data);
-                setEdit(true);
-                setMenuId(params.data?.menu_key || "");
-                console.log(params.data);
-              }}
-              aria-label="delete"
-              size="small"
-            >
-              <Edit2Icon fontSize="small" />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-               setAddTabModal(true);
-                setSelectedRow(params.data);
-                setMenuId(params.data?.menu_key || "");
-
-              }}
-              aria-label="Add Tab"
-              size="small"
-            >
-              <CopyPlus className="onclick-animate-spin" fontSize="small" />
-            </IconButton>
-            {!!params.data.hasTab && (
+            <Tooltip title="Delete">
               <IconButton
                 onClick={() => {
                   setMenuid(params.data?.menu_key || "");
-                  setMenuId(params.data?.menu_key || "");
-                  console.log(params.data);
-                  setShowTabDialog(true);
-                  dispatch(getMenuTabList(params.data?.menu_key || "")).then(
-                    (res: any) => {
-                      console.log(res);
-                      if (res?.payload?.data?.success) {
-                        setTabData(res.payload.data.data);
-                        console.log(res.payload.data.data);
-                      }
-                    }
-                  );
+                  setMenuToDelete(params.data?.menu_key || "");
+                  setOpenDelete(true);
                 }}
                 aria-label="delete"
                 size="small"
               >
-                <ViewListIcon fontSize="small" />
+                <DeleteIcon fontSize="small" />
               </IconButton>
+            </Tooltip>
+            <Tooltip title="Add">
+              <IconButton
+                onClick={() => {
+                  // dispatch(setMenuData(params.data));
+                  handleOpenmodal();
+                  setSelectedRow(params.data);
+                }}
+                aria-label="add"
+                size="small"
+              >
+                <Plus className="onclick-animate-spin" fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit">
+              <IconButton
+                onClick={() => {
+                  setMenuid(params.data?.menu_key || "");
+                  setEditData(params.data);
+                  setEdit(true);
+                  setMenuId(params.data?.menu_key || "");
+                  console.log(params.data);
+                }}
+                aria-label="edit"
+                size="small"
+              >
+                <Edit2Icon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add Tab">
+              <IconButton
+                onClick={() => {
+                  setAddTabModal(true);
+                  setSelectedRow(params.data);
+                  setMenuId(params.data?.menu_key || "");
+                }}
+                aria-label="Add Tab"
+                size="small"
+              >
+                <CopyPlus className="onclick-animate-spin" fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            {!!params.data.hasTab && (
+              <Tooltip title="View Tab">
+                <IconButton
+                  onClick={() => {
+                    setMenuid(params.data?.menu_key || "");
+                    setMenuId(params.data?.menu_key || "");
+                    console.log(params.data);
+                    setShowTabDialog(true);
+                    dispatch(getMenuTabList(params.data?.menu_key || "")).then(
+                      (res: any) => {
+                        console.log(res);
+                        if (res?.payload?.data?.success) {
+                          setTabData(res.payload.data.data);
+                          console.log(res.payload.data.data);
+                        }
+                      }
+                    );
+                  }}
+                  aria-label="delete"
+                  size="small"
+                >
+                  <ViewListIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             )}
           </>
         );
@@ -331,4 +339,3 @@ const TreeDataMenu: React.FC<Props> = () => {
 };
 
 export default TreeDataMenu;
-

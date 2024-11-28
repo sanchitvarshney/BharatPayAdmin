@@ -469,7 +469,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </div>
             </div>
           )}
-
           {tab === "location" && (
             <div>
               <div className="h-[100px] flex items-center px-[10px]">
@@ -477,7 +476,36 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   Location
                 </h1>
               </div>
-              <div></div>
+              <div>
+                <ul className="w-full pe-[10px]">
+                  <li className="w-full">
+                    <NavLink
+                      to={"/location/list"}
+                      className={({ isActive }) =>
+                        isActive ? "active navlink " : "navlink rounded-e-md"
+                      }
+                    >
+                      <ButtonBase className="w-full link">
+                        <div>Allot Location </div>
+                      </ButtonBase>
+                    </NavLink>
+                  </li>
+
+                  <li className="w-full">
+                    <NavLink
+                      to={"/location/alloted-location"}
+                      className={({ isActive }) =>
+                        isActive ? "active navlink " : "navlink rounded-e-md"
+                      }
+                    >
+                      <ButtonBase className="w-full link">
+                        <div>Location Alloted Module  </div>
+                      </ButtonBase>
+                    </NavLink>
+                  </li>
+                  
+                </ul>
+              </div>
             </div>
           )}
           {tab === "setting" && (

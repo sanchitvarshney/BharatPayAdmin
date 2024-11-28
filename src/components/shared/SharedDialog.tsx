@@ -1,6 +1,12 @@
 // src/components/reusable/SharedDialog.tsx
 import React from "react";
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 
 interface SharedDialogProps {
   open: boolean;
@@ -29,7 +35,16 @@ const SharedDialog: React.FC<SharedDialogProps> = ({
         <Button onClick={onClose} color="primary">
           {cancelText}
         </Button>
-        <Button onClick={onConfirm} color="secondary">
+        <Button
+          onClick={onConfirm}
+          sx={{
+            backgroundColor: confirmText === "Delete" ? "red" : "primary.main",
+            color: "white", // White text color
+            "&:hover": {
+              backgroundColor: confirmText === "Delete" ? "#d32f2f" : "#1976d2",
+            },
+          }}
+        >
           {confirmText}
         </Button>
       </DialogActions>

@@ -62,7 +62,7 @@ const verificationTypes = [
 ];
 
 const schema = z.object({
-password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   ask_password_change: z.boolean(),
   user_id: z.string(),
 });
@@ -158,7 +158,7 @@ const UserProfile = () => {
   const onSubmit = (data: ResetPasswordType) => {
     const payload: ChangeUserPasswordPayload = {
       userId: userProfile ? userProfile?.id || "" : "",
-      
+
       password: data.password,
       ask_password_change: data.ask_password_change ? "yes" : "no",
     };
@@ -419,7 +419,7 @@ const UserProfile = () => {
                 <Button
                   type="submit"
                   disabled={cahngeUserPasswordLoading}
-                  variant="contained"          
+                  variant="contained"
                 >
                   Continue
                 </Button>
@@ -1224,8 +1224,8 @@ const UserProfile = () => {
                 />
               </Tabs>
             </Box>
-            <CustomTabPanel value={value} index={0} >
-              <div className="flex flex-col gap-[10px]  px-[5px] ">
+            <CustomTabPanel value={value} index={0}>
+              <div className="flex flex-col gap-[10px] px-[5px]">
                 <div className="border flex justify-between py-[10px] px-[20px]">
                   <div className="flex items-center gap-[3px] text-[15px]">
                     <span className="flex items-center gap-[5px]">
@@ -1241,6 +1241,7 @@ const UserProfile = () => {
                     View alerts
                   </Link>
                 </div>
+
                 <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
                   <div className="flex items-end justify-between">
                     <p className="text-stone-500">User information</p>
@@ -1254,11 +1255,11 @@ const UserProfile = () => {
                         padding: 0,
                       }}
                     >
-                      {" "}
                       <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
                     </Button>
                   </div>
-                  <div className="mt-[20px] py-[10px] space-y-[10px]">
+
+                  <div className="mt-[20px] space-y-[10px]">
                     <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">User Name</p>
                       <p className="text-sm text-stone-500">
@@ -1271,8 +1272,7 @@ const UserProfile = () => {
                         )}
                       </p>
                     </div>
-                  </div>
-                  <div className="mt-[20px] py-[10px] space-y-[10px]">
+
                     <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">Email</p>
                       <p className="text-sm text-stone-500">
@@ -1285,10 +1285,8 @@ const UserProfile = () => {
                         )}
                       </p>
                     </div>
-                  </div>
 
-                  <div className="mt-[10px] py-[5px]">
-                    <div className="flex justify-between items-center gap-[20px]">
+                    <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">Phone Number</p>
                       <p className="text-sm text-stone-500">
                         {getUserProfileLoading ? (
@@ -1300,9 +1298,8 @@ const UserProfile = () => {
                         )}
                       </p>
                     </div>
-                  </div>
-                  <div className="mt-[10px] py-[5px]">
-                    <div className="flex justify-between items-center gap-[20px]">
+
+                    <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">Gender</p>
                       <p className="text-sm text-stone-500">
                         {getUserProfileLoading ? (
@@ -1314,9 +1311,8 @@ const UserProfile = () => {
                         )}
                       </p>
                     </div>
-                  </div>
-                  <div className="mt-[10px] py-[5px]">
-                    <div className="flex justify-between items-center gap-[20px]">
+
+                    <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">User Type</p>
                       <p className="text-sm text-stone-500">
                         {getUserProfileLoading ? (
@@ -1330,114 +1326,93 @@ const UserProfile = () => {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <button
-                className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
-                aria-describedby={
-                  Boolean(changePhone) ? "requiredChangePass" : undefined
-                }
-                onClick={(e) => setChangePhone(e.currentTarget)}
-              >
-                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
-                  <div className="flex items-end justify-between">
-                    <p className="text-stone-500">Update Phone Number</p>
-                    <Button
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        minWidth: 0,
-                        padding: 0,
-                      }}
-                    >
-                      {" "}
-                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
-                    </Button>
-                  </div>
-                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
-                    {/* <div>
-                      <p>User Role</p>
-                      <p className="text-stone-500 text-[14px]">
-                        {getUserProfileLoading ? (
-                          <Skeleton className="w-full h-[13px] mt-[5px]" />
-                        ) : userProfile ? (
-                          userProfile?.type
-                        ) : (
-                          "--"
-                        )}
-                      </p>
-                    </div> */}
-                    <div>
-                      <p>Phone Number | Work</p>
-                      <p className="text-stone-500 text-[14px]">
-                        {getUserProfileLoading ? (
-                          <Skeleton className="w-full h-[13px] mt-[5px]" />
-                        ) : userProfile ? (
-                          userProfile?.mobile
-                        ) : (
-                          "--"
-                        )}
-                      </p>
+                {/* Buttons with gaps between sections */}
+                <button
+                  className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
+                  aria-describedby={
+                    Boolean(changePhone) ? "requiredChangePass" : undefined
+                  }
+                  onClick={(e) => setChangePhone(e.currentTarget)}
+                >
+                  <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                    <div className="flex items-end justify-between">
+                      <p className="text-stone-500">Update Phone Number</p>
+                      <Button
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          minWidth: 0,
+                          padding: 0,
+                        }}
+                      >
+                        <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                      </Button>
                     </div>
-                    <RiPencilFill className="h-[20px] w-[20px]" />
-                  </div>
-                </div>
-              </button>
-              <button
-                className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
-                aria-describedby={
-                  Boolean(changeEmail) ? "requiredChangePass" : undefined
-                }
-                onClick={(e) => setChangeEmail(e.currentTarget)}
-              >
-                <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
-                  <div className="flex items-end justify-between">
-                    <p className="text-stone-500">Update Email</p>
-                    <Button
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        minWidth: 0,
-                        padding: 0,
-                      }}
-                    >
-                      {" "}
-                      <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
-                    </Button>
-                  </div>
-                  <div className="mt-[20px] py-[10px] flex gap-[100px]">
-                    {/* <div>
-                      <p>User Role</p>
-                      <p className="text-stone-500 text-[14px]">
-                        {getUserProfileLoading ? (
-                          <Skeleton className="w-full h-[13px] mt-[5px]" />
-                        ) : userProfile ? (
-                          userProfile?.type
-                        ) : (
-                          "--"
-                        )}
-                      </p>
-                    </div> */}
-                    <div>
-                      <p>Email</p>
-                      <p className="text-stone-500 text-[14px]">
-                        {getUserProfileLoading ? (
-                          <Skeleton className="w-full h-[13px] mt-[5px]" />
-                        ) : userProfile ? (
-                          userProfile?.email
-                        ) : (
-                          "--"
-                        )}
-                      </p>
+
+                    <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                      <div>
+                        <p>Phone Number | Work</p>
+                        <p className="text-stone-500 text-[14px]">
+                          {getUserProfileLoading ? (
+                            <Skeleton className="w-full h-[13px] mt-[5px]" />
+                          ) : userProfile ? (
+                            userProfile?.mobile
+                          ) : (
+                            "--"
+                          )}
+                        </p>
+                      </div>
+                      <RiPencilFill className="h-[20px] w-[20px]" />
                     </div>
-                    <RiPencilFill className="h-[20px] w-[20px]" />
                   </div>
-                </div>
-              </button>
-              {/* </div> */}
+                </button>
+
+                {/* Second Button Section */}
+                <button
+                  className="items-start w-full p-0 m-0 text-start hover:bg-zinc-100 rounded-sm"
+                  aria-describedby={
+                    Boolean(changeEmail) ? "requiredChangePass" : undefined
+                  }
+                  onClick={(e) => setChangeEmail(e.currentTarget)}
+                >
+                  <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
+                    <div className="flex items-end justify-between">
+                      <p className="text-stone-500">Update Email</p>
+                      <Button
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          minWidth: 0,
+                          padding: 0,
+                        }}
+                      >
+                        <FaChevronDown className="h-[18px] w-[18px] text-stone-400" />
+                      </Button>
+                    </div>
+
+                    <div className="mt-[20px] py-[10px] flex gap-[100px]">
+                      <div>
+                        <p>Email</p>
+                        <p className="text-stone-500 text-[14px]">
+                          {getUserProfileLoading ? (
+                            <Skeleton className="w-full h-[13px] mt-[5px]" />
+                          ) : userProfile ? (
+                            userProfile?.email
+                          ) : (
+                            "--"
+                          )}
+                        </p>
+                      </div>
+                      <RiPencilFill className="h-[20px] w-[20px]" />
+                    </div>
+                  </div>
+                </button>
+              </div>
             </CustomTabPanel>
+
             <CustomTabPanel value={value} index={1}>
               <div className="flex flex-col gap-[10px] rounded-sm shadow  shadow-stone-400">
                 <div className="h-[50px] flex items-center px-[20px] bg-zinc-50 text-zinc-500 border-b">
