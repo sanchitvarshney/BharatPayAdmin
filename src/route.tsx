@@ -14,6 +14,8 @@ import ProtectedRoute from "./components/shared/ProtectedRoute";
 import PermissionList from "./pages/permissions/PermissionList";
 import LocationList from "@/pages/location/LocationList";
 import AllocatedLocationTable from "@/components/table/location/AllocatedLocationTable";
+import Profile from "@/pages/profile/Profile";
+
 
 export const router = createBrowserRouter([
   {
@@ -69,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: "/permission/list",
         element: <PermissionList />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ],
   },
