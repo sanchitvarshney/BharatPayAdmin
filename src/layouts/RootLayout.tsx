@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight, Star } from "lucide-react";
 import Button from "@mui/material/Button";
-import { CiSettings } from "react-icons/ci";
 import Tooltip from "@mui/material/Tooltip";
 import { IoGrid, IoHomeOutline } from "react-icons/io5";
 import { LuUser2 } from "react-icons/lu";
@@ -244,7 +243,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             </Tooltip> */}
           </div>
           <div className="flex flex-col gap-4 mt-auto">
-            <div className="h-[20px] flex items-center justify-center pb-6">
+            <div className="h-[20px] flex items-center justify-center">
               <Tooltip title="Profile" placement="right" arrow>
                 <Button
                   onClick={() => {
@@ -265,7 +264,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
               </Tooltip>
             </div>
 
-            <div className="h-[50px] flex items-center justify-center pb-10">
+            {/* <div className="h-[50px] flex items-center justify-center pb-10">
               <Tooltip title="Settings" placement="right" arrow>
                 <Button
                   onClick={() => setTab("setting")}
@@ -281,7 +280,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
                   <CiSettings className="h-[20px] w-[20px] text-slate-600" />
                 </Button>
               </Tooltip>
-            </div>
+            </div> */}
           </div>
         </div>
         {/* <div className=" min-w-[350px] h-full"> */}
