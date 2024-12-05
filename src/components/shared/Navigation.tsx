@@ -6,6 +6,7 @@ import SearchLinks from "./SearchLinks";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import { logout } from "@/features/authentication/authSlice";
 import SharedDialog from "@/components/shared/SharedDialog";
+import { Icons } from "../icons/icons";
 
 const Navigation: React.FC = () => {
   const [openUser, setOpenUser] = useState<boolean>(false);
@@ -46,6 +47,7 @@ const Navigation: React.FC = () => {
         content="Are you sure you want to logout?"
         onClose={() => setOpenUser(false)}
         onConfirm={() => dispatch(logout())}
+        endIcon={<Icons.logout fontSize="small"/>}
       />
     </div>
   );

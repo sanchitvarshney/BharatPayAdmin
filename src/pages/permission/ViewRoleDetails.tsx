@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridColDef, gridClasses } from "@mui/x-data-grid";
 import ButtonBase from "@mui/material/ButtonBase";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { Box, LinearProgress, Modal, Typography } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Autocomplete, TextField } from "@mui/material";
 import { assignRole, getUserRole } from "@/features/permission/permissionSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { getActiveUser } from "@/features/menu/menuSlice";
 import { showToast } from "@/utills/toasterContext";
+import ViewRoleTable from "@/components/table/role/ViewRoleTable";
 
 const style = {
   position: "absolute" as "absolute",
@@ -30,11 +30,8 @@ const ViewRoleDetails: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [options, setOptions] = React.useState([]);
   const dispatch = useAppDispatch();
-  const paginationModel = { page: 0, pageSize: 5 };
   const handleOpen = () => setOpen(true);
-  const { userRoleList, roleListLoading } = useAppSelector(
-    (state) => state.permission
-  );
+  const { asignRoleLoading } = useAppSelector((state) => state.permission);
   const handleClose = (_: any, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason !== "backdropClick") {
       setOpen(false);
@@ -53,24 +50,7 @@ const ViewRoleDetails: React.FC = () => {
       }
     });
   }, [id]);
-  const columns: GridColDef[] = [
-    {
-      field: "user_name",
-      headerName: "User Name",
-      flex: 1,
-    },
-    {
-      field: "mobile",
-      headerName: "Mobile",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-      // renderCell: (params: any) => <span style={{ textTransform: "capitalize" }}>{params.value}</span>,
-    },
-  ];
+
   const handleAssignRole = () => {
     const payload = {
       userID: selectedUserId,
@@ -84,29 +64,18 @@ const ViewRoleDetails: React.FC = () => {
           setOpen(false);
         }
       });
+    } else {
+      showToast("Please select user", "error");
     }
   };
 
   return (
     <>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
         <Box sx={style}>
           <div className="h-[50px] flex items-center gap-[10px] px-[20px] bg-blue-800">
-            <Cross2Icon
-              className="cursor-pointer h-[20px] w-[20px] text-white"
-              onClick={() => setOpen(false)}
-            />
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ color: "white" }}
-            >
+            <Cross2Icon className="cursor-pointer h-[20px] w-[20px] text-white" onClick={() => setOpen(false)} />
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ color: "white" }}>
               Add User
             </Typography>
           </div>
@@ -121,20 +90,18 @@ const ViewRoleDetails: React.FC = () => {
                   setSelectedUserId(null);
                 }
               }}
-              renderInput={(params) => (
-                <TextField variant="standard" {...params} label="Select User" />
-              )}
+              renderInput={(params) => <TextField variant="standard" {...params} label="Select User" />}
             />
             <div className="mt-[20px] flex items-center justify-end">
-              <LoadingButton variant="contained" onClick={handleAssignRole}>
+              <LoadingButton loading={asignRoleLoading} variant="contained" onClick={handleAssignRole}>
                 Asign Role
               </LoadingButton>
             </div>
-            {roleListLoading && (
+            {/* {roleListLoading && (
               <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
                 <LinearProgress />
               </div>
-            )}
+            )} */}
           </div>
         </Box>
       </Modal>
@@ -145,9 +112,7 @@ const ViewRoleDetails: React.FC = () => {
         </div>
         <div className="flex flex-col h-[calc(100vh-120px)]  rounded-sm shadow shadow-stone-400">
           <div className="h-[50px] bg-zinc-100 flex items-center gap-[20px] px-[10px] text-blue-600 ">
-            <p className="text-[18px] text-stone-800">
-              Showing all {role_name}
-            </p>
+            <p className="text-[18px] text-stone-800">Showing all {role_name}</p>
             <ButtonBase
               onClick={handleOpen}
               sx={{
@@ -158,27 +123,7 @@ const ViewRoleDetails: React.FC = () => {
               Assign users
             </ButtonBase>
           </div>
-          <DataGrid
-            className="w-full max-h-[calc(100vh-160px)]"
-            sx={{
-              [`& .${gridClasses.cell}:focus, & .${gridClasses.cell}:focus-within`]:
-                {
-                  outline: "none",
-                },
-              [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]:
-                {
-                  outline: "none",
-                },
-              [`& .${gridClasses.panel}`]: {
-                border: "none",
-              },
-            }}
-            checkboxSelection
-            rows={userRoleList}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[5, 10]}
-          />
+          <ViewRoleTable />
         </div>
       </div>
     </>

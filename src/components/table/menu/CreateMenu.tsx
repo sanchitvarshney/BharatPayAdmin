@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Button, InputLabel, MenuItem, TextField } from "@mui/material";
-import Modal from "@mui/material/Modal";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputLabel, LinearProgress, MenuItem, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
@@ -8,35 +7,32 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateMenuType } from "@/features/menu/menuType";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import {
-  createMenu,
-  getMenuList,
-  updateUserMenu,
-} from "@/features/menu/menuSlice";
-import Typography from "@mui/material/Typography";
+import { createMenu, getMenuList, updateUserMenu } from "@/features/menu/menuSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Icons } from "@/components/icons/icons";
 
 // Define Zod schema
-const schema = z.object({
-  project: z.string().nonempty("Project name is required"),
-  name: z.string().nonempty("Page name is required"),
-  is_parent: z.string().nonempty("Please select if it's a parent"),
-  parent_menu_key: z.string().optional(),
-  url: z.string().optional(), // Initially optional
-  icon: z.string().nonempty("Icon is required"),
-  order: z.string().min(1, "Order must be at least 1"),
-  description: z.string().nonempty("Description is required"),
-}).superRefine((data, ctx) => {
-  // Custom validation to conditionally require the URL field
-  if (data.is_parent === "N" && !data.url) {
-    ctx.addIssue({
-      path: ['url'],
-      message: "Page URL is required",
-      code: z.ZodIssueCode.custom,
-    });
-  }
-});
-
+const schema = z
+  .object({
+    project: z.string().nonempty("Project name is required"),
+    name: z.string().nonempty("Page name is required"),
+    is_parent: z.string().nonempty("Please select if it's a parent"),
+    parent_menu_key: z.string().optional(),
+    url: z.string().optional(), // Initially optional
+    icon: z.string().nonempty("Icon is required"),
+    order: z.string().min(1, "Order must be at least 1"),
+    description: z.string().nonempty("Description is required"),
+  })
+  .superRefine((data, ctx) => {
+    // Custom validation to conditionally require the URL field
+    if (data.is_parent === "N" && !data.url) {
+      ctx.addIssue({
+        path: ["url"],
+        message: "Page URL is required",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+  });
 
 // Infer the form values from Zod schema
 type FormValues = z.infer<typeof schema>;
@@ -49,13 +45,7 @@ interface CreateMenuProps {
   menuId?: any;
 }
 
-const CreateMenu: React.FC<CreateMenuProps> = ({
-  open,
-  onClose,
-  selectedRow,
-  data,
-  menuId,
-}) => {
+const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow, data, menuId }) => {
   const dispatch = useAppDispatch();
 
   const { createMenuLoading } = useAppSelector((state) => state.menu);
@@ -71,7 +61,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
   });
 
   const parent = watch("is_parent");
-  
+
   useEffect(() => {
     if (parent == "Y") {
       setValue("parent_menu_key", selectedRow.name);
@@ -112,18 +102,6 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
     }
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    fontSize: "11px",
-    boxShadow: 24,
-    width: 650,
-    p: 4,
-  };
-
   useEffect(() => {
     if (data && menuId) {
       setValue("project", data.project_name);
@@ -138,25 +116,16 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
   }, [data]);
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          {data ? "Update Menu" : "Add New Menu"}
-        </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-[20px] grid grid-cols-2 max-w-[95%] gap-[30px]">
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
+      <div className="absolute top-0 left-0 right-0">{createMenuLoading && <LinearProgress />}</div>
+      <DialogTitle fontWeight={600}>{data ? "Update Menu" : "Add New Menu"}</DialogTitle>
+      <Divider />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent>
+          <div className=" grid grid-cols-2 min-w-[650px] gap-[20px]">
             {/* Project Name */}
             <div className="grid gap-2">
-              <FormControl
-                variant="standard"
-                sx={{ minWidth: 150 }}
-                error={!!errors.project}
-              >
+              <FormControl variant="filled" sx={{ minWidth: 150 }} error={!!errors.project}>
                 <InputLabel>Project Name</InputLabel>
                 <Controller
                   name="project"
@@ -168,34 +137,18 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
                     </Select>
                   )}
                 />
-                {errors.project && (
-                  <p className="text-red-600 text-[13px]">
-                    {errors.project.message}
-                  </p>
-                )}
+                {errors.project && <p className="text-red-600 text-[13px]">{errors.project.message}</p>}
               </FormControl>
             </div>
 
             {/* Page Name */}
             <div className="grid gap-2">
-              <Controller
-                name="name"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Page Name"
-                    variant="standard"
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ""}
-                  />
-                )}
-              />
+              <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Page Name" variant="filled" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
             </div>
 
             {/* Is Parent */}
             <div className="grid gap-2">
-              <FormControl variant="standard" error={!!errors.is_parent}>
+              <FormControl variant="filled" error={!!errors.is_parent}>
                 <InputLabel>Is Parent?</InputLabel>
                 <Controller
                   name="is_parent"
@@ -207,9 +160,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
                     </Select>
                   )}
                 />
-                {errors.is_parent && (
-                  <p className="text-red-600">{errors.is_parent.message}</p>
-                )}
+                {errors.is_parent && <p className="text-red-600">{errors.is_parent.message}</p>}
               </FormControl>
             </div>
 
@@ -222,9 +173,9 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
                   <TextField
                     {...field}
                     label="Page URL"
-                    variant="standard"
+                    variant="filled"
                     error={!!errors.url}
-                    disabled={parent === "Y"}  // Disable if Parent is Yes
+                    disabled={parent === "Y"} // Disable if Parent is Yes
                     helperText={errors.url ? errors.url.message : ""}
                   />
                 )}
@@ -233,72 +184,34 @@ const CreateMenu: React.FC<CreateMenuProps> = ({
 
             {/* Icon */}
             <div className="grid gap-2">
-              <Controller
-                name="icon"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Icon"
-                    variant="standard"
-                    error={!!errors.icon}
-                    helperText={errors.icon ? errors.icon.message : ""}
-                  />
-                )}
-              />
+              <Controller name="icon" control={control} render={({ field }) => <TextField {...field} label="Icon" variant="filled" error={!!errors.icon} helperText={errors.icon ? errors.icon.message : ""} />} />
             </div>
 
             {/* Order No. */}
             <div className="grid gap-2">
-              <Controller
-                name="order"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Order No."
-                    variant="standard"
-                    type="number"
-                    error={!!errors.order}
-                    helperText={errors.order ? errors.order.message : ""}
-                  />
-                )}
-              />
+              <Controller name="order" control={control} render={({ field }) => <TextField {...field} label="Order No." variant="filled" type="number" error={!!errors.order} helperText={errors.order ? errors.order.message : ""} />} />
             </div>
 
             {/* Description */}
-            <div className="grid gap-2">
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Description"
-                    variant="standard"
-                    error={!!errors.description}
-                    helperText={
-                      errors.description ? errors.description.message : ""
-                    }
-                  />
-                )}
-              />
+            <div className="grid col-span-2 gap-2">
+              <Controller name="description" control={control} render={({ field }) => <TextField multiline rows={3} {...field} label="Description" variant="filled" error={!!errors.description} helperText={errors.description ? errors.description.message : ""} />} />
             </div>
           </div>
+        </DialogContent>
+        <Divider />
 
-          <div className="mt-[20px] justify-end flex gap-[10px]">
-            <LoadingButton
-              loading={createMenuLoading}
-              variant="contained"
-              type="submit"
-            >
-              Submit
-            </LoadingButton>
-            <Button onClick={() => onClose()}>Close</Button>
-          </div>
-        </form>
-      </Box>
-    </Modal>
+        <DialogActions>
+          <Button disabled={createMenuLoading} startIcon={<Icons.close fontSize="small" />} variant="contained" sx={{ background: "white", color: "red" }} onClick={() => onClose()}>
+            Close
+          </Button>
+          <LoadingButton startIcon={<Icons.save fontSize="small" />} loadingPosition="start" disabled={createMenuLoading} variant="contained" type="submit">
+            Submit
+          </LoadingButton>
+        </DialogActions>
+      </form>
+
+      <Divider />
+    </Dialog>
   );
 };
 

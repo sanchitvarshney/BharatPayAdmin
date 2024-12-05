@@ -1,31 +1,19 @@
-import React, {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { IconButton, Switch } from "@mui/material";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import {
-  deleteMenu,
-  getMenuList,
-  getMenuTabList,
-  menustatusChange,
-} from "@/features/menu/menuSlice";
+import { deleteMenu, getMenuList, getMenuTabList, menustatusChange } from "@/features/menu/menuSlice";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Edit2Icon, Plus, CopyPlus } from "lucide-react";
 import CreateMenu from "./CreateMenu";
 import SharedDialog from "@/components/shared/SharedDialog";
 import TabDetailsDialog from "@/features/menu/TabDetailsDialog";
 import AddTab from "@/components/table/menu/AddTab";
 import { Tooltip } from "@mui/material";
+import { Icons } from "@/components/icons/icons";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -59,10 +47,7 @@ interface RowData {
 }
 
 // Utility function to flatten hierarchical data
-const flattenMenuHierarchy = (
-  data: MenuData[],
-  parentHierarchy: string[] = []
-): RowData[] => {
+const flattenMenuHierarchy = (data: MenuData[], parentHierarchy: string[] = []): RowData[] => {
   let result: RowData[] = [];
 
   data.forEach((item) => {
@@ -81,9 +66,7 @@ const flattenMenuHierarchy = (
     });
 
     if (item.children && item.children.length > 0) {
-      result = result.concat(
-        flattenMenuHierarchy(item.children, currentHierarchy)
-      );
+      result = result.concat(flattenMenuHierarchy(item.children, currentHierarchy));
     }
   });
 
@@ -108,6 +91,7 @@ const TreeDataMenu: React.FC<Props> = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [addTabModal, setAddTabModal] = useState(false);
   const dispatch = useAppDispatch();
+  const { deleteMenuLoading } = useAppSelector((state) => state.menu);
   const [columnDefs] = useState<ColDef[]>([
     { field: "order", headerName: "Order", filter: true },
     { field: "url", headerName: "URL" },
@@ -146,7 +130,7 @@ const TreeDataMenu: React.FC<Props> = () => {
       cellRenderer: (params: any) => {
         console.log(params.data);
         const [menuid, setMenuid] = useState("");
-        const { deleteMenuLoading } = useAppSelector((state) => state.menu);
+
         return menuid === params.data?.menu_key && deleteMenuLoading ? (
           <IconButton aria-label="delete" size="small">
             <ReloadIcon className="animate-spin" fontSize="small" />
@@ -163,7 +147,7 @@ const TreeDataMenu: React.FC<Props> = () => {
                 aria-label="delete"
                 size="small"
               >
-                <DeleteIcon fontSize="small" />
+                <Icons.delete fontSize="small" />
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit">
@@ -178,7 +162,7 @@ const TreeDataMenu: React.FC<Props> = () => {
                 aria-label="edit"
                 size="small"
               >
-                <Edit2Icon fontSize="small" />
+                <Icons.edit fontSize="small" />
               </IconButton>
             </Tooltip>
             <Tooltip title="Add Tab">
@@ -191,7 +175,7 @@ const TreeDataMenu: React.FC<Props> = () => {
                 aria-label="Add Tab"
                 size="small"
               >
-                <CopyPlus className="onclick-animate-spin" fontSize="small" />
+                <Icons.addtab className="onclick-animate-spin" fontSize="small" />
               </IconButton>
             </Tooltip>
             {params?.data?.url === null && (
@@ -205,7 +189,7 @@ const TreeDataMenu: React.FC<Props> = () => {
                   aria-label="add"
                   size="small"
                 >
-                  <Plus className="onclick-animate-spin" fontSize="small" />
+                  <Icons.add className="onclick-animate-spin" fontSize="small" />
                 </IconButton>
               </Tooltip>
             )}
@@ -217,15 +201,13 @@ const TreeDataMenu: React.FC<Props> = () => {
                     setMenuId(params.data?.menu_key || "");
                     console.log(params.data);
                     setShowTabDialog(true);
-                    dispatch(getMenuTabList(params.data?.menu_key || "")).then(
-                      (res: any) => {
-                        console.log(res);
-                        if (res?.payload?.data?.success) {
-                          setTabData(res.payload.data.data);
-                          console.log(res.payload.data.data);
-                        }
+                    dispatch(getMenuTabList(params.data?.menu_key || "")).then((res: any) => {
+                      console.log(res);
+                      if (res?.payload?.data?.success) {
+                        setTabData(res.payload.data.data);
+                        console.log(res.payload.data.data);
                       }
-                    );
+                    });
                   }}
                   aria-label="delete"
                   size="small"
@@ -241,6 +223,7 @@ const TreeDataMenu: React.FC<Props> = () => {
       sortable: false,
       filter: false,
       maxWidth: 200,
+      minWidth: 200,
     },
   ]);
 
@@ -291,20 +274,8 @@ const TreeDataMenu: React.FC<Props> = () => {
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 25, 50]}
       />
-      {open == true && (
-        <CreateMenu
-          open={handleOpenmodal}
-          onClose={handleClosemodal}
-          selectedRow={selectedRow}
-        />
-      )}
-      <CreateMenu
-        open={edit}
-        onClose={() => setEdit(false)}
-        selectedRow={selectedRow}
-        data={editData}
-        menuId={menuId}
-      />
+      {open == true && <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} />}
+      <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data={editData} menuId={menuId} />
       <SharedDialog
         open={openDelete}
         title="Delete Menu Item"
@@ -320,22 +291,13 @@ const TreeDataMenu: React.FC<Props> = () => {
             });
           }
         }} // Confirm delete action
-        confirmText="Delete"
+        confirmText="Continue"
         cancelText="Cancel"
+        startIcon={<Icons.delete fontSize="small" />}
+        loading={deleteMenuLoading}
       />
-      <TabDetailsDialog
-        open={showTabDialog}
-        onClose={() => setShowTabDialog(false)}
-        data={tabData}
-        title="Tab Details"
-        loading={menuListLoading}
-      />
-      <AddTab
-        open={addTabModal}
-        onClose={() => setAddTabModal(false)}
-        selectedRow={selectedRow}
-        menuId={menuId}
-      />
+      <TabDetailsDialog open={showTabDialog} onClose={() => setShowTabDialog(false)} data={tabData} title="Tab Details" loading={menuListLoading} />
+      <AddTab open={addTabModal} onClose={() => setAddTabModal(false)} selectedRow={selectedRow} menuId={menuId} />
     </div>
   );
 };

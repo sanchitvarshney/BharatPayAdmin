@@ -10,7 +10,7 @@ const MenuList: React.FC = () => {
   }, []);
   return (
     <div className="p-[20px]">
-      <div className="h-[calc(100vh-110px)] rounded-sm shadow shadow-stone-400 ">
+      <div className="h-[calc(100vh-110px)] rounded-sm shadow shadow-stone-400 overflow-hidden ">
         <MenuListTable />
       </div>
     </div>

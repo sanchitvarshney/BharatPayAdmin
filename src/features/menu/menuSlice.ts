@@ -1,13 +1,7 @@
 import axiosInstance from "@/api/baratpayDashApi";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
-import {
-  AddTabType,
-  CreateMenuResponse,
-  CreateMenuType,
-  MenuListResponse,
-  MenuState,
-} from "./menuType";
+import { AddTabType, CreateMenuResponse, CreateMenuType, MenuListResponse, MenuState } from "./menuType";
 import { showToast } from "@/utills/toasterContext";
 
 const initialState: MenuState = {
@@ -18,116 +12,68 @@ const initialState: MenuState = {
   deleteMenuLoading: false,
   disableMenuLoading: false,
   isId: null,
-  menuTabList:null,
+  menuTabList: null,
+  addTabLoading: false,
 };
 // Define a type for your slice state
 
-export const createMenu = createAsyncThunk<
-  AxiosResponse<CreateMenuResponse>,
-  CreateMenuType
->("menu/createMenu", async (payload) => {
+export const createMenu = createAsyncThunk<AxiosResponse<CreateMenuResponse>, CreateMenuType>("menu/createMenu", async (payload) => {
   const response = await axiosInstance.post("/menu/createMenu", payload);
   return response;
 });
 
-export const addTab = createAsyncThunk<
-  AxiosResponse<any>,
-  AddTabType
->("menu/addTab", async (payload) => {
+export const addTab = createAsyncThunk<AxiosResponse<{ message: string; success: boolean }>, AddTabType>("menu/addTab", async (payload) => {
   const response = await axiosInstance.post("/menuTab/add", payload);
   return response;
 });
 
-export const createMasterMenu = createAsyncThunk<
-  AxiosResponse<CreateMenuResponse>,
-  CreateMenuType
->("menu/createMenu", async (payload) => {
+export const createMasterMenu = createAsyncThunk<AxiosResponse<CreateMenuResponse>, CreateMenuType>("menu/createMenu", async (payload) => {
   const response = await axiosInstance.post("/menu/createMenu", payload);
   return response;
 });
 
-export const updateUserMenu = createAsyncThunk<
-  AxiosResponse<CreateMenuResponse>,
-  CreateMenuType
->("menu/createMenu", async (payload) => {
+export const updateUserMenu = createAsyncThunk<AxiosResponse<CreateMenuResponse>, CreateMenuType>("menu/createMenu", async (payload) => {
   const response = await axiosInstance.put(`/menu/updateMenu/${payload.parent_menu_key}`, payload);
   return response;
 });
 
-export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>(
-  "menu/getMenuList",
-  async () => {
-    const response = await axiosInstance.get("/menu/getMenu");
-    return response;
-  }
-);
-export const getUserMenu = createAsyncThunk<
-  AxiosResponse<MenuListResponse>,
-  string
->(`/user/menu/getUserMenu`, async (id) => {
+export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>("menu/getMenuList", async () => {
+  const response = await axiosInstance.get("/menu/getMenu");
+  return response;
+});
+export const getUserMenu = createAsyncThunk<AxiosResponse<MenuListResponse>, string>(`/user/menu/getUserMenu`, async (id) => {
   const response = await axiosInstance.get(`/permission/getUserMenu/${id}`);
   return response;
 });
-export const getRoleMenu = createAsyncThunk<
-  AxiosResponse<MenuListResponse>,
-   string
->(`/user/menu/getRoleMenu`, async (payload) => {
+export const getRoleMenu = createAsyncThunk<AxiosResponse<MenuListResponse>, string>(`/user/menu/getRoleMenu`, async (payload) => {
   const response = await axiosInstance.get(`/permission/getRoleMenu/${payload}`);
   return response;
 });
-export const saveUserMenuPermission = createAsyncThunk<
-  AxiosResponse<MenuListResponse>,
-  any
->("/user/menu/saveUserMenuPermission", async (payload: any) => {
-  const response = await axiosInstance.post(
-    "/permission/saveUserMenuPermission",
-    payload
-  );
+export const saveUserMenuPermission = createAsyncThunk<AxiosResponse<MenuListResponse>, any>("/user/menu/saveUserMenuPermission", async (payload: any) => {
+  const response = await axiosInstance.post("/permission/saveUserMenuPermission", payload);
   return response;
 });
-export const saveRoleMenuPermission = createAsyncThunk<
-  AxiosResponse<MenuListResponse>,any
->("/user/menu/saveRoleMenuPermission", async (payload) => {
-  const response = await axiosInstance.post(
-    "/permission/saveRoleMenuPermission",
-    payload
-  );
+export const saveRoleMenuPermission = createAsyncThunk<AxiosResponse<MenuListResponse>, any>("/user/menu/saveRoleMenuPermission", async (payload) => {
+  const response = await axiosInstance.post("/permission/saveRoleMenuPermission", payload);
   return response;
 });
-export const getActiveUser = createAsyncThunk<AxiosResponse<MenuListResponse>>(
-  "/user/active",
-  async () => {
-    const response = await axiosInstance.get("/user/active");
-    return response;
-  }
-);
-export const getRoleList = createAsyncThunk<AxiosResponse<MenuListResponse>>(
-  "/user/roleList",
-  async () => {
-    const response = await axiosInstance.get("/user/roleList");
-    return response;
-  }
-);
-export const menustatusChange = createAsyncThunk<
-  AxiosResponse<{ message: string; success: boolean }>,
-  { id: string; statue: number }
->("menu/menustatusChange", async (payload) => {
-  const response = await axiosInstance.post(
-    `/menu/status/${payload.id}/${payload.statue}`
-  );
+export const getActiveUser = createAsyncThunk<AxiosResponse<MenuListResponse>>("/user/active", async () => {
+  const response = await axiosInstance.get("/user/active");
   return response;
 });
-export const deleteMenu = createAsyncThunk<
-  AxiosResponse<{ message: string; success: boolean }>,
-  string
->("menu/deleteMenu", async (id) => {
+export const getRoleList = createAsyncThunk<AxiosResponse<MenuListResponse>>("/user/roleList", async () => {
+  const response = await axiosInstance.get("/user/roleList");
+  return response;
+});
+export const menustatusChange = createAsyncThunk<AxiosResponse<{ message: string; success: boolean }>, { id: string; statue: number }>("menu/menustatusChange", async (payload) => {
+  const response = await axiosInstance.post(`/menu/status/${payload.id}/${payload.statue}`);
+  return response;
+});
+export const deleteMenu = createAsyncThunk<AxiosResponse<{ message: string; success: boolean }>, string>("menu/deleteMenu", async (id) => {
   const response = await axiosInstance.delete(`/menu/deleteMenu/${id}`);
   return response;
 });
-export const getMenuTabList = createAsyncThunk<
-  AxiosResponse<any>,
-  string
->("menu/getMenuTabList", async (id) => {
+export const getMenuTabList = createAsyncThunk<AxiosResponse<any>, string>("menu/getMenuTabList", async (id) => {
   const response = await axiosInstance.get(`/menuTab/list/${id}`);
   return response;
 });
@@ -143,10 +89,7 @@ const authSlice = createSlice({
       })
       .addCase(createMenu.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          showToast(
-            action.payload.data?.message || "Menu created successfully.",
-            "success"
-          );
+          showToast(action.payload.data?.message || "Menu created successfully.", "success");
         }
         state.createMenuLoading = false;
       })
@@ -263,10 +206,7 @@ const authSlice = createSlice({
       })
       .addCase(menustatusChange.fulfilled, (state, action) => {
         if (action.payload.data.success) {
-          showToast(
-            action.payload.data?.message || "Menu status changed successfully.",
-            "success"
-          );
+          showToast(action.payload.data?.message || "Menu status changed successfully.", "success");
         }
         state.disableMenuLoading = false;
       })
@@ -279,16 +219,26 @@ const authSlice = createSlice({
       .addCase(deleteMenu.fulfilled, (state, action) => {
         state.deleteMenuLoading = false;
         if (action.payload.data.success) {
-          showToast(
-            action.payload.data?.message || "Menu deleted successfully.",
-            "success"
-          );
+          showToast(action.payload.data?.message || "Menu deleted successfully.", "success");
         }
         state.deleteMenuLoading = false;
       })
       .addCase(deleteMenu.rejected, (state) => {
         state.deleteMenuLoading = true;
         state.deleteMenuLoading = false;
+      })
+      .addCase(addTab.pending, (state) => {
+        state.addTabLoading = true;
+      })
+      .addCase(addTab.fulfilled, (state, action) => {
+        state.addTabLoading = false;
+        if (action.payload.data.success) {
+          showToast(action.payload.data?.message || "Tab added successfully.", "success");
+        }
+        state.addTabLoading = false;
+      })
+      .addCase(addTab.rejected, (state) => {
+        state.addTabLoading = false;
       });
   },
 });

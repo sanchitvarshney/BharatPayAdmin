@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Button, InputLabel, MenuItem, TextField } from "@mui/material";
-import Modal from "@mui/material/Modal";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputLabel, LinearProgress, MenuItem, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
@@ -8,13 +7,10 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTabType } from "@/features/menu/menuType";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import {
-    addTab,
-  getMenuList,
-} from "@/features/menu/menuSlice";
-import Typography from "@mui/material/Typography";
+import { addTab, getMenuList } from "@/features/menu/menuSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { showToast } from "@/utills/toasterContext";
+import { Icons } from "@/components/icons/icons";
 
 // Define Zod schema
 const schema = z.object({
@@ -37,14 +33,10 @@ interface AddTabProps {
   menuId?: any;
 }
 
-const AddTab: React.FC<AddTabProps> = ({
-  open,
-  onClose,
-  menuId,
-}) => {
+const AddTab: React.FC<AddTabProps> = ({ open, onClose, menuId }) => {
   const dispatch = useAppDispatch();
 
-  const { createMenuLoading } = useAppSelector((state) => state.menu);
+  const { addTabLoading } = useAppSelector((state) => state.menu);
   const {
     handleSubmit,
     control,
@@ -53,12 +45,12 @@ const AddTab: React.FC<AddTabProps> = ({
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      url: '',
-      icon: '',
-      order: '',
-      description: '',
-      status: '', // Ensure default values are set correctly
+      name: "",
+      url: "",
+      icon: "",
+      order: "",
+      description: "",
+      status: "", // Ensure default values are set correctly
     },
   });
 
@@ -82,60 +74,26 @@ const AddTab: React.FC<AddTabProps> = ({
       }
     });
   };
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    // width: 400,
-    bgcolor: "background.paper",
-    fontSize: "11px",
-    //   border: "2px solid #000",
-    boxShadow: 24,
-    width: 650,
-    p: 4,
-  };
 
   return (
     <>
-      <Modal
-        open={open}
-        onClose={onClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add Tab
-            {/* Against
-            <span style={{ color: "#1976d2", fontWeight: "bold" }}>
-              {selectedRow.name}
-            </span> */}
-          </Typography>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mt-[20px] grid grid-cols-2 max-w-[95%] gap-[30px]">
+      <Dialog open={open} onClose={onClose} maxWidth="lg">
+        <div className="absolute top-0 left-0 right-0">{addTabLoading && <LinearProgress />}</div>
+        <DialogTitle fontWeight={600}>Add Tab</DialogTitle>
+        <Divider />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent>
+            <div className=" grid grid-cols-2  gap-[20px]">
               {/* Project Name */}
 
               {/* Page Name */}
               <div className="grid gap-2">
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Name"
-                      variant="standard"
-                      error={!!errors.name}
-                      helperText={errors.name ? errors.name.message : ""}
-                    />
-                  )}
-                />
+                <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Name" variant="filled" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
               </div>
 
               {/* Is Parent */}
-              <div className="grid gap-2">
-                <FormControl variant="standard" error={!!errors.status}>
+              <div className="grid gap-2 w-[300px]">
+                <FormControl variant="filled" error={!!errors.status}>
                   <InputLabel>Status?</InputLabel>
                   <Controller
                     name="status"
@@ -147,14 +105,12 @@ const AddTab: React.FC<AddTabProps> = ({
                       </Select>
                     )}
                   />
-                  {errors.status && (
-                    <p className="text-red-600">{errors.status.message}</p>
-                  )}
+                  {errors.status && <p className="text-red-600">{errors.status.message}</p>}
                 </FormControl>
               </div>
 
               {/* Page URL */}
-              <div className="grid gap-2">
+              <div className="grid gap-2 w-[300px]">
                 <Controller
                   name="url"
                   control={control}
@@ -162,7 +118,7 @@ const AddTab: React.FC<AddTabProps> = ({
                     <TextField
                       {...field}
                       label="URL"
-                      variant="standard"
+                      variant="filled"
                       error={!!errors.url}
                       // helperText={errors.username?.message}
                     />
@@ -171,33 +127,26 @@ const AddTab: React.FC<AddTabProps> = ({
               </div>
 
               {/* Icon */}
-              <div className="grid gap-2">
-                <Controller
-                  name="icon"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Icon"
-                      variant="standard"
-                      error={!!errors.icon}
-                      helperText={errors.icon ? errors.icon.message : ""}
-                    />
-                  )}
-                />
+              <div className="grid gap-2 w-[300px]">
+                <Controller name="icon" control={control} render={({ field }) => <TextField {...field} label="Icon" variant="filled" error={!!errors.icon} helperText={errors.icon ? errors.icon.message : ""} />} />
               </div>
 
               {/* Order No. */}
-              <div className="grid gap-2">
+              <div className="grid gap-2 w-[300px]">
                 <Controller
                   name="order"
                   control={control}
                   render={({ field }) => (
                     <TextField
-                      {...field}
+                      slotProps={{ input: { inputProps: { min: 1 } } }}
+                      value={field.value}
+                      onChange={(e) => {
+                        if (/^[0-9]*$/.test(e.target.value)) {
+                          field.onChange(e);
+                        }
+                      }}
                       label="Order No."
-                      variant="standard"
-                      type="number"
+                      variant="filled"
                       error={!!errors.order}
                       helperText={errors.order ? errors.order.message : ""}
                     />
@@ -206,38 +155,22 @@ const AddTab: React.FC<AddTabProps> = ({
               </div>
 
               {/* Description */}
-              <div className="grid gap-2">
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Description"
-                      variant="standard"
-                      error={!!errors.description}
-                      helperText={
-                        errors.description ? errors.description.message : ""
-                      }
-                    />
-                  )}
-                />
+              <div className="grid col-span-2 gap-2">
+                <Controller name="description" control={control} render={({ field }) => <TextField multiline rows={2} {...field} label="Description" variant="filled" error={!!errors.description} helperText={errors.description ? errors.description.message : ""} />} />
               </div>
             </div>
-
-            <div className="mt-[20px] justify-end flex gap-[10px]">
-              <LoadingButton
-                loading={createMenuLoading}
-                variant="contained"
-                type="submit"
-              >
-                Submit
-              </LoadingButton>
-              <Button onClick={() => onClose()}>Close</Button>
-            </div>
-          </form>
-        </Box>
-      </Modal>
+          </DialogContent>
+          <Divider />
+          <DialogActions>
+            <Button disabled={addTabLoading} startIcon={<Icons.close fontSize="small" />} variant="contained" sx={{ background: "white", color: "red" }} onClick={() => onClose()}>
+              Close
+            </Button>
+            <LoadingButton startIcon={<Icons.save fontSize="small" />} loadingPosition="start" disabled={addTabLoading} variant="contained" type="submit">
+              Submit
+            </LoadingButton>
+          </DialogActions>
+        </form>
+      </Dialog>
     </>
   );
 };

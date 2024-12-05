@@ -2,11 +2,13 @@ import axiosInstance from "@/api/baratpayDashApi";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import { CreateRolePayload, CreateRoleResponse, PermissionState, RolesListResponse } from "./permissionType";
+import { showToast } from "@/utills/toasterContext";
 const initialState: PermissionState = {
   createRoleLoading: false,
   rolelistData: null,
   roleListLoading: false,
-  userRoleList:null
+  userRoleList: null,
+  asignRoleLoading: false,
 };
 
 export const createRole = createAsyncThunk<AxiosResponse<CreateRoleResponse>, CreateRolePayload>("permission/createRole", async (payload) => {
@@ -18,10 +20,7 @@ export const getRoleList = createAsyncThunk<AxiosResponse<RolesListResponse>>("p
   return response;
 });
 
-export const getUserRole = createAsyncThunk<
-  AxiosResponse<any>,
-  string
->(`/role/getUserMenu`, async (id) => {
+export const getUserRole = createAsyncThunk<AxiosResponse<any>, string>(`/role/getUserMenu`, async (id) => {
   const response = await axiosInstance.get(`/role/users/${id}`);
   return response;
 });
@@ -50,6 +49,7 @@ const permissionSlice = createSlice({
       })
       .addCase(getRoleList.pending, (state) => {
         state.roleListLoading = true;
+        state.rolelistData = null;
       })
       .addCase(getRoleList.fulfilled, (state, action) => {
         if (action.payload.data.success) {
@@ -59,9 +59,10 @@ const permissionSlice = createSlice({
       })
       .addCase(getRoleList.rejected, (state) => {
         state.roleListLoading = false;
-        state.userRoleList = [];
+        state.rolelistData = null;
       })
       .addCase(getUserRole.pending, (state) => {
+        state.userRoleList = null;
         state.roleListLoading = true;
       })
       .addCase(getUserRole.fulfilled, (state, action) => {
@@ -72,7 +73,19 @@ const permissionSlice = createSlice({
       })
       .addCase(getUserRole.rejected, (state) => {
         state.roleListLoading = false;
-        state.userRoleList = [];
+        state.userRoleList = null;
+      })
+      .addCase(assignRole.pending, (state) => {
+        state.asignRoleLoading = true;
+      })
+      .addCase(assignRole.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+        state.asignRoleLoading = false;
+      })
+      .addCase(assignRole.rejected, (state) => {
+        state.asignRoleLoading = false;
       });
   },
 });

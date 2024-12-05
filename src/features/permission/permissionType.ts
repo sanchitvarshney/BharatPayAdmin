@@ -25,4 +25,5 @@ export type PermissionState = {
   rolelistData: RoleList[]|null;
   roleListLoading: boolean;
   userRoleList:any;
+  asignRoleLoading:boolean
 }
