@@ -47,6 +47,14 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import TocIcon from "@mui/icons-material/Toc";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import HomeIcon from "@mui/icons-material/Home";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MenuIcon from "@mui/icons-material/Menu";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -97,4 +105,12 @@ export const Icons = {
   invisible: VisibilityOff,
   addtab: AddBoxIcon,
   list: TocIcon,
+  role: AdminPanelSettingsIcon,
+  permission: VerifiedUserIcon,
+  home: HomeIcon,
+  location: LocationOnIcon,
+  menu: MenuIcon,
+  logout2: ExitToAppIcon,
+  userOutline: AccountCircleOutlinedIcon,
+  print: LocalPrintshopIcon,
 };

@@ -93,14 +93,14 @@ const TreeDataMenu: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const { deleteMenuLoading } = useAppSelector((state) => state.menu);
   const [columnDefs] = useState<ColDef[]>([
-    { field: "order", headerName: "Order", filter: true },
+    { field: "order", headerName: "Order", filter: false },
     { field: "url", headerName: "URL" },
     { field: "minuKey", headerName: "Menu Key", hide: true },
     {
       headerName: "Status",
       field: "status",
-      sortable: true,
-      filter: true,
+      sortable: false,
+      filter: false,
 
       cellRenderer: (params: any) => {
         const [active, setActive] = useState(params.value === "ACTIVE" ? 1 : 0);
@@ -256,7 +256,7 @@ const TreeDataMenu: React.FC<Props> = () => {
   }, [menuList]);
 
   return (
-    <div className="ag-theme-quartz h-[calc(100vh-110px)]">
+    <div className="ag-theme-quartz h-[calc(100vh-130px)]">
       <AgGridReact
         overlayNoRowsTemplate={OverlayNoRowsTemplate}
         loading={menuListLoading}

@@ -9,6 +9,8 @@ const initialState: PermissionState = {
   roleListLoading: false,
   userRoleList: null,
   asignRoleLoading: false,
+  deleteRoleLoading: false,
+  updateRoleLoading: false,
 };
 
 export const createRole = createAsyncThunk<AxiosResponse<CreateRoleResponse>, CreateRolePayload>("permission/createRole", async (payload) => {
@@ -27,6 +29,14 @@ export const getUserRole = createAsyncThunk<AxiosResponse<any>, string>(`/role/g
 
 export const assignRole = createAsyncThunk<AxiosResponse<any>, any>("permission/assignRole", async (payload) => {
   const response = await axiosInstance.post("/role/assignRole", payload);
+  return response;
+});
+export const deleteRole = createAsyncThunk<AxiosResponse<{ message: string; success: boolean }>, string>("permission/deleteRole", async (id) => {
+  const response = await axiosInstance.delete(`/role/deleteRole/${id}`);
+  return response;
+});
+export const editRole = createAsyncThunk<AxiosResponse<{ message: string; success: boolean }>, { id: string; name: string; description: string }>("permission/editRole", async (payload) => {
+  const response = await axiosInstance.put(`/role/renameRole/${payload.id}`, payload);
   return response;
 });
 
@@ -86,6 +96,30 @@ const permissionSlice = createSlice({
       })
       .addCase(assignRole.rejected, (state) => {
         state.asignRoleLoading = false;
+      })
+      .addCase(deleteRole.pending, (state) => {
+        state.deleteRoleLoading = true;
+      })
+      .addCase(deleteRole.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+        state.deleteRoleLoading = false;
+      })
+      .addCase(deleteRole.rejected, (state) => {
+        state.deleteRoleLoading = false;
+      })
+      .addCase(editRole.pending, (state) => {
+        state.updateRoleLoading = true;
+      })
+      .addCase(editRole.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+        state.updateRoleLoading = false;
+      })
+      .addCase(editRole.rejected, (state) => {
+        state.updateRoleLoading = false;
       });
   },
 });

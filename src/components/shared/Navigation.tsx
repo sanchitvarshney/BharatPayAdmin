@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Tooltip } from "@mui/material";
-import { FiLogOut } from "react-icons/fi";
 import SearchLinks from "./SearchLinks";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch } from "@/hooks/useReduxHook";
@@ -33,22 +32,11 @@ const Navigation: React.FC = () => {
             }}
             onClick={() => setOpenUser(!openUser)}
           >
-            <FiLogOut
-              className={`h-[25px] w-[25px]  ${
-                openUser ? "text-blue-600" : "text-slate-500"
-              }`}
-            />
+            <Icons.logout className={`h-[25px] w-[25px]  ${openUser ? "text-blue-600" : "text-slate-500"}`} />
           </Button>
         </Tooltip>
       </div>
-      <SharedDialog
-        open={openUser}
-        title="Logout"
-        content="Are you sure you want to logout?"
-        onClose={() => setOpenUser(false)}
-        onConfirm={() => dispatch(logout())}
-        endIcon={<Icons.logout fontSize="small"/>}
-      />
+      <SharedDialog open={openUser} title="Logout" content="Are you sure you want to logout?" onClose={() => setOpenUser(false)} onConfirm={() => dispatch(logout())} endIcon={<Icons.logout fontSize="small" />} />
     </div>
   );
 };

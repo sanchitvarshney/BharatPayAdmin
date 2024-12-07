@@ -14,23 +14,24 @@ interface SharedDialogProps {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   loading?: boolean;
+  color?: "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning";
 }
 
-const SharedDialog: React.FC<SharedDialogProps> = ({ open, title, content, onClose, onConfirm, confirmText = "Confirm", cancelText = "Cancel", startIcon, endIcon, loading = false }) => {
+const SharedDialog: React.FC<SharedDialogProps> = ({ open, title, content, onClose, onConfirm, confirmText = "Confirm", cancelText = "Cancel", startIcon, endIcon, loading = false, color = "error" }) => {
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="dialog-title" >
+    <Dialog open={open} onClose={onClose} aria-labelledby="dialog-title">
       <div className="absolute top-0 left-0 right-0">{loading && <LinearProgress />}</div>
       <DialogTitle id="dialog-title" fontWeight={600}>
         {title}
       </DialogTitle>
-      <DialogContent sx={{minWidth: "600px"}}>
+      <DialogContent sx={{ minWidth: "600px" }}>
         <Typography>{content}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button disabled={loading} startIcon={<Icons.close fontSize="small" />} onClick={onClose} variant="contained" color="primary" sx={{ background: "white", color: "red" }}>
+        <Button size="small" disabled={loading} startIcon={<Icons.close fontSize="small" />} onClick={onClose} variant="contained" color="primary" sx={{ background: "white", color: "red" }}>
           {cancelText}
         </Button>
-        <Button disabled={loading} onClick={onConfirm} variant="contained" startIcon={startIcon} endIcon={endIcon}>
+        <Button size="small" color={color} disabled={loading} onClick={onConfirm} variant="contained" startIcon={startIcon} endIcon={endIcon}>
           {confirmText}
         </Button>
       </DialogActions>

@@ -1,7 +1,7 @@
 import PermissionTable from "@/components/table/permissions/PermissionTable";
-import { getActiveUser, getRoleMenu, getUserMenu, saveRoleMenuPermission, saveUserMenuPermission } from "@/features/menu/menuSlice";
+import { getRoleMenu, getUserMenu, saveRoleMenuPermission, saveUserMenuPermission } from "@/features/menu/menuSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
-import { Autocomplete, FormControl, ListItem, ListItemText, TextField } from "@mui/material";
+import { Autocomplete, FormControl, TextField } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { getRoleList } from "@/features/permission/permissionSlice";
 import { setIsId } from "@/features/menu/isIdReducer";
 import { showToast } from "@/utills/toasterContext";
+import SelectUser, { UserType } from "@/components/reusable/selectors/SelectUser";
 const schema = z.object({
   type: z.string().nonempty("Project name is required"),
   role: z.string().nonempty("Page name is required"),
@@ -18,10 +19,10 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 const PermissionList: React.FC = () => {
-  const [options, setOptions] = React.useState([]);
   const [roleOptions, setRoleOptions] = React.useState([]);
   const [selectedVal, setSelectedVal] = React.useState<any>("");
   const [selectedType, setSelectedType] = React.useState<any>("");
+  const [user, setUser] = React.useState<UserType | null>(null);
   // const isId = useSelector((state: RootState) => state.isId.isId);
   const {
     // handleSubmit,
@@ -49,11 +50,6 @@ const PermissionList: React.FC = () => {
           };
         });
         setRoleOptions(arr);
-      }
-    });
-    dispatch(getActiveUser()).then((res: any) => {
-      if (res?.payload?.data?.success) {
-        setOptions(res?.payload?.data?.data);
       }
     });
   }, []);
@@ -141,11 +137,12 @@ const PermissionList: React.FC = () => {
   };
 
   return (
-    <div className="p-[20px] ">
+    <div className="">
       <form
-      //  onSubmit={handleSubmit(onSubmit)}
+        className="h-[100px] flex items-center  px-[20px] border-b"
+        //  onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="mt-[20px] flex max-w-[70%] gap-[30px]">
+        <div className=" flex max-w-[70%] gap-[30px]">
           {/* Project Name */}
           <div className="flex gap-4 ">
             <FormControl variant="standard" sx={{ minWidth: 300 }} error={!!errors.project}>
@@ -175,30 +172,7 @@ const PermissionList: React.FC = () => {
             <FormControl variant="standard" sx={{ minWidth: 300 }} error={!!errors.project}>
               {/* <InputLabel>{selectedType ? selectedType : 'Select an option'}</InputLabel> */}
               {selectedType === "User" ? (
-                <Controller
-                  name="role"
-                  control={control}
-                  render={({ field }) => (
-                    <Autocomplete
-                      {...field}
-                      options={options} // Options for the role selection
-                      getOptionLabel={(option: any) => option.text} // Define how to display the option in the dropdown
-                      onChange={(e, newValue: any) => {
-                        handleRoleChange(newValue); // Update selected value
-                        console.log(e);
-                      }}
-                      value={options.find((option: any) => option.id === selectedVal) || null} // Set selected value based on the id
-                      renderInput={(params) => <TextField {...params} label={selectedType ? `Search ${selectedType}` : "Select an option"} variant="filled" />}
-                      isOptionEqualToValue={(option, value) => option.id === value.id} // Compare option and selected value based on id
-                      disableClearable // Prevent clearing of the input
-                      renderOption={(props, option) => (
-                        <ListItem {...props}>
-                          <ListItemText primary={option.text.split("-")[0]} secondary={option.text.split("-")[1]} />
-                        </ListItem>
-                      )}
-                    />
-                  )}
-                />
+                <SelectUser value={user} onChange={(value) => setUser(value)} />
               ) : (
                 <Controller
                   name="role"
@@ -225,8 +199,8 @@ const PermissionList: React.FC = () => {
           </div>
         </div>
       </form>
-      <div className="mt-[20px] rounded-sm shadow shadow-stone-400">
-      <PermissionTable selectedVal={selectedVal} selectedType={selectedType} updateRow={updateRow} />
+      <div className="">
+        <PermissionTable selectedVal={selectedVal} selectedType={selectedType} updateRow={updateRow} />
       </div>
     </div>
   );

@@ -58,6 +58,7 @@ export type CreateMenuType = {
     success: boolean;
     data: LocationItemList[];
     code: number;
+    message: string
   };
   
   export type LocationState = {
@@ -68,6 +69,8 @@ export type CreateMenuType = {
     disableMenuLoading: boolean;
     isId: any;
     allotLocationList: any;
-    loading: boolean
+    loading: boolean;
+    allotLocationLoading: boolean
+
   };
   

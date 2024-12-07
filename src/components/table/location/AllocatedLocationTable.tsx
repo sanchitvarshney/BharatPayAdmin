@@ -6,12 +6,9 @@ import { IconButton } from "@mui/material";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Edit2Icon } from "lucide-react";
-import { Tooltip } from "@mui/material";
-import {
-  fetchlocationUpdate,
-  getAllocatedLocationList,
-} from "@/features/location/locationSlice";
+
+import { getAllocatedLocationList } from "@/features/location/locationSlice";
+import { Icons } from "@/components/icons/icons";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -45,10 +42,7 @@ interface RowData {
 }
 
 // Utility function to flatten hierarchical data
-const flattenMenuHierarchy = (
-  data: MenuData[],
-  parentHierarchy: string[] = []
-): RowData[] => {
+const flattenMenuHierarchy = (data: MenuData[], parentHierarchy: string[] = []): RowData[] => {
   let result: RowData[] = [];
 
   data.forEach((item) => {
@@ -67,9 +61,7 @@ const flattenMenuHierarchy = (
     });
 
     if (item.children && item.children.length > 0) {
-      result = result.concat(
-        flattenMenuHierarchy(item.children, currentHierarchy)
-      );
+      result = result.concat(flattenMenuHierarchy(item.children, currentHierarchy));
     }
   });
 
@@ -79,9 +71,7 @@ const flattenMenuHierarchy = (
 // Example component for Tree Data Table with Menu Data
 const AllocatedLocationTable: React.FC<Props> = () => {
   const gridRef = useRef<AgGridReact>(null);
-  const { allotLocationList, loading } = useAppSelector(
-    (state) => state.location
-  );
+  const { allotLocationList, loading } = useAppSelector((state) => state.location);
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
     { field: "module_name", headerName: "Module Name", filter: true, flex: 1 },
@@ -99,18 +89,29 @@ const AllocatedLocationTable: React.FC<Props> = () => {
           </IconButton>
         ) : (
           <>
-            <Tooltip title="Edit">
+            <div className="flex items-center gap-[10px]">
               <IconButton
+                color="primary"
                 onClick={() => {
                   setMenuid(params.data?.menu_key || "");
-                  dispatch(fetchlocationUpdate(params.data.loc_all_key));
                 }}
                 aria-label="edit"
                 size="small"
               >
-                <Edit2Icon fontSize="small" />
+                <Icons.edit fontSize="small" />
               </IconButton>
-            </Tooltip>
+              <IconButton
+                disabled
+                color="error"
+                onClick={() => {
+                  setMenuid(params.data?.menu_key || "");
+                }}
+                aria-label="edit"
+                size="small"
+              >
+                <Icons.delete fontSize="small" />
+              </IconButton>
+            </div>
           </>
         );
       },
@@ -126,7 +127,7 @@ const AllocatedLocationTable: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="ag-theme-quartz h-[calc(100vh-110px)]">
+    <div className="ag-theme-quartz h-[calc(100vh-140px)] ">
       <AgGridReact
         overlayNoRowsTemplate={OverlayNoRowsTemplate}
         loading={loading}

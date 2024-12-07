@@ -1,17 +1,18 @@
 export type CreateRolePayload = {
   role_name: string;
   description: string;
-}
+};
 
 export type CreateRoleResponse = {
-    success: boolean;
-    message: string;
-}
+  success: boolean;
+  message: string;
+};
 
 export type RoleList = {
   role_id: string;
   role_name: string;
   description: string;
+  count: number;
 };
 
 export type RolesListResponse = {
@@ -22,8 +23,10 @@ export type RolesListResponse = {
 
 export type PermissionState = {
   createRoleLoading: boolean;
-  rolelistData: RoleList[]|null;
+  rolelistData: RoleList[] | null;
   roleListLoading: boolean;
-  userRoleList:any;
-  asignRoleLoading:boolean
-}
+  userRoleList: any;
+  asignRoleLoading: boolean;
+  deleteRoleLoading: boolean;
+  updateRoleLoading: boolean;
+};
