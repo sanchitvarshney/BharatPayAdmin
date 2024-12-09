@@ -91,7 +91,7 @@ const UserRols = () => {
             <div className="flex items-center gap-[10px]">
               <Typography fontWeight={500}>Roles</Typography>
               <Button onClick={() => setOpen(true)} startIcon={<Icons.add />} sx={{ textTransform: "none" }}>
-                Craete Role
+                Create Role
               </Button>
             </div>
             <div>
