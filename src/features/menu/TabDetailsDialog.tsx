@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Modal, Typography, Box, Button } from "@mui/material";
+import {  Dialog, DialogTitle, Divider, IconButton, DialogContent } from "@mui/material";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
+import { Icons } from "@/components/icons/icons";
 
 // Define the data structure for the tab
 interface TabData {
@@ -24,21 +25,16 @@ interface TabDetailsDialogProps {
   loading: boolean;
 }
 
-const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
-  open,
-  onClose,
-  data,
-  loading,
-}) => {
+const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({ open, onClose, data, loading }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = React.useState<TabData[]>([]);
 
   const columnDefs: ColDef[] = [
-    { headerName: "Name", field: "name",filter: true },
-    { headerName: "URL", field: "url",filter: true },
-    { headerName: "Order", field: "order",filter: true },
-    { headerName: "Icon", field: "icon",filter: true },
-    { headerName: "Description", field: "description",filter: true },
+    { headerName: "Name", field: "name", filter: true },
+    { headerName: "URL", field: "url", filter: true },
+    { headerName: "Order", field: "order", filter: true },
+    { headerName: "Icon", field: "icon", filter: true },
+    { headerName: "Description", field: "description", filter: true },
     {
       headerName: "Status",
       field: "status",
@@ -52,32 +48,17 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
     }
   }, [data]);
 
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    fontSize: "12px",
-    boxShadow: 24,
-    width: "80%",
-    maxWidth: "1200px", // Limit max width for better responsiveness
-    p: 4,
-    borderRadius: "8px", // Rounded corners
-  };
-
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
-          Tab Details
-        </Typography>
-        <div className="ag-theme-quartz" style={{ height: "calc(100vh - 250px)", border: "1px solid #ccc", borderRadius: "8px" }}>
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
+      <div className="h-[50px] flex items-center justify-between pr-[20px]">
+        <DialogTitle fontWeight={600}>Tab Details</DialogTitle>
+        <IconButton onClick={onClose}>
+          <Icons.close />
+        </IconButton>
+      </div>
+      <Divider />
+      <DialogContent sx={{ minWidth: "70vw",p:0 }}>
+        <div className="overflow-hidden ag-theme-quartz " style={{ height: "calc(100vh - 250px)", borderRadius: "8px" }}>
           <AgGridReact
             overlayNoRowsTemplate={OverlayNoRowsTemplate}
             loading={loading}
@@ -94,13 +75,8 @@ const TabDetailsDialog: React.FC<TabDetailsDialogProps> = ({
             // domLayout="autoHeight" // This makes the grid dynamically adjust its height based on the number of rows
           />
         </div>
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button onClick={onClose} variant="contained" color="primary" sx={{ paddingX: 3 }}>
-            Close
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };
 

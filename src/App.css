@@ -80,3 +80,7 @@
       outline: none;
       border: none;
     }
+    .ag-theme-quartz .ag-cell {
+      display: flex;
+      align-items: center;
+    }

@@ -1,5 +1,5 @@
 import React from "react";
-import { InputLabel, MenuItem, TextField } from "@mui/material";
+import { InputLabel, MenuItem, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useForm, Controller } from "react-hook-form";
@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { createMasterMenu } from "@/features/menu/menuSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Icons } from "@/components/icons/icons";
 
 // Define Zod schema
 const schema = z.object({
@@ -45,7 +46,7 @@ const CreateMenu: React.FC = () => {
       project: data.project,
       name: data.name,
       isParent: true,
-      has_parent:false,
+      has_parent: false,
       description: data.description,
       icon: data.icon,
       order: data.order,
@@ -59,14 +60,16 @@ const CreateMenu: React.FC = () => {
   };
 
   return (
-    <div className="p-[20px] overflow-y-auto h-[calc(100vh-70px)]">
-      <div className="rounded-sm shadow shadow-stone-400 p-[20px]">
-        <h2 className="text-[20px] font-[600] text-slate-600">Add New Menu</h2>
+    <div className=" overflow-y-auto h-[calc(100vh-72px)] p-[20px]">
+      <div className="rounded-sm ">
+        <Typography variant="h2" fontSize={20} fontWeight={500}>
+          Add New Menu
+        </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-[20px] grid grid-cols-2 max-w-[70%] gap-[30px]">
             {/* Project Name */}
             <div className="grid gap-2">
-              <FormControl variant="standard" sx={{ minWidth: 120 }} error={!!errors.project}>
+              <FormControl variant="filled" sx={{ minWidth: 120 }} error={!!errors.project}>
                 <InputLabel>Project Name</InputLabel>
                 <Controller
                   name="project"
@@ -84,27 +87,27 @@ const CreateMenu: React.FC = () => {
 
             {/* Page Name */}
             <div className="grid gap-2">
-              <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Page Name" variant="standard" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
+              <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Page Name" variant="filled" error={!!errors.name} helperText={errors.name ? errors.name.message : ""} />} />
             </div>
 
             {/* Icon */}
             <div className="grid gap-2">
-              <Controller name="icon" control={control} render={({ field }) => <TextField {...field} label="Icon" variant="standard" error={!!errors.icon} helperText={errors.icon ? errors.icon.message : ""} />} />
+              <Controller name="icon" control={control} render={({ field }) => <TextField {...field} label="Icon" variant="filled" error={!!errors.icon} helperText={errors.icon ? errors.icon.message : ""} />} />
             </div>
 
             {/* Order No. */}
             <div className="grid gap-2">
-              <Controller name="order" control={control} render={({ field }) => <TextField {...field} label="Order No." variant="standard" type="number" error={!!errors.order} helperText={errors.order ? errors.order.message : ""} />} />
+              <Controller name="order" control={control} render={({ field }) => <TextField {...field} label="Order No." variant="filled" type="number" error={!!errors.order} helperText={errors.order ? errors.order.message : ""} />} />
             </div>
 
             {/* Description */}
-            <div className="grid gap-2">
-              <Controller name="description" control={control} render={({ field }) => <TextField {...field} label="Description" variant="standard" error={!!errors.description} helperText={errors.description ? errors.description.message : ""} />} />
+            <div className="grid col-span-2 gap-2">
+              <Controller name="description" control={control} render={({ field }) => <TextField multiline rows={4} {...field} label="Description" variant="filled" error={!!errors.description} helperText={errors.description ? errors.description.message : ""} />} />
             </div>
           </div>
 
           <div className="mt-[20px]">
-            <LoadingButton loading={createMenuLoading} variant="contained" type="submit">
+            <LoadingButton startIcon={<Icons.save fontSize="small" />} loading={createMenuLoading} variant="contained" type="submit">
               Submit
             </LoadingButton>
           </div>

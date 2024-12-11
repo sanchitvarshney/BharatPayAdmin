@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Button, Tooltip } from "@mui/material";
-import { FiLogOut } from "react-icons/fi";
 import SearchLinks from "./SearchLinks";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import { logout } from "@/features/authentication/authSlice";
 import SharedDialog from "@/components/shared/SharedDialog";
+import { Icons } from "../icons/icons";
 
 const Navigation: React.FC = () => {
   const [openUser, setOpenUser] = useState<boolean>(false);
@@ -32,21 +32,11 @@ const Navigation: React.FC = () => {
             }}
             onClick={() => setOpenUser(!openUser)}
           >
-            <FiLogOut
-              className={`h-[25px] w-[25px]  ${
-                openUser ? "text-blue-600" : "text-slate-500"
-              }`}
-            />
+            <Icons.logout className={`h-[25px] w-[25px]  ${openUser ? "text-blue-600" : "text-slate-500"}`} />
           </Button>
         </Tooltip>
       </div>
-      <SharedDialog
-        open={openUser}
-        title="Logout"
-        content="Are you sure you want to logout?"
-        onClose={() => setOpenUser(false)}
-        onConfirm={() => dispatch(logout())}
-      />
+      <SharedDialog open={openUser} title="Logout" content="Are you sure you want to logout?" onClose={() => setOpenUser(false)} onConfirm={() => dispatch(logout())} endIcon={<Icons.logout fontSize="small" />} />
     </div>
   );
 };

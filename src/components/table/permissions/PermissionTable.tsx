@@ -189,7 +189,7 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
   }, [menuList]);
 
   return (
-    <div className="ag-theme-quartz h-[calc(100vh-200px)]">
+    <div className="ag-theme-quartz h-[calc(100vh-175px)]">
       <AgGridReact
         overlayNoRowsTemplate={OverlayNoRowsTemplate}
         loading={menuListLoading}

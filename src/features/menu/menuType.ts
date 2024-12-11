@@ -65,4 +65,5 @@ export type MenuState = {
   disableMenuLoading: boolean;
   isId: any;
   menuTabList: any;
+  addTabLoading: boolean;
 };
