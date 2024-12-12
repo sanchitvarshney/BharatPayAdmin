@@ -1,66 +1,106 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+import LoadingButton from "@mui/lab/LoadingButton";
+
+// Define the data structure for editing the profile
+type ProfileFormData = {
+  name: string;
+  email: string;
+  mobile: string;
+  bio: string;
+};
+
+// Define the data structure for changing the password
+type PasswordFormData = {
+  newPassword: string;
+  confirmPassword: string;
+};
 
 const UserProfile = () => {
-  // Sample user data
   const [user, setUser] = useState({
-    name: 'John Doe',
-    username: '@johndoe',
-    email: 'johndoe@example.com',
-    mobile: '+1234567890',
-    bio: 'Software Developer | Tech Enthusiast | Blogger',
-    profilePicture: 'https://www.w3schools.com/w3images/avatar2.png',
+    name: "John Doe",
+    username: "@johndoe",
+    email: "johndoe@example.com",
+    mobile: "+1234567890",
+    bio: "Software Developer",
+    profilePicture: "https://www.w3schools.com/w3images/avatar2.png",
     is2faActive: false,
   });
 
-  // Modal and form states
+  // Modal states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
+    useState(false);
   const [is2faActive, setIs2faActive] = useState(user.is2faActive);
 
   // Form states for editing profile
-  const [newName, setNewName] = useState(user.name);
-  const [newEmail, setNewEmail] = useState(user.email);
-  const [newMobile, setNewMobile] = useState(user.mobile);
-  const [newBio, setNewBio] = useState(user.bio);
+  const {
+    control: controlProfile,
+    handleSubmit: handleSubmitProfile,
+    formState: { errors: profileErrors },
+    // reset: resetProfile,
+  } = useForm<ProfileFormData>({
+    defaultValues: {
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile,
+      bio: user.bio,
+    },
+  });
 
-  // Form states for changing password
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const {
+    control: controlPassword,
+    handleSubmit: handleSubmitPassword,
+    formState: { errors: passwordErrors },
+    // reset: resetPassword,
+  } = useForm<PasswordFormData>({
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
 
   // Toggle 2FA
   const toggle2FA = () => {
     setIs2faActive(!is2faActive);
-    alert(`2FA has been ${!is2faActive ? 'enabled' : 'disabled'}`);
+    alert(`2FA has been ${!is2faActive ? "enabled" : "disabled"}`);
   };
 
-  // Handle Edit Profile form submission
-  const handleEditProfileSubmit = (e:any) => {
-    e.preventDefault();
+  const handleEditProfileSubmit = (data: ProfileFormData) => {
     setUser({
       ...user,
-      name: newName,
-      email: newEmail,
-      mobile: newMobile,
-      bio: newBio,
+      name: data.name,
+      email: data.email,
+      mobile: data.mobile,
+      bio: data.bio,
     });
     setIsEditModalOpen(false);
   };
 
-  // Handle Change Password form submission
-  const handleChangePasswordSubmit = (e:any) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
+  const handleChangePasswordSubmit = (data: PasswordFormData) => {
+    if (data.newPassword !== data.confirmPassword) {
       alert("Passwords don't match!");
     } else {
-      alert('Password updated successfully!');
-      setNewPassword('');
-      setConfirmPassword('');
+      alert("Password updated successfully!");
       setIsChangePasswordModalOpen(false);
     }
   };
 
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    fontSize: "11px",
+    boxShadow: 24,
+    width: 650,
+    p: 4,
+  };
+
   return (
-    <div className=" bg-gray-100 flex justify-center items-center p-4">
+    <div className="bg-gray-100 flex justify-center items-center p-4">
       <div className="bg-white w-full p-6 rounded-lg shadow-lg h-screen">
         {/* Profile Picture */}
         <div className="flex justify-center mb-6">
@@ -110,124 +150,168 @@ const UserProfile = () => {
           <button
             onClick={toggle2FA}
             className={`py-2 px-6 rounded-full ${
-              is2faActive ? 'bg-red-500' : 'bg-yellow-500'
+              is2faActive ? "bg-red-500" : "bg-yellow-500"
             } text-white hover:bg-opacity-90 transition duration-200`}
           >
-            {is2faActive ? 'Disable 2FA' : 'Enable 2FA'}
+            {is2faActive ? "Disable 2FA" : "Enable 2FA"}
           </button>
         </div>
       </div>
 
       {/* Edit Profile Modal */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Profile</h2>
-            <form onSubmit={handleEditProfileSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-600">Name</label>
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600">Email</label>
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600">Mobile</label>
-                <input
-                  type="text"
-                  value={newMobile}
-                  onChange={(e) => setNewMobile(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600">Bio</label>
-                <textarea
-                  value={newBio}
-                  onChange={(e) => setNewBio(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                //   rows="4"
-                />
-              </div>
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Modal open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+        <Box sx={{ ...style, width: 400 }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Edit Profile
+          </Typography>
+          <form onSubmit={handleSubmitProfile(handleEditProfileSubmit)}>
+            <div className="mt-[20px] grid grid-cols-1 gap-[20px]">
+              {/* Name */}
+              <Controller
+                name="name"
+                control={controlProfile}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Name"
+                    variant="standard"
+                    fullWidth
+                    error={!!profileErrors.name}
+                    helperText={profileErrors.name?.message}
+                  />
+                )}
+              />
+
+              {/* Email */}
+              <Controller
+                name="email"
+                control={controlProfile}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Email"
+                    variant="standard"
+                    fullWidth
+                    error={!!profileErrors.email}
+                    helperText={
+                      profileErrors.email ? profileErrors.email.message : ""
+                    }
+                  />
+                )}
+              />
+
+              {/* Mobile */}
+              <Controller
+                name="mobile"
+                control={controlProfile}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Mobile"
+                    variant="standard"
+                    fullWidth
+                    error={!!profileErrors.mobile}
+                    helperText={
+                      profileErrors.mobile ? profileErrors.mobile.message : ""
+                    }
+                  />
+                )}
+              />
+
+              {/* Bio */}
+              <Controller
+                name="bio"
+                control={controlProfile}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Bio"
+                    variant="standard"
+                    fullWidth
+                    error={!!profileErrors.bio}
+                    helperText={
+                      profileErrors.bio ? profileErrors.bio.message : ""
+                    }
+                    multiline
+                    rows={4}
+                  />
+                )}
+              />
+            </div>
+            <div className="mt-[20px] flex justify-between gap-[10px]">
+              <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+              <LoadingButton type="submit" variant="contained">
+                Save Changes
+              </LoadingButton>
+            </div>
+          </form>
+        </Box>
+      </Modal>
 
       {/* Change Password Modal */}
-      {isChangePasswordModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Change Password</h2>
-            <form onSubmit={handleChangePasswordSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-600">New Password</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-600">Confirm New Password</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setIsChangePasswordModalOpen(false)}
-                  className="py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600"
-                >
-                  Change Password
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+      >
+        <Box sx={{ ...style, width: 400 }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Change Password
+          </Typography>
+          <form onSubmit={handleSubmitPassword(handleChangePasswordSubmit)}>
+            <div className="mt-[20px] grid grid-cols-1 gap-[20px]">
+              {/* New Password */}
+              <Controller
+                name="newPassword"
+                control={controlPassword}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="New Password"
+                    type="password"
+                    variant="standard"
+                    fullWidth
+                    error={!!passwordErrors.newPassword}
+                    helperText={
+                      passwordErrors.newPassword
+                        ? passwordErrors.newPassword.message
+                        : ""
+                    }
+                  />
+                )}
+              />
+
+              {/* Confirm Password */}
+              <Controller
+                name="confirmPassword"
+                control={controlPassword}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Confirm Password"
+                    type="password"
+                    variant="standard"
+                    fullWidth
+                    error={!!passwordErrors.confirmPassword}
+                    helperText={
+                      passwordErrors.confirmPassword
+                        ? passwordErrors.confirmPassword.message
+                        : ""
+                    }
+                  />
+                )}
+              />
+            </div>
+            <div className="mt-[20px] flex justify-between gap-[10px]">
+              <Button onClick={() => setIsChangePasswordModalOpen(false)}>
+                Cancel
+              </Button>
+              <LoadingButton type="submit" variant="contained">
+                Change Password
+              </LoadingButton>
+            </div>
+          </form>
+        </Box>
+      </Modal>
     </div>
   );
 };

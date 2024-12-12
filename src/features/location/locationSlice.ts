@@ -1,7 +1,13 @@
 import axiosInstance from "@/api/baratpayDashApi";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
-import { AddTabType, AllotLocationListResponse, AllotLocationType, LocationListResponse, LocationState } from "@/features/location/locationTypes";
+import {
+  AddTabType,
+  AllotLocationListResponse,
+  AllotLocationType,
+  LocationListResponse,
+  LocationState,
+} from "@/features/location/locationTypes";
 import { showToast } from "@/utills/toasterContext";
 
 // Initial state
@@ -18,30 +24,59 @@ const initialState: LocationState = {
 };
 
 // Async Thunks
-export const addTab = createAsyncThunk<AxiosResponse<any>, AddTabType>("location/addTab", async (payload) => {
-  const response = await axiosInstance.post("/location/add", payload);
+export const addTab = createAsyncThunk<AxiosResponse<any>, AddTabType>(
+  "location/addTab",
+  async (payload) => {
+    const response = await axiosInstance.post("/location/add", payload);
+    return response;
+  }
+);
+
+export const allotLocation = createAsyncThunk<
+  AxiosResponse<AllotLocationListResponse>,
+  AllotLocationType
+>("location/allotLocation", async (payload) => {
+  const response = await axiosInstance.post(
+    "/location/location_allotted",
+    payload
+  );
   return response;
 });
 
-export const allotLocation = createAsyncThunk<AxiosResponse<AllotLocationListResponse>, AllotLocationType>("location/allotLocation", async (payload) => {
-  const response = await axiosInstance.post("/location/location_allotted", payload);
+export const updateAllotLocation = createAsyncThunk<
+  AxiosResponse<AllotLocationListResponse>,
+  AllotLocationType
+>("location/updateAllotLocation", async (payload) => {
+  const response = await axiosInstance.put(
+    "/location/location_allotted_update",
+    payload
+  );
   return response;
 });
 
-export const getLocationList = createAsyncThunk<AxiosResponse<LocationListResponse>>("location/getLocationList", async () => {
+export const getLocationList = createAsyncThunk<
+  AxiosResponse<LocationListResponse>
+>("location/getLocationList", async () => {
   const response = await axiosInstance.get("/location/list");
   return response;
 });
 
-export const getAllocatedLocationList = createAsyncThunk<AxiosResponse<LocationListResponse>>("location/getAllocatedLocationList", async () => {
+export const getAllocatedLocationList = createAsyncThunk<
+  AxiosResponse<LocationListResponse>
+>("location/getAllocatedLocationList", async () => {
   const response = await axiosInstance.get("/location/fetch_loc_all");
   return response;
 });
 
-export const fetchLocationUpdate = createAsyncThunk<AxiosResponse<any>, string>("location/fetchLocationUpdate", async (id) => {
-  const response = await axiosInstance.get(`/location/fetch_location_all_update/${id}`);
-  return response;
-});
+export const fetchLocationUpdate = createAsyncThunk<AxiosResponse<any>, string>(
+  "location/fetchLocationUpdate",
+  async (id) => {
+    const response = await axiosInstance.get(
+      `/location/fetch_location_all_update/${id}`
+    );
+    return response;
+  }
+);
 
 // Slice
 const locationSlice = createSlice({
@@ -82,6 +117,15 @@ const locationSlice = createSlice({
         state.allotLocationList = null;
       })
 
+      .addCase(fetchLocationUpdate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchLocationUpdate.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(fetchLocationUpdate.rejected, (state) => {
+        state.loading = false;
+      })
       // allotLocation
       .addCase(allotLocation.pending, (state) => {
         state.allotLocationLoading = true;

@@ -7,8 +7,9 @@ import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplat
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-import { getAllocatedLocationList } from "@/features/location/locationSlice";
+import {getAllocatedLocationList } from "@/features/location/locationSlice";
 import { Icons } from "@/components/icons/icons";
+import LocationAllocation from "@/components/table/location/LocationAllocation";
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
   menu_key: string;
@@ -71,7 +72,9 @@ const flattenMenuHierarchy = (data: MenuData[], parentHierarchy: string[] = []):
 // Example component for Tree Data Table with Menu Data
 const AllocatedLocationTable: React.FC<Props> = () => {
   const gridRef = useRef<AgGridReact>(null);
+  const [editLocation, setEditLocation] = useState(false);
   const { allotLocationList, loading } = useAppSelector((state) => state.location);
+  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const [columnDefs] = useState<ColDef[]>([
     { field: "module_name", headerName: "Module Name", filter: true, flex: 1 },
@@ -80,7 +83,6 @@ const AllocatedLocationTable: React.FC<Props> = () => {
       headerName: "Action",
       field: "action",
       cellRenderer: (params: any) => {
-        console.log(params.data);
         const [menuid, setMenuid] = useState("");
         const { deleteMenuLoading } = useAppSelector((state) => state.menu);
         return menuid === params.data?.menu_key && deleteMenuLoading ? (
@@ -93,7 +95,8 @@ const AllocatedLocationTable: React.FC<Props> = () => {
               <IconButton
                 color="primary"
                 onClick={() => {
-                  setMenuid(params.data?.menu_key || "");
+                  setSelectedMenuId(params.data?.loc_all_key || "");
+                  setEditLocation(true);
                 }}
                 aria-label="edit"
                 size="small"
@@ -139,6 +142,11 @@ const AllocatedLocationTable: React.FC<Props> = () => {
         pagination
         paginationPageSize={25}
         paginationPageSizeSelector={[10, 25, 50]}
+      />
+      <LocationAllocation
+        open={editLocation}
+        onClose={() => setEditLocation(false)}
+        id={selectedMenuId}
       />
     </div>
   );

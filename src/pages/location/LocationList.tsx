@@ -46,10 +46,12 @@ const LocationList = () => {
 
   useEffect(() => {
     dispatch(getLocationList());
-  }, []);
+  }, []); 
+
   useEffect(() => {
     setLocations(locationList || []);
   }, []);
+
   return (
     <div className="h-full ">
       <div className=" h-[150px] p-[20px]">
