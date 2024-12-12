@@ -83,7 +83,6 @@ const AllocatedLocationTable: React.FC<Props> = () => {
       headerName: "Action",
       field: "action",
       cellRenderer: (params: any) => {
-        console.log(params.data);
         const [menuid, setMenuid] = useState("");
         const { deleteMenuLoading } = useAppSelector((state) => state.menu);
         return menuid === params.data?.menu_key && deleteMenuLoading ? (

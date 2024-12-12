@@ -11,10 +11,20 @@ import {
   CircularProgress,
   Checkbox,
   FormControlLabel,
+  Typography,
+  Box,
+  Divider,
+  TextField,
+  Grid,
 } from "@mui/material";
 import { Icons } from "../../icons/icons";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { fetchLocationUpdate, getAllocatedLocationList, getLocationList, updateAllotLocation } from "@/features/location/locationSlice";
+import {
+  fetchLocationUpdate,
+  getAllocatedLocationList,
+  getLocationList,
+  updateAllotLocation,
+} from "@/features/location/locationSlice";
 import { showToast } from "@/utills/toasterContext";
 
 interface SharedDialogProps {
@@ -25,7 +35,7 @@ interface SharedDialogProps {
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   loading?: boolean;
-  id: string|null;
+  id: string | null;
 }
 
 const LocationAllocation: React.FC<SharedDialogProps> = ({
@@ -40,8 +50,13 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
   // Redux state and local state hooks
   const { locationList, loading } = useAppSelector((state) => state.location);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [locations, setLocations] = useState<{ name: string; code: string }[]>([]);
+  const [locations, setLocations] = useState<{ name: string; code: string }[]>(
+    []
+  );
   const [checkedLocations, setCheckedLocations] = useState<any>({});
+
+  const [moduleName, setModuleName] = useState<string>(""); // State for module name
+  const [moduleDescription, setModuleDescription] = useState(""); // State for module description
 
   const dispatch = useAppDispatch();
 
@@ -64,15 +79,17 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    id&&dispatch(fetchLocationUpdate(id)).then((res: any) => {
-        console.log(res)
-      if (res?.payload?.data?.success) {
-        setCheckedLocations(res.payload.data.data);
-        const locations=res.payload.data.data.locations;
-        setSelectedLocations(locations.split(","));
-        console.log(checkedLocations)
-      }
-    })
+    if (id) {
+      dispatch(fetchLocationUpdate(id)).then((res: any) => {
+        if (res?.payload?.data?.success) {
+          setCheckedLocations(res.payload.data.data);
+          const locations = res.payload.data.data.locations;
+          setSelectedLocations(locations.split(","));
+          setModuleName(res.payload.data.data.for_module);
+          setModuleDescription(res.payload.data.data.module_desc);
+        }
+      });
+    }
   }, [id]);
 
   // Update locations list when locationList from Redux changes
@@ -81,18 +98,19 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
   }, [locationList]);
 
   const handleSubmit = () => {
-    if (!selectedLocations.length) return showToast("Please select at least one location", "error");
-    const payload:any = {
-      module_name: checkedLocations.for_module,
+    if (!selectedLocations.length)
+      return showToast("Please select at least one location", "error");
+    const payload: any = {
+      module_name: moduleName,
       locations: selectedLocations,
-      key:id
-    //   module_description: moduleDescription,
+      key: id,
+      module_description: moduleDescription,
     };
     dispatch(updateAllotLocation(payload)).then((res: any) => {
       if (res?.payload?.data?.success) {
         showToast(res.payload.data.message, "success");
-        // setSelectedLocations([]);
         onClose();
+        dispatch(getAllocatedLocationList());
       } else {
         showToast(res.payload.data.message, "error");
       }
@@ -100,46 +118,95 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="dialog-title" sx={{ "& .MuiDialog-paper": { minWidth: "800px" } }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby="dialog-title"
+      sx={{ "& .MuiDialog-paper": { minWidth: "1000px" } }}
+    >
       {/* Loading Indicator */}
       {loading && (
-        <div className="absolute top-0 left-0 right-0">
+        <Box position="absolute" top={0} left={0} right={0}>
           <LinearProgress />
-        </div>
+        </Box>
       )}
 
       {/* Dialog Title */}
       <DialogTitle id="dialog-title" fontWeight={600}>
-        Edit Location for {checkedLocations.for_module}
+        Update Location for {checkedLocations.for_module}
       </DialogTitle>
 
+      <Divider sx={{ mb: 2 }} />
+
       {/* Dialog Content */}
-      <DialogContent sx={{ minWidth: "600px" }}>
+      <DialogContent sx={{ minWidth: "600px", padding: 2 }}>
+        <div className="p-4">
+          <Grid container spacing={2}>
+            {/* Module Name Field */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1" sx={{ mb: 1 }}>
+                Module Name:
+              </Typography>
+              <TextField
+                size="small"
+                fullWidth
+                variant="filled"
+                value={moduleName}
+                onChange={(e) => setModuleName(e.target.value)}
+              />
+            </Grid>
+
+            {/* Module Description Field */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1" sx={{ mb: 1 }}>
+                Module Description:
+              </Typography>
+              <TextField
+                size="small"
+                fullWidth
+                variant="filled"
+                value={moduleDescription}
+                onChange={(e) => setModuleDescription(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </div>
         {loading ? (
-          <div className="h-[calc(100vh-325px)] flex items-center justify-center">
-            <CircularProgress />
-          </div>
+          <Box
+            className="h-[calc(100vh-325px)] flex items-center justify-center"
+            sx={{ minHeight: "300px" }}
+          >
+            <CircularProgress size={50} />
+          </Box>
         ) : (
-          <div className="h-[calc(100vh-325px)] overflow-y-auto">
+          <Box className="h-[calc(100vh-325px)] overflow-y-auto">
             {/* Location Checkbox Grid */}
-            <div className="grid grid-cols-4 gap-[10px] p-[20px]">
+            <Typography variant="h6" sx={{ mb: 2, ml: 2 }}>
+              Update Locations:
+            </Typography>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-[15px] p-[10px]">
               {locations.map((location) => (
                 <FormControlLabel
                   key={location.code}
-                  sx={{ maxHeight: "max-content" }}
                   control={
                     <Checkbox
                       checked={selectedLocations.includes(location.code)}
                       onChange={(event) =>
                         handleLocationChange(event, location.code)
                       }
+                      color="primary"
                     />
                   }
                   label={location.name || "Unnamed Location"}
+                  sx={{
+                    "& .MuiFormControlLabel-label": {
+                      fontWeight: 500,
+                    },
+                  }}
                 />
               ))}
             </div>
-          </div>
+          </Box>
         )}
       </DialogContent>
 
