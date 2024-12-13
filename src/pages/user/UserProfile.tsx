@@ -203,7 +203,7 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => setAnchorEl(null)}>Done</Button>
+            <Button onClick={() => setAnchorEl(null)}>Close</Button>
           </div>
         </Popover>
       </div>
@@ -277,7 +277,7 @@ const UserProfile = () => {
                 }
               }}
             >
-              Done
+              Close
             </Button>
           </div>
         </Popover>
@@ -338,7 +338,7 @@ const UserProfile = () => {
               }}
               type="submit"
             >
-              Done
+              Close
             </Button>
           </div>
         </Popover>
@@ -375,7 +375,7 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>Done</Button>
+            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>Close</Button>
           </div>
         </Popover>
       </div>
@@ -710,17 +710,18 @@ const UserProfile = () => {
                   <Skeleton className="w-full h-full" />
                 ) : (
                   <>
-                    <AvatarImage src="https://avatars.githubusercontent.com/u/170425125?s=96&v=4" />
+                    <AvatarImage src="https://material-ui.com/static/images/avatar/1.jpg" />
                     <AvatarFallback>CN</AvatarFallback>
                   </>
                 )}
               </Avatar>
+              
               <div className="w-full">
-                <h1 className="text-[20px] font-[500] text-stone-700">{getUserProfileLoading ? <Skeleton className="w-full h-[25px]" /> : userProfile ? userProfile[0]?.fullName : "--"}</h1>
-                <p className="break-all whitespace-normal text-stone-600 text-[15px]">{getUserProfileLoading ? <Skeleton className="w-full h-[18px] mt-[5px]" /> : userProfile ? userProfile[0]?.emailID : "--"}</p>
-                <p className="text-green-600 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile[0]?.status === "A" ? "Active" : "Inactive" : "---"}</p>
-                <p className="text-stone-500 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "Last sign in : About 19 hours ago"}</p>
-                <p className="text-stone-500 text-[13px]"> {getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? "Created: " + userProfile[0]?.registerDt : "Created:  --"}</p>
+                <h1 className="text-[20px] font-[500] text-stone-700">{getUserProfileLoading ? <Skeleton className="w-full h-[25px]" /> : userProfile ? userProfile?.fullName : "--"}</h1>
+                <p className="break-all whitespace-normal text-stone-600 text-[15px]">{getUserProfileLoading ? <Skeleton className="w-full h-[18px] mt-[5px]" /> : userProfile ? userProfile?.emailID : "--"}</p>
+                <p className="text-green-600 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? userProfile?.status === "1" ? "Active" : "Inactive" : "---"}</p>
+                <p className="text-stone-500 text-[13px]">{getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : "Last sign in : " + (userProfile ? userProfile?.lastLogin : "---")}</p>
+                <p className="text-stone-500 text-[13px]"> {getUserProfileLoading ? <Skeleton className="w-full h-[13px] mt-[5px]" /> : userProfile ? "Created: " + userProfile?.reg_date : "Created:  --"}</p>
               </div>
             </div>
             <div className="p-[20px] border-b">
@@ -789,7 +790,7 @@ const UserProfile = () => {
           <div className="py-[20px]">
             <CustomTabPanel value={value} index={0}>
               <div className="flex flex-col gap-[10px] px-[5px]">
-                <div className="border flex justify-between py-[10px] px-[20px]">
+                {/* <div className="border flex justify-between py-[10px] px-[20px]">
                   <div className="flex items-center gap-[3px] text-[15px]">
                     <span className="flex items-center gap-[5px]">
                       <BellIcon className="h-[18px] w-[18px]" />
@@ -800,7 +801,7 @@ const UserProfile = () => {
                   <Link to={"#"} className="text-[15px] text-blue-600 font-[500]">
                     View alerts
                   </Link>
-                </div>
+                </div> */}
 
                 <div className="py-[20px] px-[20px] rounded-sm shadow shadow-stone-400">
                   <div className="flex items-end justify-between">
@@ -840,10 +841,10 @@ const UserProfile = () => {
                       <p className="text-sm text-stone-500">{getUserProfileLoading ? <Skeleton className="w-[150px] h-[13px]" /> : userProfile ? userProfile?.gender : "--"}</p>
                     </div>
 
-                    <div className="flex justify-between items-center gap-[30px]">
+                    {/* <div className="flex justify-between items-center gap-[30px]">
                       <p className="font-medium text-gray-700">User Type</p>
                       <p className="text-sm text-stone-500">{getUserProfileLoading ? <Skeleton className="w-[150px] h-[13px]" /> : userProfile ? userProfile?.type : "--"}</p>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 

@@ -8,7 +8,7 @@ import { Icons } from "@/components/icons/icons";
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
-  const { locationList, loading,allotLocationLoading } = useAppSelector((state) => state.location);
+  const { locationList, loading } = useAppSelector((state) => state.location);
   const [moduleName, setModuleName] = useState<string>(""); // State for module name
   const [moduleDescription, setModuleDescription] = useState(""); // State for module description
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]); // State for selected locations
@@ -122,7 +122,7 @@ const LocationList = () => {
 
       {/* Submit Button */}
       <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-        <LoadingButton loading={allotLocationLoading} loadingPosition="start" startIcon={<Icons.save />} variant="contained" onClick={handleSubmit}>
+        <LoadingButton loading={loading} loadingPosition="start" startIcon={<Icons.save />} variant="contained" onClick={handleSubmit}>
           Submit
         </LoadingButton>
       </div>

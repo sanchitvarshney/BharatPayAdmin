@@ -62,10 +62,10 @@ const ViewUser = () => {
             <Icons.add fontSize="small" />
             Add new user
           </Link>
-          <Link to={"#"} className="flex items-center gap-[5px]">
+          {/* <Link to={"#"} className="flex items-center gap-[5px]">
             <Icons.download fontSize="small" />
             Download users
-          </Link>
+          </Link> */}
         </div>
         <div className="flex items-center gap-[15px]">
           <IconButton onClick={() => dispatch(getUserList("1"))}>
