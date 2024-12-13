@@ -32,7 +32,7 @@ const PermissionLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/permission/list")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Permissions List
             </Typography>
           </ListItemButton>

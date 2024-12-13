@@ -62,10 +62,10 @@ const ViewUser = () => {
             <Icons.add fontSize="small" />
             Add new user
           </Link>
-          <Link to={"#"} className="flex items-center gap-[5px]">
+          {/* <Link to={"#"} className="flex items-center gap-[5px]">
             <Icons.download fontSize="small" />
             Download users
-          </Link>
+          </Link> */}
         </div>
         <div className="flex items-center gap-[15px]">
           <IconButton onClick={() => dispatch(getUserList("1"))}>
@@ -74,7 +74,7 @@ const ViewUser = () => {
           <RadioGroup aria-labelledby="demo-controlled-radio-buttons-group" name="controlled-radio-buttons-group" value={value} onChange={handleChange}>
             <div className="flex items-center gap-[15px]">
               <FormControlLabel value="1" control={<Radio />} label="Active User" />
-              <FormControlLabel value="2" control={<Radio />} label="Inactive User" />
+              <FormControlLabel value="0" control={<Radio />} label="Inactive User" />
             </div>
           </RadioGroup>
         </div>

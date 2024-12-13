@@ -179,7 +179,7 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
             <CircularProgress size={50} />
           </Box>
         ) : (
-          <Box className="h-[calc(100vh-325px)] overflow-y-auto">
+          <Box className="h-[calc(100vh-350px)] overflow-y-auto">
             {/* Location Checkbox Grid */}
             <Typography variant="h6" sx={{ mb: 2, ml: 2 }}>
               Update Locations:

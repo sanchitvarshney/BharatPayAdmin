@@ -8,7 +8,7 @@ import { Icons } from "@/components/icons/icons";
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
-  const { locationList, loading,allotLocationLoading } = useAppSelector((state) => state.location);
+  const { locationList, loading } = useAppSelector((state) => state.location);
   const [moduleName, setModuleName] = useState<string>(""); // State for module name
   const [moduleDescription, setModuleDescription] = useState(""); // State for module description
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]); // State for selected locations
@@ -62,8 +62,8 @@ const LocationList = () => {
           Provide the page title OR hint where implementing the location
         </Typography>
         <div className="grid grid-cols-2 gap-[20px]">
-          <TextField size="small" label="Module Name" fullWidth variant="filled" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-          <TextField size="small" label="Module Description" fullWidth variant="filled" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
+          <TextField size="small" label="Page Name" fullWidth variant="filled" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+          <TextField size="small" label="Page Description" fullWidth variant="filled" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
         </div>
       </div>
 
@@ -122,7 +122,7 @@ const LocationList = () => {
 
       {/* Submit Button */}
       <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-        <LoadingButton loading={allotLocationLoading} loadingPosition="start" startIcon={<Icons.save />} variant="contained" onClick={handleSubmit}>
+        <LoadingButton loading={loading} loadingPosition="start" startIcon={<Icons.save />} variant="contained" onClick={handleSubmit}>
           Submit
         </LoadingButton>
       </div>

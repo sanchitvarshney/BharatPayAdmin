@@ -32,7 +32,7 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/location/list")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Allot Location
             </Typography>
           </ListItemButton>
@@ -46,7 +46,7 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/location/alloted-location")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Location Alloted Module
             </Typography>
           </ListItemButton>

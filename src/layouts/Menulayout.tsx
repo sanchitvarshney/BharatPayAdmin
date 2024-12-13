@@ -32,7 +32,7 @@ const MenuLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/menu/create")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Create Master Menu
             </Typography>
           </ListItemButton>
@@ -46,7 +46,7 @@ const MenuLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/menu/list")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Menu List
             </Typography>
           </ListItemButton>

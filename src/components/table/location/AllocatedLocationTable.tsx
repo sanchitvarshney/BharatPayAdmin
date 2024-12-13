@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
@@ -26,6 +26,7 @@ interface MenuData {
 }
 type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
+  searchQuery: string;
 };
 
 interface RowData {
@@ -70,13 +71,30 @@ const flattenMenuHierarchy = (data: MenuData[], parentHierarchy: string[] = []):
 };
 
 // Example component for Tree Data Table with Menu Data
-const AllocatedLocationTable: React.FC<Props> = () => {
+const AllocatedLocationTable: React.FC<Props> = ({searchQuery}) => {
   const gridRef = useRef<AgGridReact>(null);
   const [editLocation, setEditLocation] = useState(false);
   const { allotLocationList, loading } = useAppSelector((state) => state.location);
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
+  const [filteredData, setFilteredData] = useState(allotLocationList);
+
   const dispatch = useAppDispatch();
-  const [columnDefs] = useState<ColDef[]>([
+
+  // Filter the data based on search query
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = allotLocationList.filter((row:any) =>
+        row.module_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.module_description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(allotLocationList);
+    }
+  }, [searchQuery, allotLocationList]); // Re-filter data when searchQuery or allotLocationList changes
+
+  // Define column definitions
+  const columnDefs: ColDef[] = [
     { field: "module_name", headerName: "Module Name", filter: true, flex: 1 },
     { field: "module_description", headerName: "Module Description", flex: 1 },
     {
@@ -123,7 +141,7 @@ const AllocatedLocationTable: React.FC<Props> = () => {
       filter: false,
       maxWidth: 200,
     },
-  ]);
+  ];
 
   useEffect(() => {
     dispatch(getAllocatedLocationList());
@@ -136,7 +154,7 @@ const AllocatedLocationTable: React.FC<Props> = () => {
         loading={loading}
         loadingOverlayComponent={CustomLoadingOverlay}
         ref={gridRef}
-        rowData={allotLocationList}
+        rowData={filteredData}
         columnDefs={columnDefs}
         suppressCellFocus={true}
         pagination
