@@ -32,7 +32,7 @@ const RoleLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/role/list")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               User Roles
             </Typography>
           </ListItemButton>

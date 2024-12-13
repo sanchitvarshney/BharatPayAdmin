@@ -74,7 +74,7 @@ const ViewUser = () => {
           <RadioGroup aria-labelledby="demo-controlled-radio-buttons-group" name="controlled-radio-buttons-group" value={value} onChange={handleChange}>
             <div className="flex items-center gap-[15px]">
               <FormControlLabel value="1" control={<Radio />} label="Active User" />
-              <FormControlLabel value="2" control={<Radio />} label="Inactive User" />
+              <FormControlLabel value="0" control={<Radio />} label="Inactive User" />
             </div>
           </RadioGroup>
         </div>

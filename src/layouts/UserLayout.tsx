@@ -33,7 +33,7 @@ const UserLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/user/add-user")}
             className="link"
           >
-            <Typography fontSize={14} fontWeight={500}>
+            <Typography fontSize={17} fontWeight={500}>
               Add New User
             </Typography>
           </ListItemButton>
@@ -48,7 +48,7 @@ const UserLayout: React.FC<Props> = ({ children }) => {
             selected={isActive("/user/view-user")}
             className="link"
           >
-            <Typography fontSize={14}>View Users</Typography>
+            <Typography fontSize={17}>View Users</Typography>
           </ListItemButton>
         </List>
       </div>

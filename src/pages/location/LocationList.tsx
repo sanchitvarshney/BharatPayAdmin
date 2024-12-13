@@ -62,8 +62,8 @@ const LocationList = () => {
           Provide the page title OR hint where implementing the location
         </Typography>
         <div className="grid grid-cols-2 gap-[20px]">
-          <TextField size="small" label="Module Name" fullWidth variant="filled" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-          <TextField size="small" label="Module Description" fullWidth variant="filled" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
+          <TextField size="small" label="Page Name" fullWidth variant="filled" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+          <TextField size="small" label="Page Description" fullWidth variant="filled" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
         </div>
       </div>
 
