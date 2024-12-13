@@ -29,8 +29,8 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link, useParams } from "react-router-dom";
-import { BellIcon, CalendarIcon } from "@radix-ui/react-icons";
+import { useParams } from "react-router-dom";
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { FaChevronDown } from "react-icons/fa";
 import { RiPencilFill } from "react-icons/ri";
 import { FaChevronLeft } from "react-icons/fa";
