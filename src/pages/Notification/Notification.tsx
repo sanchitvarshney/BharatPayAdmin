@@ -1,4 +1,3 @@
-import React from "react";
 import NotificationTable from "@/components/table/Notification/NotificationTable";
 const Notification = () => {
   return (

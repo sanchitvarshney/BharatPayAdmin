@@ -26,12 +26,12 @@ interface MenuData {
   icon: string | null;
 }
 
-type Props = {
-  setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedType: string;
-  selectedVal: string;
-  updateRow: any;
-};
+// type Props = {
+//   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
+//   selectedType: string;
+//   selectedVal: string;
+//   updateRow: any;
+// };
 
 interface RowData {
   orgHierarchy: string[];
@@ -77,7 +77,7 @@ const flattenMenuHierarchy = (
   return result;
 };
 
-const NotificationTable: React.FC<Props> = ({}) => {
+const NotificationTable = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const { menuList } = useAppSelector((state) => state.menu);
