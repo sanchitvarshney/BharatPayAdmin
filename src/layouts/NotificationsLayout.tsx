@@ -6,7 +6,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const LocationLayout: React.FC<Props> = ({ children }) => {
+const NotificationsLayout: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,22 +18,22 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
       <div className="min-w-[250px]">
         <div className="h-[50px] flex items-center px-[10px]">
           <Typography fontWeight={600} variant="h2" fontSize={20}>
-            Notifications
+            Permissions
           </Typography>
         </div>
         <List sx={{ pr: 1 }}>
           <ListItemButton
             sx={{
-              background: isActive("/notification") ? "red" : "inherit",
+              background: isActive("/permission/list") ? "red" : "inherit",
               borderTopRightRadius: "20px",
               borderBottomRightRadius: "20px",
             }}
-            onClick={() => navigate("/notification")}
-            selected={isActive("/notification")}
+            onClick={() => navigate("/permission/list")}
+            selected={isActive("/permission/list")}
             className="link"
           >
             <Typography fontSize={17} fontWeight={500}>
-              List of Notifications
+              Permissions List
             </Typography>
           </ListItemButton>
         </List>
@@ -43,4 +43,4 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
   );
 };
 
-export default LocationLayout;
+export default NotificationsLayout;

@@ -20,6 +20,7 @@ import Menulayout from "./layouts/Menulayout";
 import LocationLayout from "./layouts/LocationLayout";
 import PermissionLayout from "./layouts/PermissionLayout";
 import AllotLocationPage from "./pages/location/AllotLocationPage";
+import Notification from "./pages/Notification/Notification";
 
 export const router = createBrowserRouter([
   {
@@ -106,6 +107,14 @@ export const router = createBrowserRouter([
           <PermissionLayout>
             <PermissionList />
           </PermissionLayout>
+        ),
+      },
+      {
+        path: "/notification",
+        element: (
+          <LocationLayout>
+            <Notification />
+          </LocationLayout>
         ),
       },
       {
