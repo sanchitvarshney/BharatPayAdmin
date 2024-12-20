@@ -133,7 +133,6 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Edit Profile, Change Password, Toggle 2FA */}
         <div className="space-x-2 text-center mb-6 pt-20">
           <button
             onClick={() => setIsEditModalOpen(true)}
