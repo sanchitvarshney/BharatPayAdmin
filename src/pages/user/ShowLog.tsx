@@ -1,8 +1,8 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { useState, useEffect } from "react";
+// import Box from "@mui/material/Box";
+// import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
+// import Modal from "@mui/material/Modal";
 import { Drawer, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close"; // Import Close Icon
 import { AgGridReact } from "@ag-grid-community/react";
@@ -11,21 +11,32 @@ import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import { userLoginLogs } from "@/features/user/userSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import { useParams } from "react-router-dom";
+import { ColDef } from "@ag-grid-community/core";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+// const style = {
+//   position: "absolute",
+//   top: "50%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   width: 400,
+//   bgcolor: "background.paper",
+//   border: "2px solid #000",
+//   boxShadow: 24,
+//   p: 4,
+// };
+interface Row {
+  CustID: string; // or the appropriate type for CustID
+  Email_ID: string; // or the appropriate type for CustID
+  // other properties of the row can be added here
+}
+interface MyComponentProps {
+  handleClose: () => void; // handleClose is a function that takes no arguments and returns nothing
+  open: any; // handleClose is a function that takes no arguments and returns nothing
+}
 
-const ShowLog = ({ open, handleClose }) => {
-  const [rows, setRows] = React.useState([]);
+const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
+  //   const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = useState<Row[]>([]);
   const dispatch = useAppDispatch();
   const params = useParams();
   const columns: ColDef[] = [
@@ -51,7 +62,7 @@ const ShowLog = ({ open, handleClose }) => {
       }
     });
   };
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       getDataForTable();
     }

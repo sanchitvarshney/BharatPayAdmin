@@ -1,15 +1,8 @@
-import React, {
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { Button, Tooltip, Checkbox } from "@mui/material";
-import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
+// import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import {
   notificationPending,
@@ -18,6 +11,7 @@ import {
 import { Icons } from "@/components/icons/icons";
 import SharedDialog from "@/components/shared/SharedDialog";
 import { showToast } from "@/utills/toasterContext";
+import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
@@ -82,22 +76,15 @@ const flattenMenuHierarchy = (
 
   return result;
 };
-const CustomHeader = () => (
-  <div style={{ display: "flex", gap: "45px", fontWeight: "bold" }}>
-    <span>View</span>
-    <span>Edit</span>
-    <span>Add</span>
-    <span>Delete</span>
-  </div>
-);
-const NotificationTable: React.FC<Props> = ({ updateRow }) => {
+
+const NotificationTable: React.FC<Props> = ({}) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
-  const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
+  const { menuList } = useAppSelector((state) => state.menu);
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.user);
 
-  const [openUser, setOpenUser] = useState<boolean>(false);
+  const [openUser, setOpenUser] = useState<any>(false);
   const [columnDefs] = useState<ColDef[]>([
     {
       headerName: "Delete",
@@ -107,11 +94,8 @@ const NotificationTable: React.FC<Props> = ({ updateRow }) => {
       maxWidth: 80,
       cellRenderer: (params: any) => {
         // Get the role_name and role_id from the row data
-        const roleName = params?.data?.role_name;
-        const roleId = params?.data?.role_id;
 
         // Encode the role_name to make it URL-safe
-        const encodedRoleName = encodeURIComponent(roleName);
 
         return (
           // <Link
@@ -126,7 +110,6 @@ const NotificationTable: React.FC<Props> = ({ updateRow }) => {
               display: "flex",
               alignItems: "center",
               width: "100%",
-              pointerEvents: "cursor",
             }}
           >
             <Icons.delete
@@ -167,9 +150,6 @@ const NotificationTable: React.FC<Props> = ({ updateRow }) => {
 
   console.log("openUser", openUser);
 
-  const getDataPath = useCallback((data: RowData) => {
-    return data.orgHierarchy;
-  }, []);
   const getDataForTable = async () => {
     dispatch(notificationPending()).then((res: any) => {
       console.log("response", res);

@@ -75,6 +75,9 @@ const verificationTypes = [
 
 const schema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  passwordMatch: z.boolean(),
+
   ask_password_change: z.boolean(),
   user_id: z.string(),
 });
@@ -132,7 +135,7 @@ const UserProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState<any>(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
@@ -164,6 +167,7 @@ const UserProfile = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       password: "",
+      confirmPassword: "",
       ask_password_change: false,
       user_id: userProfile ? userProfile[0]?.userID || "" : "",
     },
@@ -180,7 +184,7 @@ const UserProfile = () => {
     console.log(event);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = () => {
     // setAnchorEl(event.currentTarget);
     setResetPassword(true);
   };
@@ -216,7 +220,10 @@ const UserProfile = () => {
       }
     });
   };
-  const handlePaste = (event) => {
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handlePaste = (event: any) => {
     event.preventDefault();
     showToast("Pasting is disabled in this field.");
   };
@@ -1376,7 +1383,9 @@ const UserProfile = () => {
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
                       <p>Calendar log events</p>
-                      <Button onClick={() => setOpen("login")}>View Logs</Button>
+                      <Button onClick={() => setOpen("login")}>
+                        View Logs
+                      </Button>
                     </div>
                   </div>
                   <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
@@ -1562,7 +1571,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <ShowLog open={open} handleClose={() => setOpen(false)} />
+      <ShowLog open={open} handleClose={handleClose} />
     </>
   );
 };

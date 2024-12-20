@@ -151,20 +151,20 @@ export const userLoginLogs = createAsyncThunk<AxiosResponse<any>, any>(
     return response;
   }
 );
-export const notificationPending = createAsyncThunk<AxiosResponse<any>, any>(
+export const notificationPending = createAsyncThunk<AxiosResponse<any>>(
   "/notification/pending",
   async () => {
     const response = await axiosInstance.get("/notification/pending");
     return response;
   }
 );
-export const notificationPendingDelete = createAsyncThunk<AxiosResponse<any>, any>(
-  "/notification/pending",
-  async (id) => {
-    const response = await axiosInstance.delete(`/notification/pending/${id}`);
-    return response;
-  }
-);
+export const notificationPendingDelete = createAsyncThunk<
+  AxiosResponse<any>,
+  any
+>("/notification/pending", async (id) => {
+  const response = await axiosInstance.delete(`/notification/pending/${id}`);
+  return response;
+});
 
 const userSlice = createSlice({
   name: "user",
