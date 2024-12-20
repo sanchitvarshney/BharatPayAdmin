@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-// import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
 import {
   notificationPending,
