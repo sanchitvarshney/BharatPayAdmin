@@ -1,7 +1,17 @@
 import { HiOutlineLightBulb } from "react-icons/hi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import RoleListTable from "@/components/table/permission/RoleListTable";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
@@ -16,14 +26,48 @@ const UserRols = () => {
   const [description, setdescription] = useState<string>("");
   const dispatch = useAppDispatch();
   const { createRoleLoading } = useAppSelector((state) => state.permission);
+  const { menuList } = useAppSelector((state: any) => state.menu);
+
+  // Safe check to ensure menuList is an array before iterating
+  const findMenuKey = (url: string) => {
+    if (Array.isArray(menuList)) {
+      for (let menu of menuList) {
+        if (Array.isArray(menu.children)) {
+          for (let child of menu.children) {
+            if (child.url === url) {
+              return child.menu_key;
+            }
+          }
+        }
+      }
+    }
+    return null; // Return null if no match is found or menuList is not an array
+  };
+
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(
+    () => findMenuKey(window.location.pathname),
+    [menuList]
+  );
+
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    console.log(menuKey);
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
 
   useEffect(() => {
-    dispatch(getRoleList());
+    menuList && dispatch(getRoleList());
   }, []);
+
   return (
     <>
       <Dialog maxWidth="md" open={open} onClose={() => setOpen(false)}>
-        <div className="absolute top-0 left-0 right-0 bg-white h-[20-px]">{createRoleLoading && <LinearProgress />}</div>
+        <div className="absolute top-0 left-0 right-0 bg-white h-[20-px]">
+          {createRoleLoading && <LinearProgress />}
+        </div>
         <div className="flex items-center justify-between pr-[20px] h-[50px]">
           <DialogTitle>
             <Typography fontWeight={600}>Create Role</Typography>
@@ -36,15 +80,36 @@ const UserRols = () => {
         <DialogContent>
           <div className="h-full min-w-[500px] ">
             <div className="flex flex-col gap-[20px] ">
-              <TextField value={role} onChange={(e) => setRole(e.target.value)} id="standard-basic" label="Name" required variant="filled" />
-              <TextField multiline rows={3} value={description} onChange={(e) => setdescription(e.target.value)} id="standard-basic" label="Decription" variant="filled" />
+              <TextField
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                id="standard-basic"
+                label="Name"
+                required
+                variant="filled"
+              />
+              <TextField
+                multiline
+                rows={3}
+                value={description}
+                onChange={(e) => setdescription(e.target.value)}
+                id="standard-basic"
+                label="Decription"
+                variant="filled"
+              />
             </div>
           </div>
         </DialogContent>
         <Divider />
         <DialogActions>
           <div className="flex items-center gap-[20px] justify-end px-[20px]">
-            <Button startIcon={<Icons.close />} variant="contained" sx={{ background: "white", color: "red" }} onClick={() => setOpen(false)} disabled={createRoleLoading}>
+            <Button
+              startIcon={<Icons.close />}
+              variant="contained"
+              sx={{ background: "white", color: "red" }}
+              onClick={() => setOpen(false)}
+              disabled={createRoleLoading}
+            >
               Cancel
             </Button>
             <LoadingButton
@@ -63,7 +128,10 @@ const UserRols = () => {
                       setOpen(false);
                       setRole("");
                       setdescription("");
-                      showToast(res.payload.data.message || "Role created successfully", "success");
+                      showToast(
+                        res.payload.data.message || "Role created successfully",
+                        "success"
+                      );
                       dispatch(getRoleList());
                     }
                   });
@@ -82,7 +150,10 @@ const UserRols = () => {
           <div className="border flex justify-between py-[10px] px-[20px] rounded-sm w-full ">
             <div className="flex items-center gap-[3px] text-[15px]">
               <HiOutlineLightBulb className="h-[25px] w-[25px] text-blue-600" />
-              <span className="text-stone-800">You can now assign admin roles to security groups as well as users.</span>
+              <span className="text-stone-800">
+                You can now assign admin roles to security groups as well as
+                users.
+              </span>
             </div>
           </div>
         </div>
@@ -90,7 +161,11 @@ const UserRols = () => {
           <div className="h-[50px] bg-zinc-100 flex items-center justify-between gap-[20px] px-[20px]  ">
             <div className="flex items-center gap-[10px]">
               <Typography fontWeight={500}>Roles</Typography>
-              <Button onClick={() => setOpen(true)} startIcon={<Icons.add />} sx={{ textTransform: "none" }}>
+              <Button
+                onClick={() => setOpen(true)}
+                startIcon={<Icons.add />}
+                sx={{ textTransform: "none" }}
+              >
                 Create Role
               </Button>
             </div>

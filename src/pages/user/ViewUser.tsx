@@ -1,5 +1,5 @@
+import React, { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { getUserList } from "@/features/user/userSlice";
 import { AgGridReact } from "@ag-grid-community/react";
@@ -15,21 +15,56 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 const ViewUser = () => {
   const [value, setValue] = React.useState("1");
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue((event.target as HTMLInputElement).value);
-    dispatch(getUserList((event.target as HTMLInputElement).value));
-  };
-
   const dispatch = useAppDispatch();
   const { getUserListLoading, userList } = useAppSelector((state) => state.user);
+  const { menuList } = useAppSelector((state: any) => state.menu);
+
+  // Safe check to ensure menuList is an array before iterating
+  const findMenuKey = (url: string) => {
+    if (Array.isArray(menuList)) {
+      for (let menu of menuList) {
+        if (Array.isArray(menu.children)) {
+          for (let child of menu.children) {
+            if (child.url === url) {
+              return child.menu_key;
+            }
+          }
+        }
+      }
+    }
+    return null; // Return null if no match is found or menuList is not an array
+  };
+
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname), [menuList]);
+
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
+
+  // Fetch user list when menuKey changes
+  useEffect(() => {
+    if (menuKey) {
+      dispatch(getUserList("1"));
+    }
+  }, [menuKey, dispatch]);
+
+  // Handle radio button change
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = (event.target as HTMLInputElement).value;
+    setValue(newValue);
+    dispatch(getUserList(newValue));
+  };
+
   const columns: ColDef[] = [
     {
       field: "fullName",
       headerName: "Name",
       minWidth: 200,
       maxWidth: 400,
-
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-[10px] py-[5px] max-w-max ">
           <Avatar src={"https://material-ui.com/static/images/avatar/1.jpg"} />
@@ -42,7 +77,6 @@ const ViewUser = () => {
       autoHeight: true,
       flex: 1,
     },
-
     { field: "emailID", headerName: "Email", flex: 1, minWidth: 200, maxWidth: 400 },
     { field: "mobileNo", headerName: "Mobile No." },
     { field: "gender", headerName: "Gender" },
@@ -50,28 +84,25 @@ const ViewUser = () => {
     { field: "userID", headerName: "userID", hide: true },
   ];
 
-  useEffect(() => {
-    dispatch(getUserList("1"));
-  }, []);
-
   return (
     <div className="h-full">
-      <div className="h-[50px]  flex items-center gap-[20px] px-[10px] text-blue-600 border-b justify-between ">
+      <div className="h-[50px] flex items-center gap-[20px] px-[10px] text-blue-600 border-b justify-between ">
         <div className="flex items-center gap-[20px]">
           <Link to={"/user/add-user"} className="flex items-center gap-[5px]">
             <Icons.add fontSize="small" />
             Add new user
           </Link>
-          {/* <Link to={"#"} className="flex items-center gap-[5px]">
-            <Icons.download fontSize="small" />
-            Download users
-          </Link> */}
         </div>
         <div className="flex items-center gap-[15px]">
           <IconButton onClick={() => dispatch(getUserList("1"))}>
             <Icons.refresh />
           </IconButton>
-          <RadioGroup aria-labelledby="demo-controlled-radio-buttons-group" name="controlled-radio-buttons-group" value={value} onChange={handleChange}>
+          <RadioGroup
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={value}
+            onChange={handleChange}
+          >
             <div className="flex items-center gap-[15px]">
               <FormControlLabel value="1" control={<Radio />} label="Active User" />
               <FormControlLabel value="0" control={<Radio />} label="Inactive User" />
@@ -80,7 +111,17 @@ const ViewUser = () => {
         </div>
       </div>
       <div className={"ag-theme-quartz h-[calc(100vh-130px)] "}>
-        <AgGridReact rowHeight={60} overlayNoRowsTemplate={OverlayNoRowsTemplate} loadingOverlayComponent={CustomLoadingOverlay} suppressCellFocus={true} loading={getUserListLoading} rowData={userList ? userList : []} columnDefs={columns} pagination paginationPageSize={20} />
+        <AgGridReact
+          rowHeight={60}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
+          loadingOverlayComponent={CustomLoadingOverlay}
+          suppressCellFocus={true}
+          loading={getUserListLoading}
+          rowData={userList ? userList : []}
+          columnDefs={columns}
+          pagination
+          paginationPageSize={20}
+        />
       </div>
     </div>
   );

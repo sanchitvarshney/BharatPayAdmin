@@ -41,6 +41,10 @@ export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>("me
   const response = await axiosInstance.get("/menu/getMenu");
   return response;
 });
+export const getAdminMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>("menu/getAdminMenuList", async () => {
+  const response = await axiosInstance.get("/menu/getMenuAdmin");
+  return response;
+});
 export const getUserMenu = createAsyncThunk<AxiosResponse<MenuListResponse>, string>(`/user/menu/getUserMenu`, async (id) => {
   const response = await axiosInstance.get(`/permission/getUserMenu/${id}`);
   return response;
@@ -106,6 +110,19 @@ const authSlice = createSlice({
         state.menuListLoading = false;
       })
       .addCase(getMenuList.rejected, (state) => {
+        state.menuListLoading = false;
+        state.menuList = null;
+      })
+      .addCase(getAdminMenuList.pending, (state) => {
+        state.menuListLoading = true;
+      })
+      .addCase(getAdminMenuList.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.menuList = action.payload?.data?.menu;
+        }
+        state.menuListLoading = false;
+      })
+      .addCase(getAdminMenuList.rejected, (state) => {
         state.menuListLoading = false;
         state.menuList = null;
       })

@@ -3,13 +3,13 @@ export type AddUserPayload = {
   email: string;
   mobileNo: string;
   password: string;
-  gender: "F" | "M" ;
+  gender: "F" | "M";
   asktochange: "off" | "on";
   newsletterSubscription: "yes" | "no";
   // userStatus: "active" | "inactive";
   type: "developer" | "admin" | "user";
   verification: "E" | "M" | "1" | "0";
-  role:string
+  role: string;
 };
 export type AdduserApiResponse = {
   message: string;
@@ -51,7 +51,7 @@ export type UserProfileResponse = {
 export type ChangeUserPasswordPayload = {
   userId: string;
   password: string;
-  ask_password_change: string;
+  ask_password_change: boolean;
 };
 export type ChangePasswordResponse = {
   success: boolean;
@@ -70,11 +70,10 @@ export type UpdateMobilePayload = {
   isVarified: string;
 };
 export type UpdateuserProfilePayload = {
-  userId: any,
-  name: string,
-  gender: string,
+  userId: any;
+  name: string;
+  gender: string;
 };
-
 
 export type AdduserSatates = {
   addUserloading: boolean;
@@ -88,6 +87,6 @@ export type AdduserSatates = {
   suspendUserLoading: boolean;
   activateUserLoading: boolean;
   updateUserProfileLoading: boolean;
-  rolelistData:any;
-  loading:boolean
+  rolelistData: any;
+  loading: boolean;
 };

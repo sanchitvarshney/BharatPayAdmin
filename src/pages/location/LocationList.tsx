@@ -50,7 +50,7 @@ const LocationList = () => {
 
   useEffect(() => {
     setLocations(locationList || []);
-  }, []);
+  }, [locationList]);
 
   return (
     <div className="h-full ">
