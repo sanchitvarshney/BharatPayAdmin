@@ -16,6 +16,8 @@ import {
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import axiosInstance from "@/api/baratpayDashApi";
 import { Icons } from "@/components/icons/icons";
+import { getAdminMenuList } from "@/features/menu/menuSlice";
+import { useAppDispatch } from "@/hooks/useReduxHook";
 
 type Props = {
   children: React.ReactNode;
@@ -58,6 +60,7 @@ const profileItem = {
 };
 const RootLayout: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [tab, setTab] = useState<string>("dashboard");
   const [newmenu, setNewMenu] = useState([]);
   const [masterMenu, setMasterMenu] = useState([]);
@@ -80,6 +83,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     if (masterMenu && newmenu) {
       getUserMenuPermission();
+      dispatch(getAdminMenuList());
     }
   }, []);
   const location = useLocation();

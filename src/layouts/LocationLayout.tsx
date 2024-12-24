@@ -18,22 +18,36 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
       <div className="min-w-[250px]">
         <div className="h-[50px] flex items-center px-[10px]">
           <Typography fontWeight={600} variant="h2" fontSize={20}>
-            Notifications
+            Location
           </Typography>
         </div>
         <List sx={{ pr: 1 }}>
           <ListItemButton
             sx={{
-              background: isActive("/notification") ? "red" : "inherit",
+              background: isActive("/location/list") ? "red" : "inherit",
               borderTopRightRadius: "20px",
               borderBottomRightRadius: "20px",
             }}
-            onClick={() => navigate("/notification")}
-            selected={isActive("/notification")}
+            onClick={() => navigate("/location/list")}
+            selected={isActive("/location/list")}
+            className="link"
+          >
+          <Typography fontSize={17} fontWeight={500}>
+              Allot Location
+            </Typography>
+          </ListItemButton>
+          <ListItemButton
+            sx={{
+              background: isActive("/location/alloted-location") ? "red" : "inherit",
+              borderTopRightRadius: "20px",
+              borderBottomRightRadius: "20px",
+            }}
+            onClick={() => navigate("/location/alloted-location")}
+            selected={isActive("/location/alloted-location")}
             className="link"
           >
             <Typography fontSize={17} fontWeight={500}>
-              List of Notifications
+              Location Alloted Module
             </Typography>
           </ListItemButton>
         </List>
