@@ -38,7 +38,7 @@ axiosInstance.interceptors.request.use(async (config) => {
     config.headers["session"] = "2024-2025";
     config.headers["x-click-token"] = uniqueid;
     config.headers["fingerprint"] = fingerprint || "unknown";
-    config.headers["menu_key"] = id||"";
+    config.headers["menukey"] = id||"";
   }
 
   return config;
