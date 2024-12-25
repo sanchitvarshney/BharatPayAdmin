@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef } from "@ag-grid-community/core";
 import { useAppSelector } from "@/hooks/useReduxHook";
@@ -24,6 +30,7 @@ type Props = {
   selectedType: string;
   selectedVal: string;
   updateRow: any;
+  user: any;
 };
 
 interface RowData {
@@ -36,7 +43,7 @@ interface RowData {
   can_edit?: boolean;
   can_view?: boolean;
   can_delete?: boolean;
-  can_add?:boolean
+  can_add?: boolean;
 }
 
 // Utility function to flatten hierarchical data
@@ -61,29 +68,36 @@ const flattenMenuHierarchy = (
     });
 
     if (item.children && item.children.length > 0) {
-      result = result.concat(flattenMenuHierarchy(item.children, currentHierarchy));
+      result = result.concat(
+        flattenMenuHierarchy(item.children, currentHierarchy)
+      );
     }
   });
 
   return result;
 };
 const CustomHeader = () => (
-  <div style={{ display: 'flex', gap: '45px', fontWeight: 'bold' }}>
+  <div style={{ display: "flex", gap: "45px", fontWeight: "bold" }}>
     <span>View</span>
     <span>Edit</span>
     <span>Add</span>
     <span>Delete</span>
   </div>
 );
-const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
+const TreeDataMenu: React.FC<Props> = ({ updateRow, selectedType, user }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
 
   const [columnDefs] = useState<ColDef[]>([
-    { field: "name", headerName: "Menu Name", filter: true,maxWidth: 300,
+    {
+      field: "name",
+      headerName: "Menu Name",
+      filter: true,
+      maxWidth: 300,
       minWidth: 150,
-      autoHeight: true, },
+      autoHeight: true,
+    },
     // { field: "url", headerName: "URL",maxWidth: 300,
     //   minWidth: 150,
     //   autoHeight: true, },
@@ -92,16 +106,27 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
       headerComponent: CustomHeader,
       field: "action",
       cellRenderer: (params: any) => {
-        const [isEdit, setIsEdit] = useState<boolean>(params.data?.can_edit || false);
-        const [isAdd, setIsAdd] = useState<boolean>(params.data?.can_add || false);
-        const [isView, setIsView] = useState<boolean>(params.data?.can_view || false);
-        const [isDelete, setIsDelete] = useState<boolean>(params.data?.can_delete || false);
-    
+        const [isEdit, setIsEdit] = useState<boolean>(
+          params.data?.can_edit || false
+        );
+        const [isAdd, setIsAdd] = useState<boolean>(
+          params.data?.can_add || false
+        );
+        const [isView, setIsView] = useState<boolean>(
+          params.data?.can_view || false
+        );
+        const [isDelete, setIsDelete] = useState<boolean>(
+          params.data?.can_delete || false
+        );
+
         if (!params.data?.url) return null;
-    
+
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div className="permissions-group" style={{ display: 'flex', gap: '45px' }}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div
+              className="permissions-group"
+              style={{ display: "flex", gap: "45px" }}
+            >
               <Tooltip title="View">
                 <Checkbox
                   className="permission-checkbox"
@@ -138,9 +163,8 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
               variant="contained"
               color="primary"
               style={{
-                marginLeft: '50px',
-                visibility: params.data ? 'visible' : 'hidden',
-                
+                marginLeft: "50px",
+                visibility: params.data ? "visible" : "hidden",
               }}
             >
               Update
@@ -151,8 +175,7 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
       sortable: false,
       filter: false,
       maxWidth: 800,
-    }
-    
+    },
   ]);
 
   const defaultColDef = useMemo<ColDef>(
@@ -183,10 +206,10 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow }) => {
 
   useEffect(() => {
     // Only set the rowData when menuList is not empty
-    if (menuList && Array.isArray(menuList)) {
+    if (menuList && Array.isArray(menuList) && selectedType && user) {
       setRowData(flattenMenuHierarchy(menuList));
     }
-  }, [menuList]);
+  }, [menuList, selectedType, user]);
 
   return (
     <div className="ag-theme-quartz h-[calc(100vh-175px)]">

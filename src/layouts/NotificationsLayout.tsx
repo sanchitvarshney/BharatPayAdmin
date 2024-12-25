@@ -18,22 +18,22 @@ const NotificationsLayout: React.FC<Props> = ({ children }) => {
       <div className="min-w-[250px]">
         <div className="h-[50px] flex items-center px-[10px]">
           <Typography fontWeight={600} variant="h2" fontSize={20}>
-            Permissions
+            Notifications
           </Typography>
         </div>
         <List sx={{ pr: 1 }}>
           <ListItemButton
             sx={{
-              background: isActive("/permission/list") ? "red" : "inherit",
+              background: isActive("/notification") ? "red" : "inherit",
               borderTopRightRadius: "20px",
               borderBottomRightRadius: "20px",
             }}
-            onClick={() => navigate("/permission/list")}
-            selected={isActive("/permission/list")}
+            onClick={() => navigate("/notification")}
+            selected={isActive("/notification")}
             className="link"
           >
             <Typography fontSize={17} fontWeight={500}>
-              Permissions List
+            List of Notifications
             </Typography>
           </ListItemButton>
         </List>

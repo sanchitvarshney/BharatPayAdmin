@@ -200,7 +200,7 @@ const PermissionList: React.FC = () => {
         </div>
       </form>
       <div className="">
-        <PermissionTable selectedVal={selectedVal} selectedType={selectedType} updateRow={updateRow} />
+        <PermissionTable selectedVal={selectedVal} selectedType={selectedType} updateRow={updateRow} user={user}/>
       </div>
     </div>
   );
