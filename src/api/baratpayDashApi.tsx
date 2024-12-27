@@ -24,8 +24,7 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const id = localStorage.getItem("menuKey");
-
+  const id = localStorage.getItem("menuKey");  
   const token = getToken();
 
   if (token) {

@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react"; 
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
+import { getUserProfile } from "@/features/profile/ProfileSlice";
+import FullPageLoading from "@/components/reusable/selectors/FullPageLoading";
 
 // Define the data structure for editing the profile
 type ProfileFormData = {
   name: string;
   email: string;
   mobile: string;
-  bio: string;
+  type: string;
+  gender: string;
+  status: string;
 };
 
 // Define the data structure for changing the password
@@ -19,11 +24,13 @@ type PasswordFormData = {
 
 const UserProfile = () => {
   const [user, setUser] = useState({
-    name: "John Doe",
-    username: "@johndoe",
-    email: "johndoe@example.com",
-    mobile: "+1234567890",
-    bio: "Software Developer",
+    user_name: "",
+    username: "",
+    email: "",
+    mobile: "",
+    type: "",
+    gender: "",
+    status: "",
     profilePicture: "https://www.w3schools.com/w3images/avatar2.png",
     is2faActive: false,
   });
@@ -34,20 +41,37 @@ const UserProfile = () => {
     useState(false);
   const [is2faActive, setIs2faActive] = useState(user.is2faActive);
 
+  const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.profile);
+
   // Form states for editing profile
   const {
     control: controlProfile,
     handleSubmit: handleSubmitProfile,
     formState: { errors: profileErrors },
-    // reset: resetProfile,
-  } = useForm<ProfileFormData>({
-    defaultValues: {
-      name: user.name,
-      email: user.email,
-      mobile: user.mobile,
-      bio: user.bio,
-    },
-  });
+    reset: resetProfile, // Added reset
+  } = useForm<ProfileFormData>();
+
+  // Fetch user profile on mount
+  useEffect(() => {
+    dispatch(getUserProfile()).then((res: any) => {
+      const data = res.payload.data.data;
+      setUser({
+        ...data,
+        profilePicture: "https://www.w3schools.com/w3images/avatar2.png",
+      });
+
+      // Reset form data after user profile is fetched
+      resetProfile({
+        name: data.user_name,
+        email: data.email,
+        mobile: data.mobile,
+        type: data.type,
+        gender: data.gender,
+        status: data.status,
+      });
+    });
+  }, [dispatch, resetProfile]); // Ensure that resetProfile is called after user profile is fetched
 
   const {
     control: controlPassword,
@@ -70,10 +94,10 @@ const UserProfile = () => {
   const handleEditProfileSubmit = (data: ProfileFormData) => {
     setUser({
       ...user,
-      name: data.name,
+      user_name: data.name,
       email: data.email,
       mobile: data.mobile,
-      bio: data.bio,
+      type: data.type,
     });
     setIsEditModalOpen(false);
   };
@@ -100,6 +124,7 @@ const UserProfile = () => {
   };
 
   return (
+    loading ? <FullPageLoading /> :
     <div className="bg-gray-100 flex justify-center items-center p-4">
       <div className="bg-white w-full p-6 rounded-lg shadow-lg h-screen">
         {/* Profile Picture */}
@@ -113,7 +138,7 @@ const UserProfile = () => {
 
         {/* Profile Info */}
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-semibold text-gray-800">{user.name}</h2>
+          <h2 className="text-3xl font-semibold text-gray-800">{user.user_name}</h2>
           <p className="text-sm text-gray-500">{user.username}</p>
         </div>
 
@@ -128,8 +153,16 @@ const UserProfile = () => {
             <span className="text-gray-800">{user.mobile}</span>
           </div>
           <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Bio:</span>
-            <span className="text-gray-800">{user.bio}</span>
+            <span className="font-semibold text-gray-600">Type:</span>
+            <span className="text-gray-800">{user.type}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-semibold text-gray-600">Gender:</span>
+            <span className="text-gray-800">{user.gender === "M" ? "Male" : "Female"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-semibold text-gray-600">Status:</span>
+            <span className="text-gray-800">{user.status === "1" ? "Active" : "DeActive"}</span>
           </div>
         </div>
 
@@ -148,9 +181,7 @@ const UserProfile = () => {
           </button>
           <button
             onClick={toggle2FA}
-            className={`py-2 px-6 rounded-full ${
-              is2faActive ? "bg-red-500" : "bg-yellow-500"
-            } text-white hover:bg-opacity-90 transition duration-200`}
+            className={`py-2 px-6 rounded-full ${is2faActive ? "bg-red-500" : "bg-yellow-500"} text-white hover:bg-opacity-90 transition duration-200`}
           >
             {is2faActive ? "Disable 2FA" : "Enable 2FA"}
           </button>
@@ -180,7 +211,6 @@ const UserProfile = () => {
                   />
                 )}
               />
-
               {/* Email */}
               <Controller
                 name="email"
@@ -192,13 +222,10 @@ const UserProfile = () => {
                     variant="standard"
                     fullWidth
                     error={!!profileErrors.email}
-                    helperText={
-                      profileErrors.email ? profileErrors.email.message : ""
-                    }
+                    helperText={profileErrors.email ? profileErrors.email.message : ""}
                   />
                 )}
               />
-
               {/* Mobile */}
               <Controller
                 name="mobile"
@@ -210,29 +237,23 @@ const UserProfile = () => {
                     variant="standard"
                     fullWidth
                     error={!!profileErrors.mobile}
-                    helperText={
-                      profileErrors.mobile ? profileErrors.mobile.message : ""
-                    }
+                    helperText={profileErrors.mobile ? profileErrors.mobile.message : ""}
                   />
                 )}
               />
-
-              {/* Bio */}
+              {/* Type */}
               <Controller
-                name="bio"
+                name="type"
                 control={controlProfile}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Bio"
+                    label="Type"
                     variant="standard"
                     fullWidth
-                    error={!!profileErrors.bio}
-                    helperText={
-                      profileErrors.bio ? profileErrors.bio.message : ""
-                    }
-                    multiline
-                    rows={4}
+                    error={!!profileErrors.type}
+                    helperText={profileErrors.type ? profileErrors.type.message : ""}
+                    
                   />
                 )}
               />

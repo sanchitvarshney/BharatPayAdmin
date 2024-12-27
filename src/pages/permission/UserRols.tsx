@@ -59,8 +59,8 @@ const UserRols = () => {
   }, [menuKey]);
 
   useEffect(() => {
-    menuList && dispatch(getRoleList());
-  }, []);
+    dispatch(getRoleList());
+  }, [menuList]);
 
   return (
     <>

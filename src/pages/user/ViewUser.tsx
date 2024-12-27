@@ -47,9 +47,7 @@ const ViewUser = () => {
 
   // Fetch user list when menuKey changes
   useEffect(() => {
-    if (menuKey) {
       dispatch(getUserList("1"));
-    }
   }, [menuKey, dispatch]);
 
   // Handle radio button change

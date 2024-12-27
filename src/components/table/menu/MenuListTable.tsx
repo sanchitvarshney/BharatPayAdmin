@@ -30,6 +30,7 @@ interface MenuData {
 }
 type Props = {
   setViewMenu?: React.Dispatch<React.SetStateAction<boolean>>;
+  setMenu?: any;
 };
 
 interface RowData {
@@ -74,7 +75,7 @@ const flattenMenuHierarchy = (data: MenuData[], parentHierarchy: string[] = []):
 };
 
 // Example component for Tree Data Table with Menu Data
-const TreeDataMenu: React.FC<Props> = () => {
+const TreeDataMenu: React.FC<Props> = ({setMenu}) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>();
   const [open, setOpen] = React.useState(false);
@@ -157,7 +158,6 @@ const TreeDataMenu: React.FC<Props> = () => {
                   setEditData(params.data);
                   setEdit(true);
                   setMenuId(params.data?.menu_key || "");
-                  console.log(params.data);
                 }}
                 aria-label="edit"
                 size="small"
@@ -205,7 +205,6 @@ const TreeDataMenu: React.FC<Props> = () => {
                       console.log(res);
                       if (res?.payload?.data?.success) {
                         setTabData(res.payload.data.data);
-                        console.log(res.payload.data.data);
                       }
                     });
                   }}
@@ -274,8 +273,8 @@ const TreeDataMenu: React.FC<Props> = () => {
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 25, 50]}
       />
-      {open == true && <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} />}
-      <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data={editData} menuId={menuId} />
+      {open == true && <CreateMenu open={handleOpenmodal} onClose={handleClosemodal} selectedRow={selectedRow} setMenu={setMenu}/>}
+      <CreateMenu open={edit} onClose={() => setEdit(false)} selectedRow={selectedRow} data={editData} menuId={menuId} setMenu={setMenu} />
       <SharedDialog
         open={openDelete}
         title="Delete Menu Item"
@@ -287,6 +286,7 @@ const TreeDataMenu: React.FC<Props> = () => {
               if (res?.payload?.data?.success) {
                 dispatch(getMenuList());
                 setOpenDelete(false);
+                setMenu("1");
               }
             });
           }

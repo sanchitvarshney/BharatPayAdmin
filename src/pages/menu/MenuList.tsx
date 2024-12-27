@@ -80,7 +80,7 @@ useEffect(() => {
         </RadioGroup>
       </div>
       <div className="h-[calc(100vh-130px)]  overflow-hidden ">
-        <MenuListTable />
+        <MenuListTable setMenu={setValue}/>
       </div>
     </div>
   );

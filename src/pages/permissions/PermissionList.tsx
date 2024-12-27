@@ -130,12 +130,14 @@ const PermissionList: React.FC = () => {
   const handleTypeChange = (newValue: any) => {
     setSelectedType(newValue?.id || "");
     setSelectedVal(""); // Clear selected value when changing the type
+    setUser(null);
   };
 
   const handleRoleChange = (newValue: any) => {
+    console.log(newValue)
     setSelectedVal(newValue?.id || ""); // Update selected role or user value
   };
-
+console.log(selectedType,selectedVal)
   return (
     <div className="">
       <form
