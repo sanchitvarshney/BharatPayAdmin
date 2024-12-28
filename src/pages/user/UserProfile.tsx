@@ -344,7 +344,7 @@ const UserProfile = () => {
             <div></div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-          <Button onClick={() => {setChangePhone(null);setAskToVerify(false);}} variant="danger">
+          <Button onClick={() => {setChangePhone(null);setAskToVerify(false);}} variant="text">
               Close
             </Button>
             <Button
