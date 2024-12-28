@@ -129,7 +129,6 @@ const TreeDataMenu: React.FC<Props> = ({setMenu}) => {
       headerName: "Action",
       field: "action",
       cellRenderer: (params: any) => {
-        console.log(params.data);
         const [menuid, setMenuid] = useState("");
 
         return menuid === params.data?.menu_key && deleteMenuLoading ? (
@@ -199,10 +198,8 @@ const TreeDataMenu: React.FC<Props> = ({setMenu}) => {
                   onClick={() => {
                     setMenuid(params.data?.menu_key || "");
                     setMenuId(params.data?.menu_key || "");
-                    console.log(params.data);
                     setShowTabDialog(true);
                     dispatch(getMenuTabList(params.data?.menu_key || "")).then((res: any) => {
-                      console.log(res);
                       if (res?.payload?.data?.success) {
                         setTabData(res.payload.data.data);
                       }

@@ -15,6 +15,7 @@ const initialState: MenuState = {
   menuTabList: null,
   addTabLoading: false,
   permissionMenu: null,
+  adminMenuList: null,
 };
 // Define a type for your slice state
 
@@ -124,6 +125,7 @@ const authSlice = createSlice({
       .addCase(getAdminMenuList.fulfilled, (state, action) => {
         if (action.payload.data.success) {
           state.menuList = action.payload?.data?.menu;
+          state.adminMenuList = action.payload?.data?.menu;
         }
         state.menuListLoading = false;
       })

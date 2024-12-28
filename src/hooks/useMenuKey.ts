@@ -5,10 +5,10 @@ import { getMenuKeyByUrl } from "@/layouts/RootLayout";
 const useMenuKey = () => {
   const [menuKey, setMenuKey] = useState<string>("");
   const path = window.location.pathname;
-  const {menuList} = useAppSelector((state:any) => state.menu); 
+  const {adminMenuList} = useAppSelector((state:any) => state.menu); 
   useEffect(() => {
-    setMenuKey(getMenuKeyByUrl(menuList || [], path) || "");
-  }, [path,menuList]);
+    setMenuKey(getMenuKeyByUrl(adminMenuList || [], path) || "");
+  }, [path,adminMenuList]);
   return menuKey;
 };
 

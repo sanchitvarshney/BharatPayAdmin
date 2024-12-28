@@ -17,7 +17,7 @@ import CustomTooltip from "@/components/ui/CustomTooltip";
 import axiosInstance from "@/api/baratpayDashApi";
 import { Icons } from "@/components/icons/icons";
 import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
+import { useAppDispatch } from "@/hooks/useReduxHook";
 import useMenuKey from "@/hooks/useMenuKey";
 import NotPermissionPage from "@/layouts/NotPermissionPage";
 
@@ -66,7 +66,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   const [tab, setTab] = useState<string>("dashboard");
   const [newmenu, setNewMenu] = useState([]);
   const [masterMenu, setMasterMenu] = useState([]);
-  const {permissionMenu} = useAppSelector((state) => state.menu)
 
   const getUserMenuPermission = async () => {
     try {
@@ -101,7 +100,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   }, [location]);
 
   const menuKey = useMenuKey();
-// console.log(useMenuKey(),"okk");
+console.log(menuKey,"okk");
   const renderMenu = (menu: any, r: any, setSidemenu: any) => {
     return (
       <Accordion type="single" className="w-full" collapsible>

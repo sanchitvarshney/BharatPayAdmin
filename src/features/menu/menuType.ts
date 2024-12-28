@@ -67,4 +67,5 @@ export type MenuState = {
   menuTabList: any;
   addTabLoading: boolean;
   permissionMenu: any;
+  adminMenuList: any;
 };
