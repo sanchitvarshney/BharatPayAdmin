@@ -16,8 +16,10 @@ import {
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import axiosInstance from "@/api/baratpayDashApi";
 import { Icons } from "@/components/icons/icons";
-import { getAdminMenuList } from "@/features/menu/menuSlice";
+import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
+import useMenuKey from "@/hooks/useMenuKey";
+import NotPermissionPage from "@/layouts/NotPermissionPage";
 
 type Props = {
   children: React.ReactNode;
@@ -84,6 +86,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
     if (masterMenu && newmenu) {
       getUserMenuPermission();
       dispatch(getAdminMenuList());
+      dispatch(getPermissionMenu());
     }
   }, []);
   const location = useLocation();
@@ -95,6 +98,9 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       setTab(location.pathname.split("/")[1]);
     }
   }, [location]);
+
+  const menuKey = useMenuKey();
+console.log(menuKey,"okk");
   const renderMenu = (menu: any, r: any, setSidemenu: any) => {
     return (
       <Accordion type="single" className="w-full" collapsible>
@@ -214,7 +220,8 @@ const RootLayout: React.FC<Props> = ({ children }) => {
             <Navigation />
           </div>
           <div className="w-full overflow-x-hidden ">
-            <div>{children}</div>
+            <div>{menuKey?children:<NotPermissionPage />}</div>
+            {/* <div>{children}</div> */}
           </div>
         </div>
       </main>
@@ -265,3 +272,33 @@ export default RootLayout;
 //     description: "master menu comp",
 //   },
 // ];
+
+export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null => {
+  if (targetUrl === "/") return "dashboard";
+  // if (targetUrl === "/profile") return "profile";
+  console.log(menuList, targetUrl);
+  for (const menu of menuList) {
+    if (menu.url === targetUrl) {
+      axiosInstance.interceptors.request.use(async (config) => {
+        config.headers["menuKey"] = menu.menu_key;
+        return config;
+      });
+      return menu.menu_key;
+      
+    }
+
+    if (menu.children && menu.children.length > 0) {
+      const foundKey = getMenuKeyByUrl(menu.children, targetUrl);
+      if (foundKey) {
+        axiosInstance.interceptors.request.use(async (config) => {
+          config.headers["menuKey"] = foundKey;
+          return config;
+        });
+        return foundKey;
+        
+      }
+    }
+  }
+
+  return null;
+};

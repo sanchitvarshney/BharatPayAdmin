@@ -43,9 +43,10 @@ interface CreateMenuProps {
   selectedRow: any;
   data?: any;
   menuId?: any;
+  setMenu: any;
 }
 
-const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow, data, menuId }) => {
+const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow, data, menuId,setMenu }) => {
   const dispatch = useAppDispatch();
 
   const { createMenuLoading } = useAppSelector((state) => state.menu);
@@ -89,6 +90,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow, dat
           reset();
           onClose();
           dispatch(getMenuList());
+          setMenu("1")
         }
       });
     } else {
@@ -97,6 +99,7 @@ const CreateMenu: React.FC<CreateMenuProps> = ({ open, onClose, selectedRow, dat
           reset();
           onClose();
           dispatch(getMenuList());
+          setMenu("1")
         }
       });
     }

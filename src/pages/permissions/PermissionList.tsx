@@ -121,7 +121,7 @@ const PermissionList: React.FC = () => {
       getlist();
     } else {
     }
-  }, [selectedVal, selectedType]);
+  }, [selectedVal, selectedType , user]);
   let type = [
     { id: "User", text: "User" },
     { id: "Role", text: "Role" },
@@ -130,6 +130,7 @@ const PermissionList: React.FC = () => {
   const handleTypeChange = (newValue: any) => {
     setSelectedType(newValue?.id || "");
     setSelectedVal(""); // Clear selected value when changing the type
+    setUser(null);
   };
 
   const handleRoleChange = (newValue: any) => {
@@ -172,7 +173,7 @@ const PermissionList: React.FC = () => {
             <FormControl variant="standard" sx={{ minWidth: 300 }} error={!!errors.project}>
               {/* <InputLabel>{selectedType ? selectedType : 'Select an option'}</InputLabel> */}
               {selectedType === "User" ? (
-                <SelectUser value={user} onChange={(value) => setUser(value)} />
+                <SelectUser value={user} onChange={(value) => {setUser(value);setSelectedVal(value?.id)}} />
               ) : (
                 <Controller
                   name="role"

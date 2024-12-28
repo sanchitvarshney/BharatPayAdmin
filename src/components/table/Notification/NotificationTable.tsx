@@ -172,32 +172,6 @@ const NotificationTable = () => {
       setRowData(flattenMenuHierarchy(menuList));
     }
   }, [menuList]);
-  
-  // Safe check to ensure menuList is an array before iterating
-  const findMenuKey = (url: string) => {
-    if (Array.isArray(menuList)) {
-      for (let menu of menuList) {
-        if (Array.isArray(menu.children)) {
-          for (let child of menu.children) {
-            if (child.url === url) {
-              return child.menu_key;
-            }
-          }
-        }
-      }
-    }
-    return null; // Return null if no match is found or menuList is not an array
-  };
-
-  // UseMemo to memoize the menuKey based on the current URL
-  const menuKey = useMemo(() => findMenuKey(window.location.pathname), [menuList]);
-
-  // Store menuKey in localStorage whenever it changes
-  useEffect(() => {
-    if (menuKey) {
-      localStorage.setItem("menuKey", menuKey);
-    }
-  }, [menuKey]);
 
   useEffect(() => {
     getDataForTable();

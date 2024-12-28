@@ -76,6 +76,7 @@ const flattenMenuHierarchy = (
 
   return result;
 };
+
 const CustomHeader = () => (
   <div style={{ display: "flex", gap: "45px", fontWeight: "bold" }}>
     <span>View</span>
@@ -84,7 +85,7 @@ const CustomHeader = () => (
     <span>Delete</span>
   </div>
 );
-const TreeDataMenu: React.FC<Props> = ({ updateRow, selectedType, user }) => {
+const TreeDataMenu: React.FC<Props> = ({ updateRow, selectedType, selectedVal,user }) => {
   const gridRef = useRef<AgGridReact>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const { menuList, menuListLoading } = useAppSelector((state) => state.menu);
@@ -206,10 +207,10 @@ const TreeDataMenu: React.FC<Props> = ({ updateRow, selectedType, user }) => {
 
   useEffect(() => {
     // Only set the rowData when menuList is not empty
-    if (menuList && Array.isArray(menuList) && selectedType && user) {
+    if (menuList && Array.isArray(menuList) && (user||selectedVal)&&selectedType  ) {
       setRowData(flattenMenuHierarchy(menuList));
     }
-  }, [menuList, selectedType, user]);
+  }, [menuList, selectedType, selectedVal, user]);
 
   return (
     <div className="ag-theme-quartz h-[calc(100vh-175px)]">
