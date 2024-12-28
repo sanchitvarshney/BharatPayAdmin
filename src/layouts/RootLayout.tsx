@@ -16,8 +16,8 @@ import {
 import CustomTooltip from "@/components/ui/CustomTooltip";
 import axiosInstance from "@/api/baratpayDashApi";
 import { Icons } from "@/components/icons/icons";
-import { getAdminMenuList } from "@/features/menu/menuSlice";
-import { useAppDispatch } from "@/hooks/useReduxHook";
+import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import useMenuKey from "@/hooks/useMenuKey";
 import NotPermissionPage from "@/layouts/NotPermissionPage";
 
@@ -66,6 +66,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   const [tab, setTab] = useState<string>("dashboard");
   const [newmenu, setNewMenu] = useState([]);
   const [masterMenu, setMasterMenu] = useState([]);
+  const {permissionMenu} = useAppSelector((state) => state.menu)
 
   const getUserMenuPermission = async () => {
     try {
@@ -86,6 +87,7 @@ const RootLayout: React.FC<Props> = ({ children }) => {
     if (masterMenu && newmenu) {
       getUserMenuPermission();
       dispatch(getAdminMenuList());
+      dispatch(getPermissionMenu());
     }
   }, []);
   const location = useLocation();

@@ -14,6 +14,7 @@ const initialState: MenuState = {
   isId: null,
   menuTabList: null,
   addTabLoading: false,
+  permissionMenu: null,
 };
 // Define a type for your slice state
 
@@ -43,6 +44,10 @@ export const getMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>("me
 });
 export const getAdminMenuList = createAsyncThunk<AxiosResponse<MenuListResponse>>("menu/getAdminMenuList", async () => {
   const response = await axiosInstance.get("/menu/getMenuAdmin");
+  return response;
+});
+export const getPermissionMenu = createAsyncThunk<AxiosResponse<MenuListResponse>>("menu/getPermissionMenu", async () => {
+  const response = await axiosInstance.get("/permission/getAdminPanelUserMenu");
   return response;
 });
 export const getUserMenu = createAsyncThunk<AxiosResponse<MenuListResponse>, string>(`/user/menu/getUserMenu`, async (id) => {
@@ -125,6 +130,19 @@ const authSlice = createSlice({
       .addCase(getAdminMenuList.rejected, (state) => {
         state.menuListLoading = false;
         state.menuList = null;
+      })
+      .addCase(getPermissionMenu.pending, (state) => {
+        state.menuListLoading = true;
+      })
+      .addCase(getPermissionMenu.fulfilled, (state, action) => {
+        if (action.payload.data.success) {
+          state.permissionMenu = action.payload?.data?.menu;
+        }
+        state.menuListLoading = false;
+      })
+      .addCase(getPermissionMenu.rejected, (state) => {
+        state.menuListLoading = false;
+        state.permissionMenu = null;
       })
       .addCase(getActiveUser.pending, (state) => {
         state.menuListLoading = true;
