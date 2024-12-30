@@ -19,7 +19,6 @@ import { Icons } from "@/components/icons/icons";
 import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import useMenuKey from "@/hooks/useMenuKey";
-import NotPermissionPage from "@/layouts/NotPermissionPage";
 
 type Props = {
   children: React.ReactNode;
@@ -220,7 +219,7 @@ console.log(menuKey,"okk");
             <Navigation />
           </div>
           <div className="w-full overflow-x-hidden ">
-            <div>{menuKey?children:<NotPermissionPage />}</div>
+            <div>{menuKey?children:children}</div>
             {/* <div>{children}</div> */}
           </div>
         </div>
@@ -275,7 +274,7 @@ export default RootLayout;
 
 export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null => {
   if (targetUrl === "/") return "dashboard";
-  // if (targetUrl === "/profile") return "profile";
+  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id";
   console.log(menuList, targetUrl);
   for (const menu of menuList) {
     if (menu.url === targetUrl) {

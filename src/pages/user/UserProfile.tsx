@@ -38,7 +38,7 @@ import { RiPencilFill } from "react-icons/ri";
 import { FaChevronLeft } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   activateUser,
   changeuserPasword,
@@ -52,7 +52,6 @@ import {
   updateUserVerification,
 } from "@/features/user/userSlice";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChangeUserPasswordPayload } from "@/features/user/userType";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -128,13 +127,16 @@ const UserProfile = () => {
   const [changeEmail, setChangeEmail] = React.useState<HTMLDivElement | null>(
     null
   );
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [askPasswordChange, setAskPasswordChange] = useState<boolean>(false);
+  const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [passwordChange, setPasswordChange] = useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateVerification, setUpdateVerification] = useState<boolean>(false);
   const [askToVerify, setAskToVerify] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [open, setOpen] = useState<any>(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleClickShowConfirmPassword = () =>
@@ -156,10 +158,6 @@ const UserProfile = () => {
   } = useAppSelector((state) => state.user);
 
   const {
-    handleSubmit,
-    reset,
-    control,
-    watch,
     setError,
     clearErrors,
     formState: { errors },
@@ -173,8 +171,7 @@ const UserProfile = () => {
     },
   });
   // Watch the password and confirm password fields
-  const password = watch("password");
-  const confirmPassword = watch("confirmPassword");
+
   const handleSelectChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
   };
@@ -188,22 +185,32 @@ const UserProfile = () => {
     // setAnchorEl(event.currentTarget);
     setResetPassword(true);
   };
-  const onSubmit = (data: ResetPasswordType) => {
-    const payload: ChangeUserPasswordPayload = {
-      userId: userProfile ? userProfile?.id || "" : "",
-
-      password: data.password,
-      ask_password_change: data.ask_password_change,
+  const handleSubmit2 = () => {
+    if (!passwordsMatch) {
+      showToast("Passwords do not match", "error");
+      return;
+    }
+    
+    const payload :any= {
+      userId: userProfile?.id || "",
+      password: password,
+      ask_password_change: askPasswordChange ? "Y" : "N",
     };
-    console.log("payload", payload);
-    // return;
-    dispatch(changeuserPasword(payload)).then((res: any) => {
-      if (res.payload.data?.success) {
-        setResetPassword(false);
-        reset();
-      }
-    });
+
+    dispatch(changeuserPasword(payload))
+      .then((res: any) => {
+        if (res?.payload?.data?.success) {
+          setResetPassword(false);
+          showToast("Password reset successful", "success");
+        } else {
+          showToast(res?.payload?.data?.message || "Password reset failed", "error");
+        }
+      })
+      .finally(() => {
+        setPassword("");});
   };
+
+  
 
   const handleRequirePasswordChange = (status: any) => {
     setRequiredChangePass(status);
@@ -223,10 +230,6 @@ const UserProfile = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handlePaste = (event: any) => {
-    event.preventDefault();
-    showToast("Pasting is disabled in this field.");
-  };
 
   useEffect(() => {
     dispatch(getUserProfile(params.id || ""));
@@ -235,17 +238,20 @@ const UserProfile = () => {
     if (errors.password || errors.confirmPassword) {
       clearErrors("passwordMatch");
     }
-
+  
     // If the passwords don't match, set a custom error
-    setPasswordsMatch(true);
-    if (confirmPassword?.length && password !== confirmPassword) {
+    if (confirmPassword && password !== confirmPassword) {
       setPasswordsMatch(false);
       setError("passwordMatch", {
         type: "manual",
         message: "Passwords do not match",
       });
+    } else {
+      setPasswordsMatch(true);
+      clearErrors("passwordMatch");
     }
   }, [password, confirmPassword, setError, clearErrors, errors]);
+  
   return (
     <>
       <div>
@@ -501,9 +507,9 @@ const UserProfile = () => {
       </div>
       <Modal
         open={resetpassword}
-        onClose={setResetPassword}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        onClose={handleClose}
+        aria-labelledby="reset-password-modal-title"
+        aria-describedby="reset-password-modal-description"
       >
         <Box
           sx={{
@@ -519,116 +525,87 @@ const UserProfile = () => {
           }}
         >
           <div className="h-[50px] bg-blue-800 text-white flex items-center px-[20px]">
-            <h2
-              className="text-white text-[17px] font-[500]"
-              id="modal-modal-title"
-            >
-              Reset Password- {userProfile ? userProfile?.email : "---"}
-            </h2>
+            <Typography id="reset-password-modal-title" variant="h6">
+              Reset Password - {userProfile ? userProfile?.email : "---"}
+            </Typography>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="p-[30px] relative flex flex-col gap-[30px]">
-              <div className="space-y-5">
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      required
-                      sx={{ width: "100%" }}
-                      {...field}
-                      label="New Password"
-                      variant="standard"
-                      type={showPassword ? "text" : "password"}
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={handleClickShowPassword}>
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      required
-                      sx={{ width: "100%" }}
-                      {...field}
-                      label="Confirm Password"
-                      variant="standard"
-                      type={showConfirmPassword ? "text" : "password"}
-                      error={!!errors.confirmPassword || !passwordsMatch}
-                      helperText={
-                        errors.confirmPassword?.message ||
-                        (!passwordsMatch ? "Passwords do not match" : "")
-                      }
-                      onPaste={handlePaste}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={handleClickShowConfirmPassword}
-                            >
-                              {showConfirmPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                <Controller
-                  name="ask_password_change"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox {...field} />}
-                      label="Change Password after first login"
-                    />
-                  )}
-                />
-              </div>
-              <div className="flex items-center justify-end gap-[10px]">
-                <Button
-                  type="button"
-                  disabled={cahngeUserPasswordLoading}
-                  onClick={() => {
-                    setResetPassword(false), reset();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={cahngeUserPasswordLoading}
-                  variant="contained"
-                  // onClick={() => setResetPassword(false)}
-                >
-                  Continue
-                </Button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-white h-[20-px]">
-                {cahngeUserPasswordLoading && <LinearProgress />}
-              </div>
+          {/* Password Form */}
+          <div className="p-[30px]">
+            <div className="space-y-5">
+              {/* New Password */}
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="New Password"
+                variant="standard"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={password.length < 8}
+                helperText={password.length < 8 ? "Password must be at least 8 characters" : ""}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleClickShowPassword}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              {/* Confirm Password */}
+              <TextField
+                required
+                sx={{ width: "100%" }}
+                label="Confirm Password"
+                variant="standard"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={!passwordsMatch}
+                helperText={!passwordsMatch ? "Passwords do not match" : ""}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleClickShowConfirmPassword}>
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              {/* Option to force password change on next login */}
+              <FormControlLabel
+                control={<Checkbox checked={askPasswordChange} onChange={() => setAskPasswordChange(!askPasswordChange)} />}
+                label="Change Password after first login"
+              />
             </div>
-          </form>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-[10px] mt-4">
+              <Button
+                type="button"
+                onClick={handleClose}
+                disabled={cahngeUserPasswordLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="contained"
+                onClick={handleSubmit2}
+                disabled={cahngeUserPasswordLoading || !passwordsMatch || password.length < 8}
+              >
+                {cahngeUserPasswordLoading ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+
+            {/* Loading Indicator */}
+            {cahngeUserPasswordLoading && <LinearProgress />}
+          </div>
         </Box>
       </Modal>
       <Modal
