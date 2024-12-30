@@ -19,7 +19,6 @@ import { Icons } from "@/components/icons/icons";
 import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import useMenuKey from "@/hooks/useMenuKey";
-import NotPermissionPage from "@/layouts/NotPermissionPage";
 
 type Props = {
   children: React.ReactNode;
