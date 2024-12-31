@@ -22,6 +22,7 @@ import PermissionLayout from "./layouts/PermissionLayout";
 import AllotLocationPage from "./pages/location/AllotLocationPage";
 import Notification from "./pages/Notification/Notification";
 import NotificationsLayout from "@/layouts/NotificationsLayout";
+import PasswordRecoveryPage from "@/pages/authentication/PasswordRecoveryPage";
 
 export const router = createBrowserRouter([
   {
@@ -129,6 +130,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute authentication={false}>
         <Login />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/forgot-password",
+    element: (
+      <ProtectedRoute authentication={false}>
+        <PasswordRecoveryPage />
       </ProtectedRoute>
     ),
   },
