@@ -1,339 +1,338 @@
-import { useEffect, useState } from "react"; 
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { getUserProfile } from "@/features/profile/ProfileSlice";
-import FullPageLoading from "@/components/reusable/selectors/FullPageLoading";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Switch,
+  Alert,
+  Grid,
+  IconButton,
+  Skeleton,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import { FaEdit, FaKey, FaShieldAlt } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { getUserProfile } from "@/features/profile/ProfileSlice"; // Assuming Redux integration
+import { useAppDispatch } from "@/hooks/useReduxHook";
+import { RootState } from "@/features/store";
 
-// Define the data structure for editing the profile
-type ProfileFormData = {
-  name: string;
-  email: string;
-  mobile: string;
-  type: string;
-  gender: string;
-  status: string;
-};
+const StyledCard = styled(Card)(() => ({
+  maxWidth: 800,
+  margin: "auto",
+  marginTop: 20,
+  padding: 20,
+}));
 
-// Define the data structure for changing the password
-type PasswordFormData = {
-  newPassword: string;
-  confirmPassword: string;
-};
-
-const UserProfile = () => {
-  const [user, setUser] = useState({
-    user_name: "",
-    username: "",
-    email: "",
-    mobile: "",
-    type: "",
-    gender: "",
-    status: "",
-    profilePicture: "https://www.w3schools.com/w3images/avatar2.png",
-    is2faActive: false,
-  });
-
-  // Modal states
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
-    useState(false);
-  const [is2faActive, setIs2faActive] = useState(user.is2faActive);
-
+const ProfileComponent = () => {
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.profile);
+  const { profile, loading } = useSelector(
+    (state: RootState) => state.profile as any
+  );
 
-  // Form states for editing profile
-  const {
-    control: controlProfile,
-    handleSubmit: handleSubmitProfile,
-    formState: { errors: profileErrors },
-    reset: resetProfile, // Added reset
-  } = useForm<ProfileFormData>();
-
-  // Fetch user profile on mount
-  useEffect(() => {
-    dispatch(getUserProfile()).then((res: any) => {
-      const data = res.payload.data.data;
-      setUser({
-        ...data,
-        profilePicture: "https://www.w3schools.com/w3images/avatar2.png",
-      });
-
-      // Reset form data after user profile is fetched
-      resetProfile({
-        name: data.user_name,
-        email: data.email,
-        mobile: data.mobile,
-        type: data.type,
-        gender: data.gender,
-        status: data.status,
-      });
-    });
-  }, [dispatch, resetProfile]); // Ensure that resetProfile is called after user profile is fetched
-
-  const {
-    control: controlPassword,
-    handleSubmit: handleSubmitPassword,
-    formState: { errors: passwordErrors },
-    // reset: resetPassword,
-  } = useForm<PasswordFormData>({
-    defaultValues: {
-      newPassword: "",
-      confirmPassword: "",
-    },
+  const [openEditProfile, setOpenEditProfile] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+  const [twoFAEnabled] = useState(profile?.is2faActive || false);
+  const [showAlert, setShowAlert] = useState({
+    show: false,
+    message: "",
+    severity: "success",
   });
 
-  // Toggle 2FA
-  const toggle2FA = () => {
-    setIs2faActive(!is2faActive);
-    alert(`2FA has been ${!is2faActive ? "enabled" : "disabled"}`);
-  };
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-  const handleEditProfileSubmit = (data: ProfileFormData) => {
-    setUser({
-      ...user,
-      user_name: data.name,
-      email: data.email,
-      mobile: data.mobile,
-      type: data.type,
-    });
-    setIsEditModalOpen(false);
-  };
+  const [profileDataLocal, setProfileDataLocal] = useState(profile || {}); // Local state for profile editing
 
-  const handleChangePasswordSubmit = (data: PasswordFormData) => {
-    if (data.newPassword !== data.confirmPassword) {
-      alert("Passwords don't match!");
-    } else {
-      alert("Password updated successfully!");
-      setIsChangePasswordModalOpen(false);
+  useEffect(() => {
+    dispatch(getUserProfile()); // Fetch the user profile on component mount
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (profile) {
+      setProfileDataLocal(profile); // Update local state when profile data changes
     }
+  }, [profile]);
+
+  // Handle Edit Profile submission
+  // const handleEditProfile = async () => {
+  //   try {
+  //     await dispatch(updateProfile(profileDataLocal));
+  //     setShowAlert({
+  //       show: true,
+  //       message: "Profile updated successfully!",
+  //       severity: "success",
+  //     });
+  //     setOpenEditProfile(false);
+  //   } catch (error) {
+  //     setShowAlert({
+  //       show: true,
+  //       message: "Error updating profile!",
+  //       severity: "error",
+  //     });
+  //   }
+  // };
+
+  // Handle Password Change
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setShowAlert({
+        show: true,
+        message: "Passwords do not match!",
+        severity: "error",
+      });
+      return;
+    }
+    // try {
+    //   await dispatch(changePassword(passwordData as any));
+    //   setShowAlert({
+    //     show: true,
+    //     message: "Password changed successfully!",
+    //     severity: "success",
+    //   });
+    //   setOpenChangePassword(false);
+    //   setPasswordData({
+    //     currentPassword: "",
+    //     newPassword: "",
+    //     confirmPassword: "",
+    //   });
+    // } catch (error) {
+    //   setShowAlert({
+    //     show: true,
+    //     message: "Error changing password!",
+    //     severity: "error",
+    //   });
+    // }
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
-    fontSize: "11px",
-    boxShadow: 24,
-    width: 650,
-    p: 4,
+  // Handle 2FA toggle
+  // const handleTwoFA = async () => {
+  //   try {
+  //     await dispatch(toggle2FA(!twoFAEnabled));
+  //     setTwoFAEnabled(!twoFAEnabled);
+  //     setShowAlert({
+  //       show: true,
+  //       message: `Two-factor authentication ${!twoFAEnabled ? "enabled" : "disabled"}!`,
+  //       severity: "success",
+  //     });
+  //   } catch (error) {
+  //     setShowAlert({
+  //       show: true,
+  //       message: "Error updating 2FA status!",
+  //       severity: "error",
+  //     });
+  //   }
+  // };
+
+  // Handle Profile Data Changes
+  const handleProfileChange = (e: any) => {
+    setProfileDataLocal({
+      ...profileDataLocal,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle Verification Email
+  const handleVerificationEmail = () => {
+    setShowAlert({
+      show: true,
+      message: "Verification email sent!",
+      severity: "success",
+    });
   };
 
   return (
-    loading ? <FullPageLoading /> :
-    <div className="bg-gray-100 flex justify-center items-center p-4">
-      <div className="bg-white w-full p-6 rounded-lg shadow-lg h-screen">
-        {/* Profile Picture */}
-        <div className="flex justify-center mb-6">
-          <img
-            src={user.profilePicture}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-gray-200"
-          />
-        </div>
+    <Box sx={{ p: 3 }}>
+      {showAlert.show && (
+        <Alert
+          // severity={showAlert.severity}
+          onClose={() => setShowAlert({ ...showAlert, show: false })}
+          sx={{ mb: 2 }}
+        >
+          {showAlert.message}
+        </Alert>
+      )}
 
-        {/* Profile Info */}
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-semibold text-gray-800">{user.user_name}</h2>
-          <p className="text-sm text-gray-500">{user.username}</p>
-        </div>
-
-        {/* User Info */}
-        <div className="space-y-4 mb-6">
-          <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Email:</span>
-            <span className="text-gray-800">{user.email}</span>
+      <StyledCard>
+        {loading ? (
+          <div>
+            {/* For other variants, adjust the size with `width` and `height` */}
+            <Skeleton variant="circular" width={100} height={100} />
+            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+            <Skeleton variant="rectangular" width={210} height={60} />
+            <Skeleton variant="rounded" width={210} height={60} />
           </div>
-          <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Mobile:</span>
-            <span className="text-gray-800">{user.mobile}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Type:</span>
-            <span className="text-gray-800">{user.type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Gender:</span>
-            <span className="text-gray-800">{user.gender === "M" ? "Male" : "Female"}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold text-gray-600">Status:</span>
-            <span className="text-gray-800">{user.status === "1" ? "Active" : "DeActive"}</span>
-          </div>
-        </div>
+        ) : (
+          <CardContent>
+            <Grid container spacing={3} alignItems="center">
+              <Grid item>
+                <Avatar
+                  src={"https://www.w3schools.com/w3images/avatar2.png"}
+                  alt={"https://www.w3schools.com/w3images/avatar2.png"}
+                  sx={{ width: 100, height: 100 }}
+                />
+              </Grid>
+              <Grid item xs>
+                <Typography variant="h5" gutterBottom>
+                  {profile?.user_name}
+                </Typography>
+                <Typography color="textSecondary">{profile?.email}</Typography>
+                <Typography color="textSecondary">{profile?.mobile}</Typography>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  onClick={() => setOpenEditProfile(true)}
+                  color="primary"
+                >
+                  <FaEdit />
+                </IconButton>
+              </Grid>
+            </Grid>
 
-        <div className="space-x-2 text-center mb-6 pt-20">
-          <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="bg-blue-500 text-white py-2 px-6 rounded-full hover:bg-blue-600 transition duration-200"
-          >
-            Edit Profile
-          </button>
-          <button
-            onClick={() => setIsChangePasswordModalOpen(true)}
-            className="bg-green-500 text-white py-2 px-6 rounded-full hover:bg-green-600 transition duration-200"
-          >
-            Change Password
-          </button>
-          <button
-            onClick={toggle2FA}
-            className={`py-2 px-6 rounded-full ${is2faActive ? "bg-red-500" : "bg-yellow-500"} text-white hover:bg-opacity-90 transition duration-200`}
-          >
-            {is2faActive ? "Disable 2FA" : "Enable 2FA"}
-          </button>
-        </div>
-      </div>
-
-      {/* Edit Profile Modal */}
-      <Modal open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
-        <Box sx={{ ...style, width: 400 }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Edit Profile
-          </Typography>
-          <form onSubmit={handleSubmitProfile(handleEditProfileSubmit)}>
-            <div className="mt-[20px] grid grid-cols-1 gap-[20px]">
-              {/* Name */}
-              <Controller
-                name="name"
-                control={controlProfile}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Name"
-                    variant="standard"
-                    fullWidth
-                    error={!!profileErrors.name}
-                    helperText={profileErrors.name?.message}
-                  />
-                )}
-              />
-              {/* Email */}
-              <Controller
-                name="email"
-                control={controlProfile}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Email"
-                    variant="standard"
-                    fullWidth
-                    error={!!profileErrors.email}
-                    helperText={profileErrors.email ? profileErrors.email.message : ""}
-                  />
-                )}
-              />
-              {/* Mobile */}
-              <Controller
-                name="mobile"
-                control={controlProfile}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Mobile"
-                    variant="standard"
-                    fullWidth
-                    error={!!profileErrors.mobile}
-                    helperText={profileErrors.mobile ? profileErrors.mobile.message : ""}
-                  />
-                )}
-              />
-              {/* Type */}
-              <Controller
-                name="type"
-                control={controlProfile}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Type"
-                    variant="standard"
-                    fullWidth
-                    error={!!profileErrors.type}
-                    helperText={profileErrors.type ? profileErrors.type.message : ""}
-                    
-                  />
-                )}
-              />
-            </div>
-            <div className="mt-[20px] flex justify-between gap-[10px]">
-              <Button onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-              <LoadingButton type="submit" variant="contained">
-                Save Changes
-              </LoadingButton>
-            </div>
-          </form>
-        </Box>
-      </Modal>
-
-      {/* Change Password Modal */}
-      <Modal
-        open={isChangePasswordModalOpen}
-        onClose={() => setIsChangePasswordModalOpen(false)}
-      >
-        <Box sx={{ ...style, width: 400 }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Change Password
-          </Typography>
-          <form onSubmit={handleSubmitPassword(handleChangePasswordSubmit)}>
-            <div className="mt-[20px] grid grid-cols-1 gap-[20px]">
-              {/* New Password */}
-              <Controller
-                name="newPassword"
-                control={controlPassword}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="New Password"
-                    type="password"
-                    variant="standard"
-                    fullWidth
-                    error={!!passwordErrors.newPassword}
-                    helperText={
-                      passwordErrors.newPassword
-                        ? passwordErrors.newPassword.message
-                        : ""
-                    }
-                  />
-                )}
-              />
-
-              {/* Confirm Password */}
-              <Controller
-                name="confirmPassword"
-                control={controlPassword}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Confirm Password"
-                    type="password"
-                    variant="standard"
-                    fullWidth
-                    error={!!passwordErrors.confirmPassword}
-                    helperText={
-                      passwordErrors.confirmPassword
-                        ? passwordErrors.confirmPassword.message
-                        : ""
-                    }
-                  />
-                )}
-              />
-            </div>
-            <div className="mt-[20px] flex justify-between gap-[10px]">
-              <Button onClick={() => setIsChangePasswordModalOpen(false)}>
-                Cancel
-              </Button>
-              <LoadingButton type="submit" variant="contained">
+            <Box sx={{ mt: 4 }}>
+              <Button
+                variant="outlined"
+                startIcon={<FaKey />}
+                onClick={() => setOpenChangePassword(true)}
+                sx={{ mr: 2 }}
+              >
                 Change Password
-              </LoadingButton>
-            </div>
-          </form>
-        </Box>
-      </Modal>
-    </div>
+              </Button>
+
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <FaShieldAlt style={{ marginRight: 8 }} />
+                    <span>Two-Factor Authentication</span>
+                  </Box>
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Switch
+                    checked={twoFAEnabled}
+                    onChange={() => {}}
+                    color="primary"
+                  />
+                  <Typography variant="body2" sx={{ ml: 1 }}>
+                    {twoFAEnabled ? "Enabled" : "Disabled"}
+                  </Typography>
+                </Box>
+                {twoFAEnabled && (
+                  <Button
+                    variant="contained"
+                    onClick={handleVerificationEmail}
+                    sx={{ mt: 2 }}
+                  >
+                    Send Verification Email
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </CardContent>
+        )}
+      </StyledCard>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={openEditProfile} onClose={() => setOpenEditProfile(false)}>
+        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name"
+            fullWidth
+            name="name"
+            value={profileDataLocal?.user_name}
+            onChange={handleProfileChange}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            type="email"
+            fullWidth
+            name="email"
+            value={profileDataLocal?.email}
+            onChange={handleProfileChange}
+          />
+          <TextField
+            margin="dense"
+            label="Phone"
+            fullWidth
+            name="phone"
+            value={profileDataLocal?.mobile}
+            onChange={handleProfileChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditProfile(false)}>Cancel</Button>
+          <Button onClick={() => {}} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Change Password Dialog */}
+      <Dialog
+        open={openChangePassword}
+        onClose={() => setOpenChangePassword(false)}
+      >
+        <DialogTitle>Change Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Current Password"
+            type="password"
+            fullWidth
+            value={passwordData.currentPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                currentPassword: e.target.value,
+              })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="New Password"
+            type="password"
+            fullWidth
+            value={passwordData.newPassword}
+            onChange={(e) =>
+              setPasswordData({ ...passwordData, newPassword: e.target.value })
+            }
+          />
+          <TextField
+            margin="dense"
+            label="Confirm New Password"
+            type="password"
+            fullWidth
+            value={passwordData.confirmPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenChangePassword(false)}>Cancel</Button>
+          <Button onClick={handleChangePassword} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 
-export default UserProfile;
+export default ProfileComponent;

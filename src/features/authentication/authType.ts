@@ -9,6 +9,12 @@ export type LoginResponse = {
   success: boolean;
   type: string;
 };
+
+export type OTPResponse = {
+  emailId: string,
+  otp: string, 
+  password: string                                                                       
+}
 export type LoginData = {
   token: string;
   status: {

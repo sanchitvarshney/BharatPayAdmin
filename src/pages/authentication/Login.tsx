@@ -7,7 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { showToast } from "@/utills/toasterContext";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { loginUserAsync } from "@/features/authentication/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface LoginFormInputs {
   username: string;
@@ -75,6 +75,11 @@ const Login: React.FC = () => {
                 />
                 {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
               </FormControl>
+            </div>
+            <div className="flex justify-end mt-[5px]">
+              <Link to={"/forgot-password"} className="text-[15px] text-slate-600 underline">
+                Forgot Password
+              </Link>
             </div>
             <div className="mt-[20px]">
               <LoadingButton sx={{ width: "100%" }} variant="contained" type="submit" loading={loading}>
