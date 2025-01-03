@@ -273,9 +273,9 @@ export default RootLayout;
 // ];
 
 export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null => {
-  if (targetUrl === "/") return "dashboard";
-  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id";
-  console.log(menuList, targetUrl);
+  if (targetUrl === "/") return "dashboard"; // Special case for the root URL
+  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id"; // Special case for certain paths
+
   for (const menu of menuList) {
     if (menu.url === targetUrl) {
       axiosInstance.interceptors.request.use(async (config) => {
@@ -287,7 +287,7 @@ export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null
     }
 
     if (menu.children && menu.children.length > 0) {
-      const foundKey = getMenuKeyByUrl(menu.children, targetUrl);
+      const foundKey = getMenuKeyByUrl(menu.children, targetUrl); // Recursively search children
       if (foundKey) {
         axiosInstance.interceptors.request.use(async (config) => {
           config.headers["menuKey"] = foundKey;
@@ -299,5 +299,5 @@ export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null
     }
   }
 
-  return null;
+  return null; // Return null if no match is found
 };
