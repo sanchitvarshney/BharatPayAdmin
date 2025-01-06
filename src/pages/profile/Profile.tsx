@@ -200,14 +200,14 @@ const ProfileComponent = () => {
             </Grid>
 
             <Box sx={{ mt: 4 }}>
-              <Button
+              {/* <Button
                 variant="outlined"
                 startIcon={<FaKey />}
                 onClick={() => setOpenChangePassword(true)}
                 sx={{ mr: 2 }}
               >
                 Change Password
-              </Button>
+              </Button> */}
 
               <Box sx={{ mt: 3 }}>
                 <Typography variant="h6" gutterBottom>
@@ -239,6 +239,26 @@ const ProfileComponent = () => {
             </Box>
           </CardContent>
         )}
+      </StyledCard>
+      <StyledCard
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          border: "none", // Remove the border
+          boxShadow: "none", // Optional: Remove any box shadow if there's one
+        }}
+      >
+        <div className="flex">
+          <Button
+            variant="outlined"
+            startIcon={<FaKey />}
+            onClick={() => setOpenChangePassword(true)}
+            sx={{ mr: 2 }}
+          >
+            Change Password
+          </Button>
+        </div>
       </StyledCard>
 
       {/* Edit Profile Dialog */}

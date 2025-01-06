@@ -99,7 +99,13 @@ const RootLayout: React.FC<Props> = ({ children }) => {
   }, [location]);
 
   const menuKey = useMenuKey();
-console.log(menuKey,"okk");
+
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
+
   const renderMenu = (menu: any, r: any, setSidemenu: any) => {
     return (
       <Accordion type="single" className="w-full" collapsible>
@@ -273,9 +279,9 @@ export default RootLayout;
 // ];
 
 export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null => {
-  if (targetUrl === "/") return "dashboard";
-  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id";
-  console.log(menuList, targetUrl);
+  if (targetUrl === "/") return "dashboard"; // Special case for the root URL
+  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id"; // Special case for certain paths
+
   for (const menu of menuList) {
     if (menu.url === targetUrl) {
       axiosInstance.interceptors.request.use(async (config) => {
@@ -286,18 +292,18 @@ export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null
       
     }
 
-    if (menu.children && menu.children.length > 0) {
-      const foundKey = getMenuKeyByUrl(menu.children, targetUrl);
-      if (foundKey) {
-        axiosInstance.interceptors.request.use(async (config) => {
-          config.headers["menuKey"] = foundKey;
-          return config;
-        });
-        return foundKey;
+    // if (menu.children && menu.children.length > 0) {
+    //   const foundKey = getMenuKeyByUrl(menu.children, targetUrl); // Recursively search children
+    //   if (foundKey) {
+    //     axiosInstance.interceptors.request.use(async (config) => {
+    //       config.headers["menuKey"] = foundKey;
+    //       return config;
+    //     });
+    //     return foundKey;
         
-      }
-    }
+    //   }
+    // }
   }
 
-  return null;
+  return null; // Return null if no match is found
 };
