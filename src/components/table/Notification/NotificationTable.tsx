@@ -11,6 +11,7 @@ import { Icons } from "@/components/icons/icons";
 import SharedDialog from "@/components/shared/SharedDialog";
 import { showToast } from "@/utills/toasterContext";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
+import { findMenuKey } from "@/general";
 
 // TypeScript types for hierarchical menu data and row data
 interface MenuData {
@@ -138,6 +139,15 @@ const NotificationTable = () => {
     { field: "req_code", headerName: "Request Code " },
   ]);
 
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
+
   const defaultColDef = useMemo<ColDef>(
     () => ({
       flex: 1,
@@ -151,6 +161,9 @@ const NotificationTable = () => {
     dispatch(notificationPending()).then((res: any) => {
       if (res?.payload?.data?.success) {
         setRowData(res?.payload?.data?.data);
+      }
+      else{
+        setRowData([]);
       }
     });
   };

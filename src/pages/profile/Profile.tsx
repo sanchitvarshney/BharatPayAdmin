@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Button,
@@ -21,8 +21,9 @@ import { styled } from "@mui/system";
 import { FaEdit, FaKey, FaShieldAlt } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { getUserProfile } from "@/features/profile/ProfileSlice"; // Assuming Redux integration
-import { useAppDispatch } from "@/hooks/useReduxHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { RootState } from "@/features/store";
+import { findMenuKey } from "@/general";
 
 const StyledCard = styled(Card)(() => ({
   maxWidth: 800,
@@ -53,10 +54,20 @@ const ProfileComponent = () => {
   });
 
   const [profileDataLocal, setProfileDataLocal] = useState(profile || {}); // Local state for profile editing
+  const { menuList } = useAppSelector((state: any) => state.menu); 
 
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
+  
   useEffect(() => {
     dispatch(getUserProfile()); // Fetch the user profile on component mount
-  }, [dispatch]);
+  }, [dispatch,menuKey]);
 
   useEffect(() => {
     if (profile) {

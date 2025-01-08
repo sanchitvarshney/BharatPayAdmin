@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { TextField, InputAdornment } from "@mui/material";
 import { Icons } from "@/components/icons/icons";
 import AllocatedLocationTable from "@/components/table/location/AllocatedLocationTable";
+import { useAppSelector } from "@/hooks/useReduxHook";
+import { findMenuKey } from "@/general";
 
 const AllotLocationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const { menuList } = useAppSelector((state: any) => state.menu); 
 
   // Handle the change in search input
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
 
   return (
     <div className="h-full overflow-hidden">

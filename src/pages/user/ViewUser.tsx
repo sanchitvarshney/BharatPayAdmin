@@ -16,7 +16,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 const ViewUser = () => {
   const [value, setValue] = React.useState("1");
   const dispatch = useAppDispatch();
-  const { getUserListLoading, userList } = useAppSelector((state) => state.user);
+  const { getUserListLoading, userList } = useAppSelector(
+    (state) => state.user
+  );
   const { menuList } = useAppSelector((state: any) => state.menu);
 
   // Safe check to ensure menuList is an array before iterating
@@ -36,7 +38,10 @@ const ViewUser = () => {
   };
 
   // UseMemo to memoize the menuKey based on the current URL
-  const menuKey = useMemo(() => findMenuKey(window.location.pathname), [menuList]);
+  const menuKey = useMemo(
+    () => findMenuKey(window.location.pathname),
+    [menuList]
+  );
 
   // Store menuKey in localStorage whenever it changes
   useEffect(() => {
@@ -47,7 +52,7 @@ const ViewUser = () => {
 
   // Fetch user list when menuKey changes
   useEffect(() => {
-      dispatch(getUserList("1"));
+    dispatch(getUserList("1"));
   }, [menuKey, dispatch]);
 
   // Handle radio button change
@@ -66,7 +71,10 @@ const ViewUser = () => {
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-[10px] py-[5px] max-w-max ">
           <Avatar src={"https://material-ui.com/static/images/avatar/1.jpg"} />
-          <Link to={`/user/view-user/${params?.data?.userID}`} className="text-blue-600 flex items-center gap-[5px]">
+          <Link
+            to={`/user/view-user/${params?.data?.userID}`}
+            className="text-blue-600 flex items-center gap-[5px]"
+          >
             {params.value}
             <Icons.followLink fontSize="small" sx={{ fontSize: "15px" }} />
           </Link>
@@ -75,7 +83,13 @@ const ViewUser = () => {
       autoHeight: true,
       flex: 1,
     },
-    { field: "emailID", headerName: "Email", flex: 1, minWidth: 200, maxWidth: 400 },
+    {
+      field: "emailID",
+      headerName: "Email",
+      flex: 1,
+      minWidth: 200,
+      maxWidth: 400,
+    },
     { field: "mobileNo", headerName: "Mobile No." },
     { field: "gender", headerName: "Gender" },
     { field: "role", headerName: "Role" },
@@ -102,8 +116,16 @@ const ViewUser = () => {
             onChange={handleChange}
           >
             <div className="flex items-center gap-[15px]">
-              <FormControlLabel value="1" control={<Radio />} label="Active User" />
-              <FormControlLabel value="0" control={<Radio />} label="Inactive User" />
+              <FormControlLabel
+                value="1"
+                control={<Radio />}
+                label="Active User"
+              />
+              <FormControlLabel
+                value="0"
+                control={<Radio />}
+                label="Inactive User"
+              />
             </div>
           </RadioGroup>
         </div>
