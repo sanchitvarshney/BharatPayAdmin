@@ -160,6 +160,9 @@ const NotificationTable = () => {
   const getDataForTable = async () => {
     dispatch(notificationPending()).then((res: any) => {
       if (res?.payload?.data?.success) {
+        if(res.payload.data.data.length == 0){
+          setRowData([]);
+        };
         setRowData(res?.payload?.data?.data);
       }
       else{

@@ -28,7 +28,7 @@ import {
   Divider,
   InputAdornment,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
@@ -58,6 +58,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { showToast } from "@/utills/toasterContext";
 import { Icons } from "../../components/icons/icons";
 import ShowLog from "./ShowLog";
+import { findMenuKey } from "@/general";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -131,7 +132,8 @@ const UserProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [askPasswordChange, setAskPasswordChange] = useState<boolean>(false);
   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
   const [passwordChange, setPasswordChange] = useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateVerification, setUpdateVerification] = useState<boolean>(false);
@@ -141,6 +143,7 @@ const UserProfile = () => {
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
+  const { menuList } = useAppSelector((state: any) => state.menu);
 
   const ref = React.useRef<HTMLDivElement>(null);
   const ref2 = React.useRef<HTMLDivElement>(null);
@@ -180,6 +183,16 @@ const UserProfile = () => {
     setValue(newValue);
     console.log(event);
   };
+  const menuKey = useMemo(
+    () => findMenuKey("/user/view-user", menuList),
+    [menuList]
+  );
+
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
 
   const handleClick = () => {
     // setAnchorEl(event.currentTarget);
@@ -190,8 +203,8 @@ const UserProfile = () => {
       showToast("Passwords do not match", "error");
       return;
     }
-    
-    const payload :any= {
+
+    const payload: any = {
       userId: userProfile?.id || "",
       password: password,
       ask_password_change: askPasswordChange ? "Y" : "N",
@@ -203,14 +216,16 @@ const UserProfile = () => {
           setResetPassword(false);
           showToast("Password reset successful", "success");
         } else {
-          showToast(res?.payload?.data?.message || "Password reset failed", "error");
+          showToast(
+            res?.payload?.data?.message || "Password reset failed",
+            "error"
+          );
         }
       })
       .finally(() => {
-        setPassword("");});
+        setPassword("");
+      });
   };
-
-  
 
   const handleRequirePasswordChange = (status: any) => {
     setRequiredChangePass(status);
@@ -238,7 +253,7 @@ const UserProfile = () => {
     if (errors.password || errors.confirmPassword) {
       clearErrors("passwordMatch");
     }
-  
+
     // If the passwords don't match, set a custom error
     if (confirmPassword && password !== confirmPassword) {
       setPasswordsMatch(false);
@@ -251,7 +266,7 @@ const UserProfile = () => {
       clearErrors("passwordMatch");
     }
   }, [password, confirmPassword, setError, clearErrors, errors]);
-  
+
   return (
     <>
       <div>
@@ -350,7 +365,13 @@ const UserProfile = () => {
             <div></div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-          <Button onClick={() => {setChangePhone(null);setAskToVerify(false);}} variant="text">
+            <Button
+              onClick={() => {
+                setChangePhone(null);
+                setAskToVerify(false);
+              }}
+              variant="text"
+            >
               Close
             </Button>
             <Button
@@ -380,7 +401,6 @@ const UserProfile = () => {
             >
               Submit
             </Button>
-            
           </div>
         </Popover>
       </div>
@@ -543,7 +563,11 @@ const UserProfile = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={password.length < 8}
-                helperText={password.length < 8 ? "Password must be at least 8 characters" : ""}
+                helperText={
+                  password.length < 8
+                    ? "Password must be at least 8 characters"
+                    : ""
+                }
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -570,7 +594,11 @@ const UserProfile = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={handleClickShowConfirmPassword}>
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -579,7 +607,12 @@ const UserProfile = () => {
 
               {/* Option to force password change on next login */}
               <FormControlLabel
-                control={<Checkbox checked={askPasswordChange} onChange={() => setAskPasswordChange(!askPasswordChange)} />}
+                control={
+                  <Checkbox
+                    checked={askPasswordChange}
+                    onChange={() => setAskPasswordChange(!askPasswordChange)}
+                  />
+                }
                 label="Change Password after first login"
               />
             </div>
@@ -597,7 +630,11 @@ const UserProfile = () => {
                 type="button"
                 variant="contained"
                 onClick={handleSubmit2}
-                disabled={cahngeUserPasswordLoading || !passwordsMatch || password.length < 8}
+                disabled={
+                  cahngeUserPasswordLoading ||
+                  !passwordsMatch ||
+                  password.length < 8
+                }
               >
                 {cahngeUserPasswordLoading ? "Submitting..." : "Submit"}
               </Button>
