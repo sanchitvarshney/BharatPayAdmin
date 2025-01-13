@@ -3,8 +3,8 @@ import {
   Box,
   Tab,
   Button,
-  SelectChangeEvent,
-  FormControl,
+  // SelectChangeEvent,
+  // FormControl,
   Select,
   MenuItem,
   Modal,
@@ -35,8 +35,8 @@ import { useParams } from "react-router-dom";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { FaChevronDown } from "react-icons/fa";
 import { RiPencilFill } from "react-icons/ri";
-import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa6";
+// import { FaChevronLeft } from "react-icons/fa";
+// import { FaChevronRight } from "react-icons/fa6";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
 import {
@@ -107,7 +107,7 @@ function a11yProps(index: number) {
 }
 const UserProfile = () => {
   const [value, setValue] = React.useState(0);
-  const [age, setAge] = React.useState("");
+  // const [age, setAge] = React.useState("");
   const [resetpassword, setResetPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [mobile, setMobile] = useState<string>("");
@@ -175,9 +175,9 @@ const UserProfile = () => {
   });
   // Watch the password and confirm password fields
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
-  };
+  // const handleSelectChange = (event: SelectChangeEvent) => {
+  //   setAge(event.target.value as string);
+  // };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -194,6 +194,13 @@ const UserProfile = () => {
     }
   }, [menuKey]);
 
+  useEffect(() => {
+    if (userProfile) {
+      setGender(userProfile?.gender || "");
+      setStatus(userProfile?.status || "");
+    }
+  }, [userProfile]);
+console.log(gender,userProfile)
   const handleClick = () => {
     // setAnchorEl(event.currentTarget);
     setResetPassword(true);
@@ -229,7 +236,6 @@ const UserProfile = () => {
 
   const handleRequirePasswordChange = (status: any) => {
     setRequiredChangePass(status);
-    console.log(userProfile);
     // setResetPassword(true);
     const payload = {
       userId: userProfile ? userProfile?.id || "" : "",
@@ -248,7 +254,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     dispatch(getUserProfile(params.id || ""));
-  }, [params]);
+  }, [params,menuKey]);
+  
   useEffect(() => {
     if (errors.password || errors.confirmPassword) {
       clearErrors("passwordMatch");
@@ -451,6 +458,15 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+          <Button
+              onClick={() => {
+                setAskToVerify(false);
+                setChangeEmail(null);
+              }}
+              variant="text"
+            >
+              Close
+            </Button>
             <Button
               disabled={updateUserEmailLoading}
               onClick={() => {
@@ -477,7 +493,7 @@ const UserProfile = () => {
               }}
               type="submit"
             >
-              Close
+              Submit
             </Button>
           </div>
         </Popover>
@@ -788,6 +804,7 @@ const UserProfile = () => {
                 alignItems: "center", // Ensures vertical alignment
                 gap: 2, // Adds spacing between elements
               }}
+              value={gender}
             >
               <FormControlLabel
                 value="M"
@@ -960,6 +977,7 @@ const UserProfile = () => {
                   value={verification}
                   onChange={(e) => setVerification(e.target.value)}
                   sx={{ width: 200 }} // You can adjust the width as needed
+                  placeholder="Select Verification"
                 >
                   {verificationTypes.map((type) => (
                     <MenuItem key={type.value} value={type.value}>
@@ -1400,7 +1418,7 @@ const UserProfile = () => {
                   <div className="h-full pb-[40px] overflow-y-auto">
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
-                      <p>Calendar log events</p>
+                      <p>User Login Logs</p>
                       <Button onClick={() => setOpen("login")}>
                         View Logs
                       </Button>
@@ -1408,7 +1426,7 @@ const UserProfile = () => {
                   </div>
                   <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
                     <div className="">
-                      <div className="flex items-center gap-[10px]">
+                      {/* <div className="flex items-center gap-[10px]">
                         <p className="whitespace-nowrap">Rows per page</p>
                         <FormControl fullWidth>
                           <Select
@@ -1429,12 +1447,12 @@ const UserProfile = () => {
                             <MenuItem value={30}>30</MenuItem>
                           </Select>
                         </FormControl>
-                      </div>
+                      </div> */}
                     </div>
-                    <div>
+                    {/* <div>
                       <p>1‑22 of 22</p>
-                    </div>
-                    <div className="flex items-center gap-[20px]">
+                    </div> */}
+                    {/* <div className="flex items-center gap-[20px]">
                       <Button
                         sx={{
                           padding: "0px",
@@ -1455,11 +1473,11 @@ const UserProfile = () => {
                       >
                         <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
-              <div className="mt-[50px]">
+              {/* <div className="mt-[50px]">
                 <p>Check log events for issues related to this user.</p>
                 <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
                   <div className="h-full pb-[40px] overflow-y-auto">
@@ -1584,7 +1602,7 @@ const UserProfile = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </CustomTabPanel>
           </div>
         </div>

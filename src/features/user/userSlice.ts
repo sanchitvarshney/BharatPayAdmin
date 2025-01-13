@@ -60,6 +60,9 @@ export const getUserProfile = createAsyncThunk<
   string
 >("user/getUserProfile", async (id) => {
   const response = await axiosInstance.get(`/user/details/${id}`);
+  if (response.data.success) {
+    showToast("Data Fetched Successfully", "success");
+  }
   return response;
 });
 export const changeuserPasword = createAsyncThunk<

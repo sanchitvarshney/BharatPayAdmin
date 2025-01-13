@@ -92,7 +92,6 @@ const PermissionList: React.FC = () => {
         canAdd: isAdd,
         canDelete: isDelete,
       };
-      // console.log("payload", payload);
       // return;
       dispatch(saveRoleMenuPermission(payload)).then((res: any) => {
         if (res?.payload?.data?.success) {

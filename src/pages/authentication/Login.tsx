@@ -67,8 +67,8 @@ const Login: React.FC = () => {
               <input
                 id="username"
                 type="text"
-                placeholder="Email address"
-                autoComplete="email"
+                placeholder="User Name"
+                autoComplete="text"
                 {...register("username", {
                   required: "User Name is required",
                 })}
