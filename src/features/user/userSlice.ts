@@ -66,11 +66,15 @@ export const changeuserPasword = createAsyncThunk<
   AxiosResponse<ChangePasswordResponse>,
   ChangeUserPasswordPayload
 >("user/changeuserPasword", async (paylod) => {
-  const response = await axiosInstance.put(
-    `/user/change-user-password`,
-    paylod
-  );
-  return response;
+  try {
+    const response = await axiosInstance.put(
+      `/user/change-user-password`,
+      paylod
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
 });
 export const updateUserEmail = createAsyncThunk<
   AxiosResponse<ChangePasswordResponse>,
@@ -212,11 +216,13 @@ const userSlice = createSlice({
       })
       .addCase(changeuserPasword.fulfilled, (state, action) => {
         state.cahngeUserPasswordLoading = false;
-        if (action.payload.data.success) {
+        if (action?.payload?.data?.success == true) {
           showToast(
             action.payload?.data?.message || "Password changed successfully",
             "success"
           );
+        } else {
+          state.cahngeUserPasswordLoading = false;
         }
       })
       .addCase(changeuserPasword.rejected, (state) => {

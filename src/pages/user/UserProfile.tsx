@@ -210,21 +210,15 @@ const UserProfile = () => {
       ask_password_change: askPasswordChange ? "Y" : "N",
     };
 
-    dispatch(changeuserPasword(payload))
-      .then((res: any) => {
-        if (res?.payload?.data?.success) {
-          setResetPassword(false);
-          showToast("Password reset successful", "success");
-        } else {
-          showToast(
-            res?.payload?.data?.message || "Password reset failed",
-            "error"
-          );
-        }
-      })
-      .finally(() => {
-        setPassword("");
-      });
+    dispatch(changeuserPasword(payload)).then((res: any) => {
+      setOpen(false);
+      setResetPassword(false);
+      if (res?.payload?.data?.success) {
+        showToast("Password reset successful", "success");
+      } else {
+        showToast(res?.payload?.response?.data?.message, "error");
+      }
+    });
   };
 
   const handleRequirePasswordChange = (status: any) => {
@@ -244,6 +238,9 @@ const UserProfile = () => {
   };
   const handleClose = () => {
     setOpen(false);
+    setResetPassword(false);
+    setPassword("");
+    setConfirmPassword("");
   };
 
   useEffect(() => {
@@ -1355,7 +1352,7 @@ const UserProfile = () => {
                 >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Password</p>
-                    <p className="text-zinc-400 font-[300]">Reset PASSWORD</p>
+                    <p className="text-zinc-400 font-[300]">Reset Password</p>
                     <div className="flex items-end justify-end">
                       <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
                     </div>
@@ -1459,7 +1456,7 @@ const UserProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-[50px]">
+              {/* <div className="mt-[50px]">
                 <p>Check log events for issues related to this user.</p>
                 <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
                   <div className="h-full pb-[40px] overflow-y-auto">
@@ -1584,7 +1581,7 @@ const UserProfile = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </CustomTabPanel>
           </div>
         </div>
