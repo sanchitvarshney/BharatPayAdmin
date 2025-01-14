@@ -1139,7 +1139,7 @@ const UserProfile = () => {
                   disabled={!userProfile}
                   onClick={() => setUpdateStatus(true)}
                 >
-                  <Typography fontSize={15} fontWeight={500}>
+                  <Typography fontSize={15} fontWeight={500} variant="inherit">
                     UPDATE STATUS
                   </Typography>
                 </ListItemButton>
@@ -1426,8 +1426,8 @@ const UserProfile = () => {
             <CustomTabPanel value={value} index={2}>
               <div>
                 <p>Check log events for user login logs.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
-                  <div className="h-full pb-[40px] overflow-y-auto">
+                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]">
+                  <div className="h-full overflow-y-auto">
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
                       <p>User Login Logs</p>
