@@ -219,13 +219,14 @@ const UserProfile = () => {
       ask_password_change: askPasswordChange ? "Y" : "N",
     };
 
-    dispatch(changeUserPassword(payload)).then((res: any) => {
+    dispatch(changeUserPassword(payload) as any).then((res: any) => {
       setOpen(false);
       setResetPassword(false);
+      console.log(res)
       if (res?.payload?.data?.success) {
         showToast("Password reset successful", "success");
       } else {
-        showToast(res?.payload?.response?.data?.message, "error");
+        showToast(res?.payload, "error");
       }
     });
   };
