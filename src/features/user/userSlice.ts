@@ -65,25 +65,37 @@ export const getUserProfile = createAsyncThunk<
   }
   return response;
 });
+
 export const changeUserPassword = createAsyncThunk<
-  AxiosResponse<ChangePasswordResponse>, // Success type
-  ChangeUserPasswordPayload, // Payload type
-  { rejectValue: string } // Error type (reject value)
->(
-  'user/changeUserPassword',
-  async (payload, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.put(
-        '/user/change-user-password',
-        payload
-      );
-      return response; // Success return
-    } catch (error) {
-      // Handle the error and return a rejectWithValue
-      return rejectWithValue('Failed to change password');
-    }
+  AxiosResponse<ChangePasswordResponse>,  // The success response type
+  ChangeUserPasswordPayload,             // The payload type
+  { rejectValue: string }               // Type for reject value, assuming an error message
+>("user/changeuserPassword", async (payload, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.put(
+      `/user/change-user-password`,
+      payload
+    );
+    return response;  // Return the success response
+  } catch (error:any) {
+    console.log(error.response.data.message);
+    // Handle error by returning a rejected value with the proper type
+    return rejectWithValue(error.response.data.message);
   }
-);
+});
+
+// export const changeUserPassword = createAsyncThunk<
+// AxiosResponse<ChangePasswordResponse>,
+// ChangeUserPasswordPayload
+// >("user/changeuserPasword", async (paylod) => {
+//   const response = await axiosInstance.put(
+//     `/user/change-user-password`,
+//     paylod
+//   );
+//   console.log(response)
+//   return response;
+// });
+
 export const updateUserEmail = createAsyncThunk<
   AxiosResponse<ChangePasswordResponse>,
   UpdateEmailPayload
