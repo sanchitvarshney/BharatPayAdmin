@@ -1,13 +1,15 @@
 import { Typography, TextField, Checkbox, FormControlLabel, CircularProgress, IconButton, InputAdornment } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { allotLocation, getLocationList } from "@/features/location/locationSlice";
 import { showToast } from "@/utills/toasterContext";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Icons } from "@/components/icons/icons";
+import { findMenuKey } from "@/general";
 
 const LocationList = () => {
   const dispatch = useAppDispatch();
+  const { menuList } = useAppSelector((state: any) => state.menu); 
   const { locationList, loading } = useAppSelector((state) => state.location);
   const [moduleName, setModuleName] = useState<string>(""); // State for module name
   const [moduleDescription, setModuleDescription] = useState(""); // State for module description
@@ -43,6 +45,16 @@ const LocationList = () => {
       }
     });
   };
+
+
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
 
   useEffect(() => {
     dispatch(getLocationList());

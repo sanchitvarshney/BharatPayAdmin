@@ -1,15 +1,16 @@
 import PermissionTable from "@/components/table/permissions/PermissionTable";
 import { getRoleMenu, getUserMenu, saveRoleMenuPermission, saveUserMenuPermission } from "@/features/menu/menuSlice";
-import { useAppDispatch } from "@/hooks/useReduxHook";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { Autocomplete, FormControl, TextField } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { getRoleList } from "@/features/permission/permissionSlice";
 import { setIsId } from "@/features/menu/isIdReducer";
 import { showToast } from "@/utills/toasterContext";
 import SelectUser, { UserType } from "@/components/reusable/selectors/SelectUser";
+import { findMenuKey } from "@/general";
 const schema = z.object({
   type: z.string().nonempty("Project name is required"),
   role: z.string().nonempty("Page name is required"),
@@ -24,6 +25,7 @@ const PermissionList: React.FC = () => {
   const [selectedType, setSelectedType] = React.useState<any>("");
   const [user, setUser] = React.useState<UserType | null>(null);
   // const isId = useSelector((state: RootState) => state.isId.isId);
+  const { menuList } = useAppSelector((state: any) => state.menu); 
   const {
     // handleSubmit,
     control,
@@ -39,6 +41,14 @@ const PermissionList: React.FC = () => {
   });
 
   const dispatch = useAppDispatch();
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
+  
   useEffect(() => {
     // dispatch(getMenuList());
     dispatch(getRoleList()).then((res: any) => {
@@ -52,7 +62,7 @@ const PermissionList: React.FC = () => {
         setRoleOptions(arr);
       }
     });
-  }, []);
+  }, [menuKey]);
   const updateRow = (value: any, isView: boolean, isedit: boolean, isAdd: boolean, isDelete: boolean) => {
     let newtype = localStorage.getItem("selectedType");
     if (newtype == "User") {
@@ -82,7 +92,6 @@ const PermissionList: React.FC = () => {
         canAdd: isAdd,
         canDelete: isDelete,
       };
-      // console.log("payload", payload);
       // return;
       dispatch(saveRoleMenuPermission(payload)).then((res: any) => {
         if (res?.payload?.data?.success) {

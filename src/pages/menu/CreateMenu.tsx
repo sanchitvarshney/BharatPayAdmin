@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { InputLabel, MenuItem, TextField, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { createMasterMenu } from "@/features/menu/menuSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Icons } from "@/components/icons/icons";
+import { findMenuKey } from "@/general";
 
 // Define Zod schema
 const schema = z.object({
@@ -39,7 +40,16 @@ const CreateMenu: React.FC = () => {
       order: undefined,
       description: "",
     },
-  });
+  }); const { menuList } = useAppSelector((state: any) => state.menu); 
+
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
 
   const onSubmit = (data: FormValues) => {
     const payload: any = {

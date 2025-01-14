@@ -113,7 +113,6 @@ const AddNewUser: React.FC = () => {
   
     // Store menuKey in localStorage whenever it changes
     useEffect(() => {
-      console.log(menuKey)
       if (menuKey) {
         localStorage.setItem("menuKey", menuKey);
       }

@@ -285,24 +285,24 @@ export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null
   for (const menu of menuList) {
     if (menu.url === targetUrl) {
       axiosInstance.interceptors.request.use(async (config) => {
-        config.headers["menuKey"] = menu.menu_key;
+        // config.headers["menuKey"] = menu.menu_key;
         return config;
       });
       return menu.menu_key;
       
     }
 
-    // if (menu.children && menu.children.length > 0) {
-    //   const foundKey = getMenuKeyByUrl(menu.children, targetUrl); // Recursively search children
-    //   if (foundKey) {
-    //     axiosInstance.interceptors.request.use(async (config) => {
-    //       config.headers["menuKey"] = foundKey;
-    //       return config;
-    //     });
-    //     return foundKey;
+    if (menu.children && menu.children.length > 0) {
+      const foundKey = getMenuKeyByUrl(menu.children, targetUrl); // Recursively search children
+      if (foundKey) {
+        axiosInstance.interceptors.request.use(async (config) => {
+          // config.headers["menuKey"] = foundKey;
+          return config;
+        });
+        return foundKey;
         
-    //   }
-    // }
+      }
+    }
   }
 
   return null; // Return null if no match is found

@@ -1,13 +1,15 @@
 import { Icons } from "@/components/icons/icons";
 import MenuListTable from "@/components/table/menu/MenuListTable";
 import { getAdminMenuList, getMenuList } from "@/features/menu/menuSlice";
-import { useAppDispatch } from "@/hooks/useReduxHook";
+import { findMenuKey } from "@/general";
+import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { FormControlLabel, IconButton, Radio, RadioGroup } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 const MenuList: React.FC = () => {
   const [value, setValue] = React.useState("1");  // state to store radio value
   const dispatch = useAppDispatch();
+  const { menuList } = useAppSelector((state: any) => state.menu); 
 
   // Handle radio button change
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,6 +24,14 @@ const MenuList: React.FC = () => {
     }
   };
 
+  // UseMemo to memoize the menuKey based on the current URL
+  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  // Store menuKey in localStorage whenever it changes
+  useEffect(() => {
+    if (menuKey) {
+      localStorage.setItem("menuKey", menuKey);
+    }
+  }, [menuKey]);
   // Fetch IMS menu initially
   useEffect(() => {
     dispatch(getMenuList());

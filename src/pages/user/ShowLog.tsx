@@ -53,11 +53,10 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
     { field: "Status", headerName: "Status" },
     { field: "LogID", headerName: "userID", hide: true },
   ];
-  console.log("open", open);
+
   const getDataForTable = async () => {
     dispatch(userLoginLogs(params?.id)).then((res: any) => {
       if (res?.payload?.data?.success) {
-        console.log("response", res);
         setRows(res?.payload?.data?.data);
       }
     });
