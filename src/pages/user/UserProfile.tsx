@@ -31,9 +31,10 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { FaChevronDown } from "react-icons/fa";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { RiPencilFill } from "react-icons/ri";
 // import { FaChevronLeft } from "react-icons/fa";
 // import { FaChevronRight } from "react-icons/fa6";
@@ -106,6 +107,7 @@ function a11yProps(index: number) {
   };
 }
 const UserProfile = () => {
+  const navigate = useNavigate();
   const [value, setValue] = React.useState(0);
   // const [age, setAge] = React.useState("");
   const [resetpassword, setResetPassword] = useState<boolean>(false);
@@ -251,8 +253,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     dispatch(getUserProfile(params.id || ""));
-  }, [params,menuKey]);
-  
+  }, [params, menuKey]);
+
   useEffect(() => {
     if (errors.password || errors.confirmPassword) {
       clearErrors("passwordMatch");
@@ -455,7 +457,7 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-          <Button
+            <Button
               onClick={() => {
                 setAskToVerify(false);
                 setChangeEmail(null);
@@ -1024,7 +1026,20 @@ const UserProfile = () => {
       </Modal>
       <div className=" grid grid-cols-[330px_1fr]">
         <div className="h-[calc(100vh-70px)]   overflow-y-auto p-[20px] ">
-          <div className="w-full h-full rounded-sm shadow shadow-stone-400">
+          {" "}
+          <Button
+            onClick={() => navigate(-1)} // Navigate back
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              minWidth: 0,
+              padding: 0,
+            }}
+          >
+            <IoMdArrowRoundBack className="h-[28px] w-[28px] text-stone-400" />
+          </Button>
+          <div className="w-full rounded-sm shadow shadow-stone-400">
             <div className="profile p-[20px] flex overflow-hidden gap-[10px] border-b h-[200px]">
               <Avatar className="border h-[50px] w-[50px]">
                 {getUserProfileLoading ? (

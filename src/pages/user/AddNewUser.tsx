@@ -33,11 +33,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const AddNewUser: React.FC = () => {
-  const userTypes = [
-    { label: "User", value: "user" },
-    { label: "Admin", value: "admin" },
-    { label: "Developer", value: "developer" },
-  ];
+  // const userTypes = [
+  //   { label: "User", value: "user" },
+  //   { label: "Admin", value: "admin" },
+  //   { label: "Developer", value: "developer" },
+  // ];
 
   const authTypes = [
     { label: "Email", value: "E" },
@@ -130,7 +130,7 @@ const AddNewUser: React.FC = () => {
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-[20px] grid grid-cols-2 max-w-[70%] gap-[20px]">
-            <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="First Name" variant="filled" error={!!errors.name} helperText={errors.name?.message} />} />
+            <Controller name="name" control={control} render={({ field }) => <TextField {...field} label="Name" variant="filled" error={!!errors.name} helperText={errors.name?.message} />} />
             <Controller name="email" control={control} render={({ field }) => <TextField {...field} label="Email" variant="filled" error={!!errors.email} helperText={errors.email?.message} />} />
             <Controller name="mobile" control={control} render={({ field }) => <TextField {...field} label="Mobile No." variant="filled" error={!!errors.mobile} helperText={errors.mobile?.message} />} />
             <Controller name="password" control={control} render={({ field }) => <TextField {...field} label="Password" type="password" variant="filled" error={!!errors.password} helperText={errors.password?.message} />} />
@@ -194,7 +194,7 @@ const AddNewUser: React.FC = () => {
             />
 
             {/* User Type Select */}
-            <Controller
+            {/* <Controller
               name="userType"
               control={control}
               render={({ field }) => (
@@ -210,7 +210,7 @@ const AddNewUser: React.FC = () => {
                   <p className="text-red-500">{errors.userType?.message}</p>
                 </FormControl>
               )}
-            />
+            /> */}
           </div>
           <div className="mt-[20px]">
             <LoadingButton startIcon={<Icons.save fontSize="small" />} loading={addUserloading} type="submit" variant="contained">
