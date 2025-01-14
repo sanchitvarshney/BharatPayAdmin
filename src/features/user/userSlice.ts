@@ -65,20 +65,25 @@ export const getUserProfile = createAsyncThunk<
   }
   return response;
 });
-export const changeuserPasword = createAsyncThunk<
-  AxiosResponse<ChangePasswordResponse>,
-  ChangeUserPasswordPayload
->("user/changeuserPasword", async (paylod) => {
-  try {
-    const response = await axiosInstance.put(
-      `/user/change-user-password`,
-      paylod
-    );
-    return response;
-  } catch (error) {
-    return error;
+export const changeUserPassword = createAsyncThunk<
+  AxiosResponse<ChangePasswordResponse>, // Success type
+  ChangeUserPasswordPayload, // Payload type
+  { rejectValue: string } // Error type (reject value)
+>(
+  'user/changeUserPassword',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(
+        '/user/change-user-password',
+        payload
+      );
+      return response; // Success return
+    } catch (error) {
+      // Handle the error and return a rejectWithValue
+      return rejectWithValue('Failed to change password');
+    }
   }
-});
+);
 export const updateUserEmail = createAsyncThunk<
   AxiosResponse<ChangePasswordResponse>,
   UpdateEmailPayload
@@ -214,10 +219,10 @@ const userSlice = createSlice({
         state.getUserProfileLoading = false;
         state.userProfile = [];
       })
-      .addCase(changeuserPasword.pending, (state) => {
+      .addCase(changeUserPassword.pending, (state) => {
         state.cahngeUserPasswordLoading = true;
       })
-      .addCase(changeuserPasword.fulfilled, (state, action) => {
+      .addCase(changeUserPassword.fulfilled, (state, action) => {
         state.cahngeUserPasswordLoading = false;
         if (action?.payload?.data?.success == true) {
           showToast(
@@ -228,7 +233,7 @@ const userSlice = createSlice({
           state.cahngeUserPasswordLoading = false;
         }
       })
-      .addCase(changeuserPasword.rejected, (state) => {
+      .addCase(changeUserPassword.rejected, (state) => {
         state.cahngeUserPasswordLoading = false;
       })
       .addCase(updateUserEmail.pending, (state) => {

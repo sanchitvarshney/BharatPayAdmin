@@ -41,7 +41,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
 import {
   activateUser,
-  changeuserPasword,
+  changeUserPassword,
   getUserProfile,
   requirePasswordChange,
   suspendUser,
@@ -200,7 +200,7 @@ const UserProfile = () => {
       setStatus(userProfile?.status || "");
     }
   }, [userProfile]);
-console.log(gender,userProfile)
+
   const handleClick = () => {
     // setAnchorEl(event.currentTarget);
     setResetPassword(true);
@@ -217,7 +217,7 @@ console.log(gender,userProfile)
       ask_password_change: askPasswordChange ? "Y" : "N",
     };
 
-    dispatch(changeuserPasword(payload)).then((res: any) => {
+    dispatch(changeUserPassword(payload)).then((res: any) => {
       setOpen(false);
       setResetPassword(false);
       if (res?.payload?.data?.success) {
