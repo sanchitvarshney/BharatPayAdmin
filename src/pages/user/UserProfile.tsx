@@ -1424,198 +1424,21 @@ const UserProfile = () => {
                 </div>
               </div>
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
+            <CustomTabPanel value={value} index={2} >
               <div>
                 <p>Check log events for user login logs.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]">
+                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]" onClick={() => setOpen("login")}>
                   <div className="h-full overflow-y-auto">
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
                       <p>User Login Logs</p>
-                      <Button onClick={() => setOpen("login")}>
+                      <Button >
                         View Logs
                       </Button>
                     </div>
                   </div>
-                  <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
-                    <div className="">
-                      {/* <div className="flex items-center gap-[10px]">
-                        <p className="whitespace-nowrap">Rows per page</p>
-                        <FormControl fullWidth>
-                          <Select
-                            inputProps={{ "aria-label": "Without label" }}
-                            labelId="demo-simple-select-label"
-                            sx={{
-                              padding: "0px",
-                              height: "30px",
-                              width: "80px",
-                            }}
-                            id="demo-simple-select"
-                            value={age}
-                            label=""
-                            onChange={handleSelectChange}
-                          >
-                            <MenuItem value={10}>10</MenuItem>
-                            <MenuItem value={20}>40</MenuItem>
-                            <MenuItem value={30}>30</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </div> */}
-                    </div>
-                    {/* <div>
-                      <p>1‑22 of 22</p>
-                    </div> */}
-                    {/* <div className="flex items-center gap-[20px]">
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                    </div> */}
-                  </div>
                 </div>
               </div>
-              {/* <div className="mt-[50px]">
-                <p>Check log events for issues related to this user.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
-                  <div className="h-full pb-[40px] overflow-y-auto">
-                    <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
-                      <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
-                      <p>Calendar log events</p>
-                      <Button>View Logs</Button>
-                    </div>
-                  </div>
-                  <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
-                    <div className="">
-                      <div className="flex items-center gap-[10px]">
-                        <p className="whitespace-nowrap">Rows per page</p>
-                        <FormControl fullWidth>
-                          <Select
-                            inputProps={{ "aria-label": "Without label" }}
-                            labelId="demo-simple-select-label"
-                            sx={{
-                              padding: "0px",
-                              height: "30px",
-                              width: "80px",
-                            }}
-                            id="demo-simple-select"
-                            value={age}
-                            label=""
-                            onChange={handleSelectChange}
-                          >
-                            <MenuItem value={10}>10</MenuItem>
-                            <MenuItem value={20}>40</MenuItem>
-                            <MenuItem value={30}>30</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div>
-                    <div>
-                      <p>1‑22 of 22</p>
-                    </div>
-                    <div className="flex items-center gap-[20px]">
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-[50px]">
-                <p>Audit logs related to this user.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative">
-                  <div className="h-full pb-[40px] overflow-y-auto">
-                    <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
-                      <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
-                      <p>Calendar log events</p>
-                      <Button>View Logs</Button>
-                    </div>
-                  </div>
-                  <div className="h-[40px] absolute bottom-0 w-full flex justify-end items-center px-[20px] gap-[20px]">
-                    <div className="">
-                      <div className="flex items-center gap-[10px]">
-                        <p className="whitespace-nowrap">Rows per page</p>
-                        <FormControl fullWidth>
-                          <Select
-                            inputProps={{ "aria-label": "Without label" }}
-                            labelId="demo-simple-select-label"
-                            sx={{
-                              padding: "0px",
-                              height: "30px",
-                              width: "80px",
-                            }}
-                            id="demo-simple-select"
-                            value={age}
-                            label=""
-                            onChange={handleSelectChange}
-                          >
-                            <MenuItem value={10}>10</MenuItem>
-                            <MenuItem value={20}>40</MenuItem>
-                            <MenuItem value={30}>30</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    </div>
-                    <div>
-                      <p>1‑22 of 22</p>
-                    </div>
-                    <div className="flex items-center gap-[20px]">
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronLeft className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                      <Button
-                        sx={{
-                          padding: "0px",
-                          width: "30px",
-                          minWidth: "0px",
-                          height: "30px",
-                        }}
-                      >
-                        <FaChevronRight className="h-[18px] w-[18px] text-zinc-700" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </CustomTabPanel>
           </div>
         </div>
