@@ -53,6 +53,7 @@ const ViewUser = () => {
       headerName: "Name",
       minWidth: 200,
       maxWidth: 400,
+      filter: true,
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-[10px] py-[5px] max-w-max ">
           <Avatar src={"https://material-ui.com/static/images/avatar/1.jpg"} />
@@ -74,10 +75,11 @@ const ViewUser = () => {
       flex: 1,
       minWidth: 200,
       maxWidth: 400,
+      filter: true,
     },
-    { field: "mobileNo", headerName: "Mobile No." },
+    { field: "mobileNo", headerName: "Mobile No.",filter: true},
     { field: "gender", headerName: "Gender" },
-    { field: "role", headerName: "Role" },
+    { field: "role", headerName: "Role",filter: true },
     { field: "userID", headerName: "userID", hide: true },
   ];
 
