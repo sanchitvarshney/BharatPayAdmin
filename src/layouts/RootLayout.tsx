@@ -280,7 +280,6 @@ export default RootLayout;
 
 export const getMenuKeyByUrl = (menuList: any, targetUrl: string): string | null => {
   if (targetUrl === "/") return "dashboard"; // Special case for the root URL
-  if (targetUrl.includes("/view-user/CRN")) return "/user/view-user/:id"; // Special case for certain paths
 
   for (const menu of menuList) {
     if (menu.url === targetUrl) {
