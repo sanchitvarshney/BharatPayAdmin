@@ -222,7 +222,6 @@ const UserProfile = () => {
     dispatch(changeUserPassword(payload) as any).then((res: any) => {
       setOpen(false);
       setResetPassword(false);
-      console.log(res)
       if (res?.payload?.data?.success) {
         showToast("Password reset successful", "success");
       } else {
@@ -578,9 +577,9 @@ const UserProfile = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                error={password.length < 8}
+                error={password.length > 0 && password.length < 8} // Only show error if password is non-empty and less than 8 characters
                 helperText={
-                  password.length < 8
+                  password.length > 0 && password.length < 8
                     ? "Password must be at least 8 characters"
                     : ""
                 }
@@ -604,8 +603,14 @@ const UserProfile = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!passwordsMatch}
-                helperText={!passwordsMatch ? "Passwords do not match" : ""}
+                error={
+                  password !== confirmPassword && confirmPassword.length > 0
+                } // Show error if passwords don't match
+                helperText={
+                  password !== confirmPassword && confirmPassword.length > 0
+                    ? "Passwords do not match"
+                    : ""
+                }
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -648,8 +653,8 @@ const UserProfile = () => {
                 onClick={handleSubmit2}
                 disabled={
                   cahngeUserPasswordLoading ||
-                  !passwordsMatch ||
-                  password.length < 8
+                  password.length < 8 ||
+                  password !== confirmPassword // Ensure password is at least 8 characters and matches
                 }
               >
                 {cahngeUserPasswordLoading ? "Submitting..." : "Submit"}
@@ -661,6 +666,7 @@ const UserProfile = () => {
           </div>
         </Box>
       </Modal>
+
       <Modal
         open={suspend}
         onClose={setSuspend}
@@ -1424,17 +1430,18 @@ const UserProfile = () => {
                 </div>
               </div>
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={2} >
+            <CustomTabPanel value={value} index={2}>
               <div>
                 <p>Check log events for user login logs.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]" onClick={() => setOpen("login")}>
+                <div
+                  className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]"
+                  onClick={() => setOpen("login")}
+                >
                   <div className="h-full overflow-y-auto">
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
                       <p>User Login Logs</p>
-                      <Button >
-                        View Logs
-                      </Button>
+                      <Button>View Logs</Button>
                     </div>
                   </div>
                 </div>
