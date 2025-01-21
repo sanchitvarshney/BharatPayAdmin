@@ -3,6 +3,7 @@ import { getToken, setToken } from "@/utills/tokenUtills";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import { AuthState, LoginResponse, OTPResponse } from "./authType";
+import { showToast } from "@/utills/toasterContext";
 
 export type LoginCredentials = {
   username: string;
@@ -13,6 +14,9 @@ const initialState: AuthState = {
   user: null,
   loading: false,
   token: getToken(),
+  changepasswordloading: false,
+  updateEmailLoading: false,
+  emailOtpLoading: false,
 };
 
 export const loginUserAsync = createAsyncThunk<AxiosResponse<LoginResponse>, LoginCredentials>("auth/signin", async (loginCredential) => {
@@ -45,6 +49,21 @@ export const verifyOtp = createAsyncThunk<AxiosResponse<OTPResponse>, LoginCrede
   return response;
 });
 
+export const changePasswordAsync = createAsyncThunk<AxiosResponse<{ success: boolean; message: string }>, any>("auth/changePassword", async (payload) => {
+  const response = await axiosInstance.put("/user/change-my-password", payload);
+  return response;
+});
+
+export const updateEmailAsync = createAsyncThunk<AxiosResponse<{ success: boolean; message: string }>, { emailId: string; otp: string }>("auth/updateEmailAsync", async (paylaod) => {
+  const response = await axiosInstance.put("/user/verify-email-otp", paylaod);
+  return response;
+});
+
+export const getEmailOtpAsync = createAsyncThunk<AxiosResponse<{ success: boolean; message: string }>>("auth/getEmailOtpAsycn", async () => {
+  const response = await axiosInstance.get("/user/get-email-otp");
+  return response;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -71,6 +90,42 @@ const authSlice = createSlice({
       })
       .addCase(loginUserAsync.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(updateEmailAsync.pending, (state) => {
+        state.updateEmailLoading = true;
+      })
+      .addCase(updateEmailAsync.fulfilled, (state, action) => {
+        state.updateEmailLoading = false;
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+      })
+      .addCase(updateEmailAsync.rejected, (state) => {
+        state.updateEmailLoading = false;
+      })
+      .addCase(getEmailOtpAsync.pending, (state) => {
+        state.emailOtpLoading = true;
+      })
+      .addCase(getEmailOtpAsync.fulfilled, (state, action) => {
+        state.emailOtpLoading = false;
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+      })
+      .addCase(getEmailOtpAsync.rejected, (state) => {
+        state.emailOtpLoading = false;
+      })
+      .addCase(changePasswordAsync.pending, (state) => {
+        state.changepasswordloading = true;
+      })
+      .addCase(changePasswordAsync.fulfilled, (state, action) => {
+        state.changepasswordloading = false;
+        if (action.payload.data.success) {
+          showToast(action.payload.data.message, "success");
+        }
+      })
+      .addCase(changePasswordAsync.rejected, (state) => {
+        state.changepasswordloading = false;
       });
   },
 });
