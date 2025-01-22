@@ -47,7 +47,7 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
       minWidth: 200,
       maxWidth: 400,
     },
-    { field: "CustID", headerName: "Customer ID " },
+    { field: "CustID", headerName: "User ID " },
     { field: "Mobile", headerName: "Mobile No." },
     { field: "Log_Time", headerName: "Log Time " },
     { field: "Status", headerName: "Status" },

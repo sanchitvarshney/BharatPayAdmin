@@ -123,7 +123,7 @@ const UserProfile = () => {
     null
   );
   const [requiredChangePass, setRequiredChangePass] =
-    React.useState<HTMLButtonElement | null>(null);
+    React.useState<any>(null);
   const [changePhone, setChangePhone] = React.useState<HTMLDivElement | null>(
     null
   );
@@ -200,6 +200,7 @@ const UserProfile = () => {
     if (userProfile) {
       setGender(userProfile?.gender || "");
       setStatus(userProfile?.status || "");
+      setPasswordChange(userProfile?.askChangePassword === "Y");
     }
   }, [userProfile]);
 
@@ -222,7 +223,6 @@ const UserProfile = () => {
     dispatch(changeUserPassword(payload) as any).then((res: any) => {
       setOpen(false);
       setResetPassword(false);
-      console.log(res)
       if (res?.payload?.data?.success) {
         showToast("Password reset successful", "success");
       } else {
@@ -525,7 +525,7 @@ const UserProfile = () => {
             </p>
             <div>
               <div className="flex items-center">
-                <Switch onChange={(e) => setPasswordChange(e.target.checked)} />
+                <Switch onChange={(e) => setPasswordChange(e.target.checked)} checked={passwordChange} />
                 {passwordChange ? "Yes" : "No"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
@@ -535,8 +535,11 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
+            <Button onClick={() => setRequiredChangePass(false)}>
               Close
+            </Button>
+            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
+              Submit
             </Button>
           </div>
         </Popover>
@@ -578,9 +581,9 @@ const UserProfile = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                error={password.length < 8}
+                error={password.length > 0 && password.length < 8} // Only show error if password is non-empty and less than 8 characters
                 helperText={
-                  password.length < 8
+                  password.length > 0 && password.length < 8
                     ? "Password must be at least 8 characters"
                     : ""
                 }
@@ -604,8 +607,14 @@ const UserProfile = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!passwordsMatch}
-                helperText={!passwordsMatch ? "Passwords do not match" : ""}
+                error={
+                  password !== confirmPassword && confirmPassword.length > 0
+                } // Show error if passwords don't match
+                helperText={
+                  password !== confirmPassword && confirmPassword.length > 0
+                    ? "Passwords do not match"
+                    : ""
+                }
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -648,8 +657,8 @@ const UserProfile = () => {
                 onClick={handleSubmit2}
                 disabled={
                   cahngeUserPasswordLoading ||
-                  !passwordsMatch ||
-                  password.length < 8
+                  password.length < 8 ||
+                  password !== confirmPassword // Ensure password is at least 8 characters and matches
                 }
               >
                 {cahngeUserPasswordLoading ? "Submitting..." : "Submit"}
@@ -661,6 +670,7 @@ const UserProfile = () => {
           </div>
         </Box>
       </Modal>
+
       <Modal
         open={suspend}
         onClose={setSuspend}
@@ -1399,15 +1409,15 @@ const UserProfile = () => {
                       ? "requiredChangePass"
                       : undefined
                   }
-                  // onClick={(e) => setRequiredChangePass(e.currentTarget)}
-                  onClick={() => setResetPassword(true)}
+                  onClick={(e) => setRequiredChangePass(e.currentTarget)}
+                  // onClick={() => setResetPassword(true)}
                 >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
                     <div>
-                      <p className=" font-[300]">OFF</p>
+                      <p className=" font-[300]">{passwordChange ? "Yes" : "No"}</p>
                       <p className="text-[13px] text-zinc-500">
-                        This password wont't to be changed once sign in.
+                        This password {!passwordChange && "wont't to be"} changed once sign in.
                       </p>
                     </div>
                     <div className="flex items-center justify-end">
@@ -1424,17 +1434,18 @@ const UserProfile = () => {
                 </div>
               </div>
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={2} >
+            <CustomTabPanel value={value} index={2}>
               <div>
                 <p>Check log events for user login logs.</p>
-                <div className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]" onClick={() => setOpen("login")}>
+                <div
+                  className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]"
+                  onClick={() => setOpen("login")}
+                >
                   <div className="h-full overflow-y-auto">
                     <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
                       <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
                       <p>User Login Logs</p>
-                      <Button >
-                        View Logs
-                      </Button>
+                      <Button>View Logs</Button>
                     </div>
                   </div>
                 </div>

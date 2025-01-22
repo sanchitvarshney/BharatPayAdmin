@@ -1,369 +1,490 @@
-import { useState, useEffect, useMemo } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Switch,
-  Alert,
-  Grid,
-  IconButton,
-  Skeleton,
-} from "@mui/material";
-import { styled } from "@mui/system";
-import { FaEdit, FaKey, FaShieldAlt } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { getUserProfile } from "@/features/profile/ProfileSlice"; // Assuming Redux integration
+import { Button, Divider, IconButton, InputAdornment, LinearProgress, ListItem, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
+import Grid from "@mui/material/Grid2";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import PersonIcon from "@mui/icons-material/Person";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import SecurityIcon from "@mui/icons-material/Security";
+import CreateIcon from "@mui/icons-material/Create";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
+import CloseIcon from "@mui/icons-material/Close";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
-import { RootState } from "@/features/store";
-import { findMenuKey } from "@/general";
+import { showToast } from "@/utills/toasterContext";
+import { changePasswordAsync } from "@/features/authentication/authSlice";
+// import { useUser } from "@/hooks/useUser";
+import UpadteEmail from "@/pages/profile/UpdateEmail";
+import { Icons } from "@/components/icons/icons";
 
-const StyledCard = styled(Card)(() => ({
-  maxWidth: 800,
-  margin: "auto",
-  marginTop: 20,
-  padding: 20,
-}));
+const schema = z
+  .object({
+    oldPassword: z.string().min(1, "Old password is required"), // Old password must be filled
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(1, "password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // This highlights confirmPassword in case of an error
+  });
+type FormValues = z.infer<typeof schema>;
 
-const ProfileComponent = () => {
+const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { profile, loading } = useSelector(
-    (state: RootState) => state.profile as any
-  );
-
-  const [openEditProfile, setOpenEditProfile] = useState(false);
-  const [openChangePassword, setOpenChangePassword] = useState(false);
-  const [twoFAEnabled] = useState(profile?.is2faActive || false);
-  const [showAlert, setShowAlert] = useState({
-    show: false,
-    message: "",
-    severity: "success",
+  const userDetails = localStorage.getItem("loggedinUser");
+  const user = userDetails ? JSON.parse(userDetails||{} as any) : null;
+  const { changepasswordloading } = useAppSelector((state) => state.auth);
+  const [tab, setTab] = React.useState("P");
+  const [editFullName, setEditFullName] = React.useState(false);
+  const [editEmail, setEditEmail] = React.useState(false);
+  const [editPhone, setEditPhone] = React.useState(false);
+  const [changePassword, setChangePassword] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    label: "",
+  });
+  const [passwordChecks, setPasswordChecks] = useState({
+    hasUpperCase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+    isValidLength: false,
+  });
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      oldPassword: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const checkPasswordStrength = (password: string) => {
+    const checks = {
+      hasUpperCase: /[A-Z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[^a-zA-Z0-9]/.test(password),
+      isValidLength: password.length >= 8 && password.length <= 16,
+    };
 
-  const [profileDataLocal, setProfileDataLocal] = useState(profile || {}); // Local state for profile editing
-  const { menuList } = useAppSelector((state: any) => state.menu); 
+    const score = Object.values(checks).filter((check) => check).length;
 
-  // UseMemo to memoize the menuKey based on the current URL
-  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
-  // Store menuKey in localStorage whenever it changes
-  useEffect(() => {
-    if (menuKey) {
-      localStorage.setItem("menuKey", menuKey);
-    }
-  }, [menuKey]);
-  
-  useEffect(() => {
-    dispatch(getUserProfile()); // Fetch the user profile on component mount
-  }, [dispatch,menuKey]);
+    setPasswordChecks(checks);
 
-  useEffect(() => {
-    if (profile) {
-      setProfileDataLocal(profile); // Update local state when profile data changes
-    }
-  }, [profile]);
+    let label = "";
+    if (score <= 2) label = "Weak";
+    else if (score === 3) label = "Medium";
+    else label = "Strong";
 
-  // Handle Edit Profile submission
-  // const handleEditProfile = async () => {
-  //   try {
-  //     await dispatch(updateProfile(profileDataLocal));
-  //     setShowAlert({
-  //       show: true,
-  //       message: "Profile updated successfully!",
-  //       severity: "success",
-  //     });
-  //     setOpenEditProfile(false);
-  //   } catch (error) {
-  //     setShowAlert({
-  //       show: true,
-  //       message: "Error updating profile!",
-  //       severity: "error",
-  //     });
-  //   }
-  // };
+    setPasswordStrength({ score, label });
+  };
 
-  // Handle Password Change
-  const handleChangePassword = async () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setShowAlert({
-        show: true,
-        message: "Passwords do not match!",
-        severity: "error",
+  const onSubmit = (data: FormValues) => {
+    const payload: any = {
+      oldPassword: data.oldPassword,
+      newPassword: data.password,
+      confirmPassword: data.confirmPassword,
+      userId: user?.crn_id || "",
+    };
+    if (data.oldPassword === data.password) {
+      showToast("New password cannot be same as old password", "error");
+    } else {
+      dispatch(changePasswordAsync(payload)).then((res: any) => {
+        if (res.payload?.data?.success) {
+          setChangePassword(false);
+          reset();
+        }
       });
-      return;
     }
-    // try {
-    //   await dispatch(changePassword(passwordData as any));
-    //   setShowAlert({
-    //     show: true,
-    //     message: "Password changed successfully!",
-    //     severity: "success",
-    //   });
-    //   setOpenChangePassword(false);
-    //   setPasswordData({
-    //     currentPassword: "",
-    //     newPassword: "",
-    //     confirmPassword: "",
-    //   });
-    // } catch (error) {
-    //   setShowAlert({
-    //     show: true,
-    //     message: "Error changing password!",
-    //     severity: "error",
-    //   });
-    // }
   };
 
-  // Handle 2FA toggle
-  // const handleTwoFA = async () => {
-  //   try {
-  //     await dispatch(toggle2FA(!twoFAEnabled));
-  //     setTwoFAEnabled(!twoFAEnabled);
-  //     setShowAlert({
-  //       show: true,
-  //       message: `Two-factor authentication ${!twoFAEnabled ? "enabled" : "disabled"}!`,
-  //       severity: "success",
-  //     });
-  //   } catch (error) {
-  //     setShowAlert({
-  //       show: true,
-  //       message: "Error updating 2FA status!",
-  //       severity: "error",
-  //     });
-  //   }
-  // };
-
-  // Handle Profile Data Changes
-  const handleProfileChange = (e: any) => {
-    setProfileDataLocal({
-      ...profileDataLocal,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle Verification Email
-  const handleVerificationEmail = () => {
-    setShowAlert({
-      show: true,
-      message: "Verification email sent!",
-      severity: "success",
-    });
-  };
+  console.log(user)
 
   return (
-    <Box sx={{ p: 3 }}>
-      {showAlert.show && (
-        <Alert
-          // severity={showAlert.severity}
-          onClose={() => setShowAlert({ ...showAlert, show: false })}
-          sx={{ mb: 2 }}
-        >
-          {showAlert.message}
-        </Alert>
-      )}
-
-      <StyledCard>
-        {loading ? (
-          <div>
-            {/* For other variants, adjust the size with `width` and `height` */}
-            <Skeleton variant="circular" width={100} height={100} />
-            <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-            <Skeleton variant="rectangular" width={210} height={60} />
-            <Skeleton variant="rounded" width={210} height={60} />
-          </div>
-        ) : (
-          <CardContent>
-            <Grid container spacing={3} alignItems="center">
-              <Grid item>
-                <Avatar
-                  src={"https://www.w3schools.com/w3images/avatar2.png"}
-                  alt={"https://www.w3schools.com/w3images/avatar2.png"}
-                  sx={{ width: 100, height: 100 }}
-                />
-              </Grid>
-              <Grid item xs>
-                <Typography variant="h5" gutterBottom>
-                  {profile?.user_name}
-                </Typography>
-                <Typography color="textSecondary">{profile?.email}</Typography>
-                <Typography color="textSecondary">{profile?.mobile}</Typography>
-              </Grid>
-              <Grid item>
-                <IconButton
-                  onClick={() => setOpenEditProfile(true)}
-                  color="primary"
-                >
-                  <FaEdit />
-                </IconButton>
-              </Grid>
-            </Grid>
-
-            <Box sx={{ mt: 4 }}>
-              {/* <Button
-                variant="outlined"
-                startIcon={<FaKey />}
-                onClick={() => setOpenChangePassword(true)}
-                sx={{ mr: 2 }}
-              >
-                Change Password
-              </Button> */}
-
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <FaShieldAlt style={{ marginRight: 8 }} />
-                    <span>Two-Factor Authentication</span>
-                  </Box>
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <Switch
-                    checked={twoFAEnabled}
-                    onChange={() => {}}
-                    color="primary"
-                  />
-                  <Typography variant="body2" sx={{ ml: 1 }}>
-                    {twoFAEnabled ? "Enabled" : "Disabled"}
-                  </Typography>
-                </Box>
-                {twoFAEnabled && (
-                  <Button
-                    variant="contained"
-                    onClick={handleVerificationEmail}
-                    sx={{ mt: 2 }}
-                  >
-                    Send Verification Email
-                  </Button>
-                )}
-              </Box>
-            </Box>
-          </CardContent>
-        )}
-      </StyledCard>
-      <StyledCard
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "none", // Remove the border
-          boxShadow: "none", // Optional: Remove any box shadow if there's one
+    <>
+    <UpadteEmail open={editEmail} handleClose={() => setEditEmail(false)}/>
+      <Dialog
+        open={editFullName}
+        onClose={() => setEditFullName(false)}
+        PaperProps={{
+          component: "form",
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            // const formData = new FormData(event.currentTarget);
+            // const formJson = Object.fromEntries((formData as any).entries());
+          },
         }}
       >
-        <div className="flex">
-          <Button
-            variant="outlined"
-            startIcon={<FaKey />}
-            onClick={() => setOpenChangePassword(true)}
-            sx={{ mr: 2 }}
-          >
-            Change Password
-          </Button>
-        </div>
-      </StyledCard>
-
-      {/* Edit Profile Dialog */}
-      <Dialog open={openEditProfile} onClose={() => setOpenEditProfile(false)}>
-        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogTitle>Update Name</DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            fullWidth
-            name="name"
-            value={profileDataLocal?.user_name}
-            onChange={handleProfileChange}
-          />
-          <TextField
-            margin="dense"
-            label="Email"
-            type="email"
-            fullWidth
-            name="email"
-            value={profileDataLocal?.email}
-            onChange={handleProfileChange}
-          />
-          <TextField
-            margin="dense"
-            label="Phone"
-            fullWidth
-            name="phone"
-            value={profileDataLocal?.mobile}
-            onChange={handleProfileChange}
-          />
+          <DialogContentText>Please enter your new name below. This will be displayed on your profile.</DialogContentText>
+          <TextField autoFocus required margin="dense" id="name" name="name" label="Name" type="text" fullWidth variant="standard" />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditProfile(false)}>Cancel</Button>
-          <Button onClick={() => {}} variant="contained">
-            Save
+          <Button startIcon={<CloseIcon fontSize="small" />} variant="contained" sx={{ background: "white", color: "red" }} onClick={() => setEditFullName(false)}>
+            Cancel
+          </Button>
+          <Button startIcon={<SystemUpdateAltIcon fontSize="small" />} variant="contained" type="submit">
+            Update
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Change Password Dialog */}
+      
       <Dialog
-        open={openChangePassword}
-        onClose={() => setOpenChangePassword(false)}
+        open={editPhone}
+        onClose={() => setEditPhone(false)}
+        PaperProps={{
+          component: "form",
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+          },
+        }}
       >
-        <DialogTitle>Change Password</DialogTitle>
+        <DialogTitle>Update Phone No.</DialogTitle>
         <DialogContent>
-          <TextField
-            margin="dense"
-            label="Current Password"
-            type="password"
-            fullWidth
-            value={passwordData.currentPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                currentPassword: e.target.value,
-              })
-            }
-          />
-          <TextField
-            margin="dense"
-            label="New Password"
-            type="password"
-            fullWidth
-            value={passwordData.newPassword}
-            onChange={(e) =>
-              setPasswordData({ ...passwordData, newPassword: e.target.value })
-            }
-          />
-          <TextField
-            margin="dense"
-            label="Confirm New Password"
-            type="password"
-            fullWidth
-            value={passwordData.confirmPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                confirmPassword: e.target.value,
-              })
-            }
-          />
+          <DialogContentText>Please enter your new phone number to keep your contact information up to date. We’ll use this to reach you if needed.</DialogContentText>
+          <TextField autoFocus required margin="dense" id="phone" name="phone" label="Phone No." type="text" fullWidth variant="standard" />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenChangePassword(false)}>Cancel</Button>
-          <Button onClick={handleChangePassword} variant="contained">
-            Save
+          <Button startIcon={<CloseIcon fontSize="small" />} variant="contained" sx={{ background: "white", color: "red" }} onClick={() => setEditPhone(false)}>
+            Cancel
+          </Button>
+          <Button startIcon={<SystemUpdateAltIcon fontSize="small" />} variant="contained" type="submit">
+            Update
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+      <Dialog maxWidth="lg" open={changePassword} onClose={() => setChangePassword(false)}>
+        <div className="absolute top-0 left-0 right-0">{changepasswordloading && <LinearProgress />}</div>
+        <div className="flex items-center justify-between w-full pr-[20px]">
+          <DialogTitle>Reset Password</DialogTitle>
+          <IconButton
+            onClick={() => {
+              setChangePassword(false);
+              reset();
+            }}
+          >
+            <Icons.close />
+          </IconButton>
+        </div>
+        <Divider />
+        <DialogContent className="min-w-[700px]">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-2">
+              <div className="flex flex-col gap-[20px] px-[20px]">
+                <TextField
+                  {...register("oldPassword")}
+                  error={!!errors.oldPassword}
+                  helperText={errors.oldPassword?.message}
+                  margin="dense"
+                  label="Current Password"
+                  type="text"
+                  fullWidth
+                  variant="filled"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Icons.code fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      value={field.value}
+                      onChange={(e) => {
+                        checkPasswordStrength(e.target.value);
+                        field.onChange(e);
+                      }}
+                      slotProps={{
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {showPassword ? (
+                                <IconButton onClick={() => setShowPassword(false)} size="small">
+                                  <Icons.visible fontSize="small" />
+                                </IconButton>
+                              ) : (
+                                <IconButton size="small" onClick={() => setShowPassword(true)}>
+                                  <Icons.invisible fontSize="small" />
+                                </IconButton>
+                              )}
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                      margin="dense"
+                      label="New Password"
+                      type={showPassword ? "text" : "password"}
+                      fullWidth
+                      variant="filled"
+                    />
+                  )}
+                />
+                <TextField
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {showConfirmPassword ? (
+                            <IconButton onClick={() => setShowConfirmPassword(false)} size="small">
+                              <Icons.visible fontSize="small" />
+                            </IconButton>
+                          ) : (
+                            <IconButton size="small" onClick={() => setShowConfirmPassword(true)}>
+                              <Icons.invisible fontSize="small" />
+                            </IconButton>
+                          )}
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                  {...register("confirmPassword")}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword?.message}
+                  margin="dense"
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  fullWidth
+                  variant="filled"
+                />
+                <Button disabled={changepasswordloading} variant="contained" type="submit">
+                  Update
+                </Button>
+              </div>
+
+              <div className="px-[20px] border-l border-gray-200 min-w-[400px]">
+                <Typography gutterBottom variant="h3" fontWeight={600} fontSize={20}>
+                  Password Requirements
+                </Typography>
+
+                <ul className="space-y-5 text-lg text-gray-600">
+                  <li className={`flex items-center ${passwordChecks.hasUpperCase ? "text-green-600" : "text-gray-500"}`}>
+                    {passwordChecks.hasUpperCase ? <CheckCircle className="w-8 h-8 mr-4 text-green-600" /> : <div className="w-8 h-8 mr-4 text-gray-500" />}
+                    <span>At least one uppercase letter</span>
+                  </li>
+                  <li className={`flex items-center ${passwordChecks.hasNumber ? "text-green-600" : "text-gray-500"}`}>
+                    {passwordChecks.hasNumber ? <CheckCircle className="w-8 h-8 mr-4 text-green-600" /> : <div className="w-8 h-8 mr-4 text-gray-500" />}
+                    <span>At least one number</span>
+                  </li>
+                  <li className={`flex items-center ${passwordChecks.hasSpecialChar ? "text-green-600" : "text-gray-500"}`}>
+                    {passwordChecks.hasSpecialChar ? <CheckCircle className="w-8 h-8 mr-4 text-green-600" /> : <div className="w-8 h-8 mr-4 text-gray-500" />}
+                    <span>At least one special character</span>
+                  </li>
+                  <li className={`flex items-center ${passwordChecks.isValidLength ? "text-green-600" : "text-gray-500"}`}>
+                    {passwordChecks.isValidLength ? <CheckCircle className="w-8 h-8 mr-4 text-green-600" /> : <div className="w-8 h-8 mr-4 text-gray-500" />}
+                    <span>8-16 characters in length</span>
+                  </li>
+                </ul>
+                <div className="mt-8">
+                  <Typography variant="h4" fontWeight={600} fontSize={18}>
+                    Password Strength:
+                  </Typography>
+                  <div className="w-full h-3 mt-2 bg-gray-200 rounded-full">
+                    <div className={`h-3 rounded-full ${passwordStrength.label === "Strong" ? "bg-green-600" : passwordStrength.label === "Medium" ? "bg-yellow-600" : "bg-red-600"}`} style={{ width: `${passwordStrength.score * 25}%` }} />
+                  </div>
+                  <Typography gutterBottom fontWeight={600}>
+                    <span className={`${passwordStrength.label === "Strong" ? "text-green-600" : passwordStrength.label === "Medium" ? "text-yellow-600" : "text-red-600"}`}>{passwordStrength.label}</span>
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <div className="h-full bg-white">
+        <Grid container spacing={2} sx={{ height: "calc(100vh - 50px)" }}>
+          <Grid size={3} sx={{ borderRight: "1px solid #c5c5c5" }}>
+            <div className="flex items-center justify-center py-[20px] flex-col gap-[5px]">
+              <Avatar className="h-[70px] w-[70px]">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Typography variant="h5">{user?.username}</Typography>
+              <div className="w-full px-[20px] mt-[20px]">
+                <div className="flex items-center justify-between">
+                  <Typography fontWeight={500}>Department</Typography>
+                  <Typography>{user?.department}</Typography>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Typography fontWeight={500}>Phone No:</Typography>
+                  <Typography>{user?.crn_mobile}</Typography>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Typography fontWeight={500}>Email</Typography>
+                  <Typography>{user?.crn_email}</Typography>
+                </div>
+              </div>
+            </div>
+            <Divider />
+            <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
+              <List component="nav" aria-label="main mailbox folders">
+                <ListItemButton
+                  selected={tab === "P"}
+                  onClick={() => {
+                    setTab("P");
+                  }}
+                >
+                  <ListItemIcon>
+                    <PersonIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Personal Information" />
+                  <ListItemIcon sx={{ minWidth: "30px" }}>
+                    <KeyboardArrowRightIcon />
+                  </ListItemIcon>
+                </ListItemButton>
+                <ListItemButton
+                  selected={tab === "S"}
+                  onClick={() => {
+                    setTab("S");
+                  }}
+                >
+                  <ListItemIcon>
+                    <SecurityIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Security Setting" />
+                  <ListItemIcon sx={{ minWidth: "30px" }}>
+                    <KeyboardArrowRightIcon />
+                  </ListItemIcon>
+                </ListItemButton>
+              </List>
+            </Box>
+          </Grid>
+          <Grid size={9} sx={{ height: "100%", overflowY: "auto", widht: "100%", paddingY: "20px" }}>
+            {tab === "P" && (
+              <div className="p-[30px]">
+                <Typography variant="h1" fontSize={"25px"} fontWeight={500}>
+                  Personal Information
+                </Typography>
+                <Typography variant="h2" fontSize={"15px"}>
+                  Basic info, like your name and phone number, that you use on Bharatpay Platform.
+                </Typography>
+                <div className="mt-[50px]">
+                  {/* <Typography variant="h3" fontSize={"18px"} fontWeight={500}>
+                      Basic Information
+                    </Typography> */}
+                  {/* <Divider /> */}
+                  <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+                    <ListItem
+                      sx={{ ":hover": { backgroundColor: "#f5f5f5" }, paddingX: "20px" }}
+                      // secondaryAction={
+                      //   <IconButton onClick={() => setEditFullName(true)}>
+                      //     <CreateIcon />
+                      //   </IconButton>
+                      // }
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography variant="h4" fontSize={"17px"}>
+                            Name
+                          </Typography>
+                        }
+                        secondary={user?.username}
+                      />
+                    </ListItem>
+
+                    <ListItem
+                      sx={{ ":hover": { backgroundColor: "#f5f5f5" }, paddingX: "20px" }}
+                      secondaryAction={
+                        <IconButton onClick={() => setEditEmail(true)} aria-label="comment">
+                          <CreateIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography variant="h4" fontSize={"17px"}>
+                            Email
+                          </Typography>
+                        }
+                        secondary={user?.crn_email}
+                      />
+                    </ListItem>
+
+                    <ListItem
+                      sx={{ ":hover": { backgroundColor: "#f5f5f5" }, paddingX: "20px" }}
+                      // secondaryAction={
+                      //   <IconButton onClick={() => setEditPhone(true)} aria-label="comment">
+                      //     <CreateIcon />
+                      //   </IconButton>
+                      // }
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography variant="h4" fontSize={"17px"}>
+                            Phone Number
+                          </Typography>
+                        }
+                        secondary={user?.crn_mobile}
+                      />
+                      {editPhone && <TextField value={user?.crn_mobile} label="Update Mobile No." />}
+                    </ListItem>
+                  </List>
+                </div>
+              </div>
+            )}
+            {tab === "S" && (
+              <div className="p-[30px]">
+                <Typography variant="h1" fontSize={"25px"} fontWeight={500}>
+                  Security Settings
+                </Typography>
+                <Typography variant="h2" fontSize={"15px"}>
+                  These settings are helps you keep your account secure.
+                </Typography>
+                <div className="mt-[50px]">
+                  <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+                    <ListItem
+                      sx={{ ":hover": { backgroundColor: "#f5f5f5" }, paddingX: "20px" }}
+                      secondaryAction={
+                        <IconButton onClick={() => setChangePassword(true)} aria-label="comment">
+                          <CreateIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography variant="h4" fontSize={"17px"}>
+                            Reset Password
+                          </Typography>
+                        }
+                        secondary="Set a unique password to protect your account."
+                      />
+                    </ListItem>
+                  </List>
+                </div>
+              </div>
+            )}
+          </Grid>
+        </Grid>
+      </div>
+    </>
   );
 };
 
-export default ProfileComponent;
+export default ProfilePage;

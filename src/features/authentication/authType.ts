@@ -27,4 +27,7 @@ export interface AuthState {
   user: LoginResponse | null;
   loading: boolean;
   token: string | null;
+  changepasswordloading: boolean;
+  updateEmailLoading: boolean;
+  emailOtpLoading: boolean;
 }

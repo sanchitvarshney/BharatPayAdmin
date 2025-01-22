@@ -137,6 +137,7 @@ const NotificationTable = () => {
     //   autoHeight: true, },
     { field: "moduleName", headerName: "Module Name ", flex: 1 },
     { field: "req_code", headerName: "Request Code " },
+    { field: "userName", headerName: "User Name" },
   ]);
 
   // UseMemo to memoize the menuKey based on the current URL
@@ -191,7 +192,7 @@ const NotificationTable = () => {
 
   useEffect(() => {
     getDataForTable();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
