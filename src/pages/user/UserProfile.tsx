@@ -200,6 +200,7 @@ const UserProfile = () => {
     if (userProfile) {
       setGender(userProfile?.gender || "");
       setStatus(userProfile?.status || "");
+      setPasswordChange(userProfile?.askChangePassword === "Y");
     }
   }, [userProfile]);
 
@@ -524,7 +525,7 @@ const UserProfile = () => {
             </p>
             <div>
               <div className="flex items-center">
-                <Switch onChange={(e) => setPasswordChange(e.target.checked)} />
+                <Switch onChange={(e) => setPasswordChange(e.target.checked)} checked={passwordChange} />
                 {passwordChange ? "Yes" : "No"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
@@ -1414,9 +1415,9 @@ const UserProfile = () => {
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
                     <div>
-                      <p className=" font-[300]">OFF</p>
+                      <p className=" font-[300]">{passwordChange ? "Yes" : "No"}</p>
                       <p className="text-[13px] text-zinc-500">
-                        This password wont't to be changed once sign in.
+                        This password {!passwordChange && "wont't to be"} changed once sign in.
                       </p>
                     </div>
                     <div className="flex items-center justify-end">
