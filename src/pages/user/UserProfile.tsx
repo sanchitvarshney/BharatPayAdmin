@@ -123,7 +123,7 @@ const UserProfile = () => {
     null
   );
   const [requiredChangePass, setRequiredChangePass] =
-    React.useState<HTMLButtonElement | null>(null);
+    React.useState<any>(null);
   const [changePhone, setChangePhone] = React.useState<HTMLDivElement | null>(
     null
   );
@@ -534,8 +534,11 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
+            <Button onClick={() => setRequiredChangePass(false)}>
               Close
+            </Button>
+            <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
+              Submit
             </Button>
           </div>
         </Popover>
@@ -1405,8 +1408,8 @@ const UserProfile = () => {
                       ? "requiredChangePass"
                       : undefined
                   }
-                  // onClick={(e) => setRequiredChangePass(e.currentTarget)}
-                  onClick={() => setResetPassword(true)}
+                  onClick={(e) => setRequiredChangePass(e.currentTarget)}
+                  // onClick={() => setResetPassword(true)}
                 >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
