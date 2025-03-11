@@ -17,6 +17,8 @@ const initialState: AuthState = {
   changepasswordloading: false,
   updateEmailLoading: false,
   emailOtpLoading: false,
+  qrStatus: null,
+  qrCodeLoading: false
 };
 
 export const loginUserAsync = createAsyncThunk<AxiosResponse<LoginResponse>, LoginCredentials>("auth/signin", async (loginCredential) => {
@@ -43,6 +45,16 @@ string // Argument type (the type of email)
     }
   }
 );
+
+export const getQRStatus = createAsyncThunk<AxiosResponse<{ success: boolean; message: string }>, { crnId: string }>("auth/getQRStatus", async () => {
+  const response = await axiosInstance.get(`auth/qrCode`);
+  return response;
+});
+
+export const verifyOtpAsync = createAsyncThunk<AxiosResponse<{ success: boolean; message: string }>, { otp: string,secret:string }>("auth/verifyOtpAsync", async (paylaod) => {
+  const response = await axiosInstance.post("/auth/verify", paylaod);
+  return response;
+})
 
 export const verifyOtp = createAsyncThunk<AxiosResponse<OTPResponse>, LoginCredentials>("user/verify-otp", async (loginCredential) => {
   const response = await axiosInstance.put<OTPResponse>("/user/update-password", loginCredential);
@@ -80,16 +92,39 @@ const authSlice = createSlice({
       .addCase(loginUserAsync.pending, (state) => {
         state.loading = true;
       })
-      .addCase(loginUserAsync.fulfilled, (state, action) => {
+      .addCase(loginUserAsync.fulfilled, (state, action:any) => {
         if (action.payload.data.success) {
           setToken(action.payload.data.data?.token);
-          localStorage.setItem("loggedinUser", JSON.stringify(action.payload.data.data));
-          state.token = action.payload.data.data?.token;
+          // localStorage.setItem("loggedinUser", JSON.stringify(action.payload.data.data));
+          localStorage.setItem("loggedinUser", btoa(JSON.stringify(action.payload.data.data)));
+
+          // state.token = action.payload.data.data?.token;
+        }
+        if(!action.payload.data.data){
+          state.qrStatus = action.payload.data;
+          localStorage.setItem("showOtpPage",action?.payload?.data?.isTwoStep);
         }
         state.loading = false;
       })
       .addCase(loginUserAsync.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(verifyOtpAsync.pending, (state) => {
+        state.qrCodeLoading = true;
+      })
+      .addCase(verifyOtpAsync.fulfilled, (state, action:any) => {
+        if (action.payload.data.success) {
+          setToken(action.payload.data.data?.token);
+          localStorage.setItem("showOtpPage","");
+          localStorage.setItem("loggedinUser", btoa(JSON.stringify(action.payload.data.data)));
+        }
+        if(!action.payload.data.data){
+          state.qrStatus = action.payload.data;
+        }
+        state.qrCodeLoading = false;
+      })
+      .addCase(verifyOtpAsync.rejected, (state) => {
+        state.qrCodeLoading = false;
       })
       .addCase(updateEmailAsync.pending, (state) => {
         state.updateEmailLoading = true;
