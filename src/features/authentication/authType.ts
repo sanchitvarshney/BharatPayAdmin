@@ -30,4 +30,6 @@ export interface AuthState {
   changepasswordloading: boolean;
   updateEmailLoading: boolean;
   emailOtpLoading: boolean;
+  qrStatus: any | null;
+  qrCodeLoading: boolean;
 }
