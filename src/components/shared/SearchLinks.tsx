@@ -2,68 +2,82 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FiSearch } from "react-icons/fi";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";  // Ensure Link is imported from react-router-dom
+
 const menuBarData = [
   {
     id: 2,
-    title: "Inventory",
+    title: "Dashboard",
     icon: "inventoryIcon",
-    route: "/inventory",
+    route: "/",
     subcategories: [
-      { id: 2.1, title: "Stock Management", route: "/inventory/stock-management" },
-      { id: 2.2, title: "Product Categories", route: "/inventory/product-categories" },
-      { id: 2.3, title: "Add New Product", route: "/inventory/add-product" },
+      { id: 2.1, title: "Dashboard", route: "/" },
     ],
   },
   {
     id: 3,
-    title: "Orders",
+    title: "User",
     icon: "ordersIcon",
-    route: "/orders",
+    route: "/user",
     subcategories: [
-      { id: 3.1, title: "Purchase Orders", route: "/orders/purchase" },
-      { id: 3.2, title: "Sales Orders", route: "/orders/sales" },
-      { id: 3.3, title: "Returns", route: "/orders/returns" },
+      { id: 3.1, title: "Add New User", route: "/user/add-user" },
+      { id: 3.2, title: "View Users", route: "/user/view-user" },
     ],
   },
   {
     id: 4,
-    title: "Suppliers",
+    title: "Roles",
     icon: "suppliersIcon",
-    route: "/suppliers",
+    route: "/role/list",
     subcategories: [
-      { id: 4.1, title: "Supplier List", route: "/suppliers/list" },
-      { id: 4.2, title: "Add New Supplier", route: "/suppliers/add" },
+      { id: 4.1, title: "User Roles", route: "/role/list" },
     ],
   },
   {
     id: 5,
-    title: "Customers",
+    title: "Location",
     icon: "customersIcon",
-    route: "/customers",
+    route: "/location/list",
     subcategories: [
-      { id: 5.1, title: "Customer List", route: "/customers/list" },
-      { id: 5.2, title: "Add New Customer", route: "/customers/add" },
+      { id: 5.1, title: "Allot Location", route: "/location/list" },
+      { id: 5.2, title: "Location Alloted Module", route: "/location/alloted-location" },
     ],
   },
   {
     id: 6,
-    title: "Reports",
+    title: "Menu",
     icon: "reportsIcon",
-    route: "/reports",
+    route: "/menu/create",
     subcategories: [
-      { id: 6.1, title: "Inventory Reports", route: "/reports/inventory" },
-      { id: 6.2, title: "Sales Reports", route: "/reports/sales" },
+      { id: 6.1, title: "Create Master Menu", route: "menu/create" },
+      { id: 6.2, title: "Menu List", route: "/menu/list" },
     ],
   },
   {
     id: 7,
-    title: "Settings",
+    title: "Permissions",
     icon: "settingsIcon",
-    route: "/settings",
+    route: "/permission/list",
     subcategories: [
-      { id: 7.1, title: "Profile Settings", route: "/settings/profile" },
-      { id: 7.2, title: "System Settings", route: "/settings/system" },
+      { id: 7.1, title: "Permission List", route: "/permission/list" },
+    ],
+  },
+  {
+    id: 7,
+    title: "Notifications",
+    icon: "settingsIcon",
+    route: "/notification",
+    subcategories: [
+      { id: 7.1, title: "List of Notifications", route: "/notification" },
+    ],
+  },
+  {
+    id: 7,
+    title: "Profile",
+    icon: "settingsIcon",
+    route: "/profile",
+    subcategories: [
+      { id: 7.1, title: "Profile", route: "/profile" },
     ],
   },
 ];
@@ -72,19 +86,22 @@ const SearchLinks: React.FC = () => {
   const [input, setInput] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [menu, setMenu] = useState<any[] | null>([]);
+
   useEffect(() => {
     if (input) {
       setOpen(true);
       setMenu(
         menuBarData.filter(
           (item) =>
-            item.title.toLowerCase().includes(input.toLowerCase()) || item.subcategories.some((sub) => sub.title.toLowerCase().includes(input.toLowerCase()))
+            item.title.toLowerCase().includes(input.toLowerCase()) ||
+            item.subcategories.some((sub) => sub.title.toLowerCase().includes(input.toLowerCase()))
         )
       );
     } else {
       setOpen(false);
     }
   }, [input]);
+
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
@@ -100,15 +117,24 @@ const SearchLinks: React.FC = () => {
             <FiSearch className="absolute right-[8px] h-[20px] w-[20px] text-blue-600" />
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-[500px] p-0 overflow-hidden rounded " onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => e.preventDefault()}>
+        <PopoverContent
+          className="w-[500px] p-0 overflow-hidden rounded"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
           {menu &&
             menu.map((item) => (
-              <div className="grid grid-cols-[150px_1fr] border-b border-slate-300">
-                <div className="bg-blue-100 border-e border-slate-300 p-[10px] text-[13px]">{item.title}</div>
+              <div key={item.id} className="grid grid-cols-[150px_1fr] border-b border-slate-300">
+                <div className="bg-blue-100 border-e border-slate-300 p-[10px] text-[13px]">
+                  {item.title}
+                </div>
                 <div className="py-[10px]">
                   {item.subcategories.map((sub: any) => (
-                    <div className="w-full">
-                      <Link to={"#"} className=" py-[5px] px-[10px] hover:text-blue-600 w-full text-slate-500 text-[13px]">
+                    <div key={sub.id} className="w-full">
+                      <Link
+                        to={sub.route}  // Navigate to the route associated with this subcategory
+                        className="py-[5px] px-[10px] hover:text-blue-600 w-full text-slate-500 text-[13px]"
+                      >
                         {sub.title}
                       </Link>
                     </div>

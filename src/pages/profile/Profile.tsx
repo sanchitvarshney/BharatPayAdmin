@@ -28,6 +28,7 @@ import { changePasswordAsync } from "@/features/authentication/authSlice";
 // import { useUser } from "@/hooks/useUser";
 import UpadteEmail from "@/pages/profile/UpdateEmail";
 import { Icons } from "@/components/icons/icons";
+import { useUser } from "@/hooks/useUser";
 
 const schema = z
   .object({
@@ -43,8 +44,9 @@ type FormValues = z.infer<typeof schema>;
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userDetails = localStorage.getItem("loggedinUser");
-  const user = userDetails ? JSON.parse(userDetails||{} as any) : null;
+  // const userDetails = localStorage.getItem("loggedinUser");
+  // const user = userDetails ? JSON.parse(userDetails||{} as any) : null;
+  const {user} = useUser();
   const { changepasswordloading } = useAppSelector((state) => state.auth);
   const [tab, setTab] = React.useState("P");
   const [editFullName, setEditFullName] = React.useState(false);
@@ -116,8 +118,6 @@ const ProfilePage: React.FC = () => {
       });
     }
   };
-
-  console.log(user)
 
   return (
     <>
