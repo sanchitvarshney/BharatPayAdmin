@@ -324,6 +324,33 @@ const userSlice = createSlice({
       .addCase(suspendUser.rejected, (state) => {
         state.suspendUserLoading = false;
       })
+      .addCase(change2FactorAuthStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(change2FactorAuthStatus.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(change2FactorAuthStatus.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(requirePasswordChange.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(requirePasswordChange.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(requirePasswordChange.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(userLoginLogs.pending, (state) => {
+        state.getUserListLoading = true;
+      })
+      .addCase(userLoginLogs.fulfilled, (state) => {
+        state.getUserListLoading = false;
+      })
+      .addCase(userLoginLogs.rejected, (state) => {
+        state.getUserListLoading = false;
+      })
       .addCase(activateUser.pending, (state) => {
         state.activateUserLoading = true;
       })

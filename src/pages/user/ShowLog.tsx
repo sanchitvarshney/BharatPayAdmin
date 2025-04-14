@@ -12,6 +12,7 @@ import { userLoginLogs } from "@/features/user/userSlice";
 import { useAppDispatch } from "@/hooks/useReduxHook";
 import { useParams } from "react-router-dom";
 import { ColDef } from "@ag-grid-community/core";
+import { useSelector } from "react-redux";
 
 // const style = {
 //   position: "absolute",
@@ -39,6 +40,8 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
   const [rows, setRows] = useState<Row[]>([]);
   const dispatch = useAppDispatch();
   const params = useParams();
+  const {getUserListLoading} = useSelector((state: any) => state.user);
+  
   const columns: ColDef[] = [
     {
       field: "Email_ID",
@@ -102,7 +105,7 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
             overlayNoRowsTemplate={OverlayNoRowsTemplate}
             loadingOverlayComponent={CustomLoadingOverlay}
             suppressCellFocus={true}
-            //   loading={getUserListLoading}
+            loading={getUserListLoading}
             rowData={rows ? rows : []}
             columnDefs={columns}
             pagination
