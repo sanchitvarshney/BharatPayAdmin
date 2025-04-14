@@ -94,4 +94,6 @@ export type AdduserSatates = {
   updateUserProfileLoading: boolean;
   rolelistData: any;
   loading: boolean;
+  activityData:any,
+  activityLoading: boolean
 };

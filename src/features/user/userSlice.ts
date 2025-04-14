@@ -31,6 +31,8 @@ const initialState: AdduserSatates = {
   updateUserProfileLoading: false,
   rolelistData: null,
   loading: false,
+  activityLoading: false,
+  activityData:null,
 };
 
 export const addUser = createAsyncThunk<
@@ -223,6 +225,15 @@ const userSlice = createSlice({
       })
       .addCase(addUser.rejected, (state) => {
         state.addUserloading = false;
+      })
+      .addCase(userActivityLogs.pending, (state) => {
+        state.activityLoading = true;
+      })
+      .addCase(userActivityLogs.fulfilled, (state) => {
+        state.activityLoading = false;
+      })
+      .addCase(userActivityLogs.rejected, (state) => {
+        state.activityLoading = false;
       })
       .addCase(getUserList.pending, (state) => {
         state.getUserListLoading = true;

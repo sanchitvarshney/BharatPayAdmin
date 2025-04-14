@@ -258,11 +258,12 @@ const UserProfile = () => {
     setModify2FactorAuth(status);
     const payload = {
       userId: userProfile ? userProfile?.id || "" : "",
-      status: status ? "Y" : "N",
+      status: status ? "ON" : "OFF",
     };
     dispatch(change2FactorAuthStatus(payload)).then((res: any) => {
       if (res?.payload?.data?.success) {
         showToast(res.payload.data.message, "success");
+        setModify2FactorAuth(false);
       }
     });
   };
@@ -592,7 +593,7 @@ const UserProfile = () => {
         >
           <div className="p-[20px] flex  gap-[50px]">
             <p className=" text-[15px] whitespace-nowrap">
-              Modify Two Factor Authentication Status
+              Modify Two Step Verification Status
             </p>
             <div>
               <div className="flex items-center">
@@ -600,7 +601,7 @@ const UserProfile = () => {
                   onChange={(e) => setModify2FactorAuthStatus(e.target.checked)}
                   checked={modify2FactorAuthStatus}
                 />
-                {modify2FactorAuthStatus ? "Yes" : "No"}{" "}
+                {modify2FactorAuthStatus ? "ON" : "OFF"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
                 Turn on require 2 factor authentication so that this will need authentication code on every login.
