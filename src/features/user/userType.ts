@@ -64,6 +64,11 @@ export type UpdateEmailPayload = {
   isVarified: string;
 };
 
+export type Modify2FactorAuthPayload = {
+  userId: string;
+  status: string;
+};
+
 export type UpdateMobilePayload = {
   userId: string;
   mobileNo: string;
