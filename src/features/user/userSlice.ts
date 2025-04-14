@@ -7,6 +7,7 @@ import {
   AdduserSatates,
   ChangePasswordResponse,
   ChangeUserPasswordPayload,
+  Modify2FactorAuthPayload,
   UpdateEmailPayload,
   UpdateMobilePayload,
   UpdateuserProfilePayload,
@@ -30,6 +31,8 @@ const initialState: AdduserSatates = {
   updateUserProfileLoading: false,
   rolelistData: null,
   loading: false,
+  activityLoading: false,
+  activityData:null,
 };
 
 export const addUser = createAsyncThunk<
@@ -103,6 +106,15 @@ export const updateUserEmail = createAsyncThunk<
   const response = await axiosInstance.put(`/user/update-email-id`, paylod);
   return response;
 });
+
+export const change2FactorAuthStatus = createAsyncThunk<
+  AxiosResponse<ChangePasswordResponse>,
+  Modify2FactorAuthPayload
+>("user/modify2FactorAuth", async (paylod) => {
+  const response = await axiosInstance.put(`/user/2Step_verfication`, paylod);
+  return response;
+});
+
 export const updateUserMobile = createAsyncThunk<
   AxiosResponse<ChangePasswordResponse>,
   UpdateMobilePayload
@@ -175,6 +187,15 @@ export const userLoginLogs = createAsyncThunk<AxiosResponse<any>, any>(
     return response;
   }
 );
+export const userActivityLogs = createAsyncThunk<AxiosResponse<any>, any>(
+  "/user/userActivityLogs",
+  async (payload) => {
+    const response = await axiosInstance.get(
+      `logs/getLogs?userId=${payload}`
+    );
+    return response;
+  }
+);
 export const notificationPending = createAsyncThunk<AxiosResponse<any>>(
   "/notification/pending",
   async () => {
@@ -204,6 +225,15 @@ const userSlice = createSlice({
       })
       .addCase(addUser.rejected, (state) => {
         state.addUserloading = false;
+      })
+      .addCase(userActivityLogs.pending, (state) => {
+        state.activityLoading = true;
+      })
+      .addCase(userActivityLogs.fulfilled, (state) => {
+        state.activityLoading = false;
+      })
+      .addCase(userActivityLogs.rejected, (state) => {
+        state.activityLoading = false;
       })
       .addCase(getUserList.pending, (state) => {
         state.getUserListLoading = true;

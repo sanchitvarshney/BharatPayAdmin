@@ -111,7 +111,7 @@ const RoleListTable: React.FC = () => {
           <div className="h-full min-w-[500px] ">
             <div className="flex flex-col gap-[20px] ">
               <TextField value={role} onChange={(e) => setRole(e.target.value)} id="standard-basic" label="Name" required variant="filled" />
-              <TextField multiline rows={3} value={description} onChange={(e) => setdescription(e.target.value)} id="standard-basic" label="Decription" variant="filled" />
+              <TextField multiline rows={3} value={description} onChange={(e) => setdescription(e.target.value)} id="standard-basic" label="Description" variant="filled" />
             </div>
           </div>
         </DialogContent>

@@ -42,6 +42,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { useForm } from "react-hook-form";
 import {
   activateUser,
+  change2FactorAuthStatus,
   changeUserPassword,
   getUserProfile,
   requirePasswordChange,
@@ -60,6 +61,7 @@ import { showToast } from "@/utills/toasterContext";
 import { Icons } from "../../components/icons/icons";
 import ShowLog from "./ShowLog";
 import { findMenuKey } from "@/general";
+import ShowActivityLog from "@/pages/user/ShowActivityLog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -122,8 +124,10 @@ const UserProfile = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const [requiredChangePass, setRequiredChangePass] =
-    React.useState<any>(null);
+  const [requiredChangePass, setRequiredChangePass] = React.useState<any>(null);
+  const [modify2FactorAuth, setModify2FactorAuth] = React.useState<any | null>(
+    null
+  );
   const [changePhone, setChangePhone] = React.useState<HTMLDivElement | null>(
     null
   );
@@ -137,11 +141,13 @@ const UserProfile = () => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [passwordChange, setPasswordChange] = useState<boolean>(false);
+  const [modify2FactorAuthStatus, setModify2FactorAuthStatus] = useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateVerification, setUpdateVerification] = useState<boolean>(false);
   const [askToVerify, setAskToVerify] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState<any>(false);
+  const [openActivityLogs, setOpenActivityLogs] = useState<any>(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
@@ -225,6 +231,9 @@ const UserProfile = () => {
       setResetPassword(false);
       if (res?.payload?.data?.success) {
         showToast("Password reset successful", "success");
+        dispatch(getUserProfile(params.id || ""));
+        setPassword("");
+        setConfirmPassword("");
       } else {
         showToast(res?.payload, "error");
       }
@@ -245,11 +254,27 @@ const UserProfile = () => {
       }
     });
   };
+  const handleModify2FactorAuth = (status: any) => {
+    setModify2FactorAuth(status);
+    const payload = {
+      userId: userProfile ? userProfile?.id || "" : "",
+      status: status ? "ON" : "OFF",
+    };
+    dispatch(change2FactorAuthStatus(payload)).then((res: any) => {
+      if (res?.payload?.data?.success) {
+        showToast(res.payload.data.message, "success");
+        setModify2FactorAuth(false);
+      }
+    });
+  };
   const handleClose = () => {
     setOpen(false);
     setResetPassword(false);
     setPassword("");
     setConfirmPassword("");
+  };
+  const handleCloseActivityLogs = () => {
+    setOpenActivityLogs(false);
   };
 
   useEffect(() => {
@@ -525,7 +550,10 @@ const UserProfile = () => {
             </p>
             <div>
               <div className="flex items-center">
-                <Switch onChange={(e) => setPasswordChange(e.target.checked)} checked={passwordChange} />
+                <Switch
+                  onChange={(e) => setPasswordChange(e.target.checked)}
+                  checked={passwordChange}
+                />
                 {passwordChange ? "Yes" : "No"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
@@ -535,13 +563,57 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => setRequiredChangePass(false)}>
-              Close
-            </Button>
+            <Button onClick={() => setRequiredChangePass(false)}>Close</Button>
             <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
               Submit
             </Button>
           </div>
+        </Popover>
+      </div>
+      <div>
+        <Popover
+          disableScrollLock={true}
+          id={Boolean(modify2FactorAuth) ? "modify2FactorAuth" : undefined}
+          open={Boolean(modify2FactorAuth)}
+          anchorEl={modify2FactorAuth}
+          onClose={() => setAnchorEl(null)}
+          sx={{
+            "& .MuiPopover-paper": {
+              width: "57%", // Custom width here
+            },
+          }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className="p-[20px] flex  gap-[50px]">
+            <p className=" text-[15px] whitespace-nowrap">
+              Modify Two Step Verification Status
+            </p>
+            <div>
+              <div className="flex items-center">
+                <Switch
+                  onChange={(e) => setModify2FactorAuthStatus(e.target.checked)}
+                  checked={modify2FactorAuthStatus}
+                />
+                {modify2FactorAuthStatus ? "ON" : "OFF"}{" "}
+              </div>
+              <p className="text-[14px] text-zinc-400 mt-[5px]">
+                Turn on require 2 factor authentication so that this will need authentication code on every login.
+              </p>
+            </div>
+          </div>
+          <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
+            <Button onClick={() => setModify2FactorAuth(false)}>Close</Button>
+            <Button onClick={() => handleModify2FactorAuth(modify2FactorAuthStatus)}>
+              Submit
+            </Button>
+          </div>    
         </Popover>
       </div>
       <Modal
@@ -1415,9 +1487,12 @@ const UserProfile = () => {
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
                     <div>
-                      <p className=" font-[300]">{passwordChange ? "Yes" : "No"}</p>
+                      <p className=" font-[300]">
+                        {passwordChange ? "Yes" : "No"}
+                      </p>
                       <p className="text-[13px] text-zinc-500">
-                        This password {!passwordChange && "wont't to be"} changed once sign in.
+                        This password {!passwordChange && "wont't to be"}{" "}
+                        changed once sign in.
                       </p>
                     </div>
                     <div className="flex items-center justify-end">
@@ -1425,13 +1500,24 @@ const UserProfile = () => {
                     </div>
                   </div>
                 </button>
+                <button
+                  className="items-start w-full p-0 m-0 text-start"
+                  aria-describedby={
+                    Boolean(modify2FactorAuth)
+                      ? "modify2FactorAuth"
+                      : undefined
+                  }
+                  onClick={(e) => setModify2FactorAuth(e.currentTarget)}
+                  // onClick={() => setResetPassword(true)}
+                >
                 <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
-                  <p>2-step verification</p>
-                  <p className=" font-[300]">OFF</p>
+                  <p>2-Step Verification</p>
+                  <p className=" font-[300]">{modify2FactorAuthStatus ? "ON" : "OFF"}</p>
                   <div className="flex items-end justify-end">
                     <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
                   </div>
                 </div>
+                </button>
               </div>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
@@ -1451,10 +1537,28 @@ const UserProfile = () => {
                 </div>
               </div>
             </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+              <div className="pt-10">
+                <p>Check log events for user Activity logs.</p>
+                <div
+                  className="border rounded-sm shadow shadow-stone-400 mt-[20px] max-h-[450px] relative mr-[15px]"
+                  onClick={() => setOpenActivityLogs(true)}
+                >
+                  <div className="h-full overflow-y-auto">
+                    <div className=" grid grid-cols-[60px_1fr_150px] px-[20px] py-[10px] items-center hover:bg-zinc-100">
+                      <CalendarIcon className="h-[20px] w-[20px] text-zinc-600" />
+                      <p>User Activity Logs</p>
+                      <Button>View Logs</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CustomTabPanel>
           </div>
         </div>
       </div>
       <ShowLog open={open} handleClose={handleClose} />
+      <ShowActivityLog open={openActivityLogs} handleClose={handleCloseActivityLogs}/>
     </>
   );
 };

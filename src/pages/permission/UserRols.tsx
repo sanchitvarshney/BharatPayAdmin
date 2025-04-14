@@ -93,7 +93,7 @@ const UserRols = () => {
                 value={description}
                 onChange={(e) => setdescription(e.target.value)}
                 id="standard-basic"
-                label="Decription"
+                label="Description"
                 variant="filled"
               />
             </div>
@@ -121,6 +121,7 @@ const UserRols = () => {
                   const payload: CreateRolePayload = {
                     role_name: role,
                     description: description,
+                    securityType :"general",
                   };
                   dispatch(createRole(payload)).then((res: any) => {
                     if (res.payload.data?.success) {

@@ -64,6 +64,11 @@ export type UpdateEmailPayload = {
   isVarified: string;
 };
 
+export type Modify2FactorAuthPayload = {
+  userId: string;
+  status: string;
+};
+
 export type UpdateMobilePayload = {
   userId: string;
   mobileNo: string;
@@ -89,4 +94,6 @@ export type AdduserSatates = {
   updateUserProfileLoading: boolean;
   rolelistData: any;
   loading: boolean;
+  activityData:any,
+  activityLoading: boolean
 };

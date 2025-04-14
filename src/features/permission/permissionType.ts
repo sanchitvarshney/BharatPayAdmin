@@ -1,6 +1,7 @@
 export type CreateRolePayload = {
   role_name: string;
   description: string;
+  securityType: string;
 };
 
 export type CreateRoleResponse = {
