@@ -62,6 +62,7 @@ import { Icons } from "../../components/icons/icons";
 import ShowLog from "./ShowLog";
 import { findMenuKey } from "@/general";
 import ShowActivityLog from "@/pages/user/ShowActivityLog";
+import FullPageLoading from "@/components/reusable/selectors/FullPageLoading";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -166,6 +167,7 @@ const UserProfile = () => {
     updateUserMobileLoading,
     updateUserEmailLoading,
     updateUserProfileLoading,
+    loading,
   } = useAppSelector((state) => state.user);
 
   const {
@@ -301,6 +303,7 @@ const UserProfile = () => {
 
   return (
     <>
+    {loading && <FullPageLoading/>}
       <div>
         <Popover
           disableScrollLock={true}
@@ -1154,17 +1157,25 @@ const UserProfile = () => {
                     "--"
                   )}
                 </p>
-                <p className="text-green-600 text-[13px]">
+                <p className=" text-[13px]">
                   {getUserProfileLoading ? (
                     <Skeleton className="w-full h-[13px] mt-[5px]" />
                   ) : userProfile ? (
                     userProfile?.status === "1" ? (
-                      "Active"
+                      <p className="text-green-600">Active</p>
                     ) : (
-                      "Inactive"
+                      <p className="text-red-600">Inactive</p>
                     )
                   ) : (
                     "---"
+                  )}
+                </p>
+                <p className="text-stone-500 text-[13px]">
+                  {getUserProfileLoading ? (
+                    <Skeleton className="w-full h-[13px] mt-[5px]" />
+                  ) : (
+                    "User Name : " +
+                    (userProfile ? userProfile?.user_name : "---")
                   )}
                 </p>
                 <p className="text-stone-500 text-[13px]">
