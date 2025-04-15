@@ -209,6 +209,7 @@ const UserProfile = () => {
       setGender(userProfile?.gender || "");
       setStatus(userProfile?.status || "");
       setPasswordChange(userProfile?.askChangePassword === "Y");
+      setModify2FactorAuthStatus(userProfile?.twoFa === "ON");
     }
   }, [userProfile]);
 
