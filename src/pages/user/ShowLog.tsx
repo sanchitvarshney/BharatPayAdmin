@@ -44,15 +44,15 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
   
   const columns: ColDef[] = [
     {
-      field: "Email_ID",
-      headerName: "Email",
+      field: "IProtocol",
+      headerName: "Internet Protocol",
       flex: 1,
       minWidth: 200,
       maxWidth: 400,
     },
-    { field: "CustID", headerName: "User ID " },
+    { field: "Log_Time", headerName: "Login Time" },
     { field: "Mobile", headerName: "Mobile No." },
-    { field: "Log_Time", headerName: "Log Time " },
+    // { field: "Log_Time", headerName: "Log Time " },
     { field: "Status", headerName: "Status" },
     { field: "LogID", headerName: "userID", hide: true },
   ];
@@ -96,7 +96,7 @@ const ShowLog: React.FC<MyComponentProps> = ({ open, handleClose }) => {
         </Typography>
         <div className="h-[50px] bg-zinc-100 flex items-center gap-[20px] px-[10px] text-blue-600 ">
           <p className="text-[18px] text-stone-800">
-            Showing all for {rows[0]?.CustID} {rows[0]?.Email_ID}
+            Showing all for User ID - {rows[0]?.CustID} and Email ID - {rows[0]?.Email_ID}
           </p>
         </div>
         <div className={"ag-theme-quartz h-[calc(100vh-180px)]  "}>

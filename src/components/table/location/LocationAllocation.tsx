@@ -60,6 +60,16 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
 
   const dispatch = useAppDispatch();
 
+  // Reset states when modal is closed
+  useEffect(() => {
+    if (!open) {
+      setSelectedLocations([]);
+      setCheckedLocations({});
+      setModuleName("");
+      setModuleDescription("");
+    }
+  }, [open]);
+
   // Handle checkbox changes
   const handleLocationChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -79,7 +89,7 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    if (id) {
+    if (id && open) {
       dispatch(fetchLocationUpdate(id)).then((res: any) => {
         if (res?.payload?.data?.success) {
           setCheckedLocations(res.payload.data.data);
@@ -90,7 +100,7 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
         }
       });
     }
-  }, [id]);
+  }, [id, open]);
 
   // Update locations list when locationList from Redux changes
   useEffect(() => {
@@ -117,10 +127,14 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
     });
   };
 
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       aria-labelledby="dialog-title"
       sx={{ "& .MuiDialog-paper": { minWidth: "1000px" } }}
     >
@@ -216,7 +230,7 @@ const LocationAllocation: React.FC<SharedDialogProps> = ({
           size="small"
           disabled={loading}
           startIcon={<Icons.close fontSize="small" />}
-          onClick={onClose}
+          onClick={handleClose}
           variant="contained"
           color="primary"
           sx={{ background: "white", color: "red" }}

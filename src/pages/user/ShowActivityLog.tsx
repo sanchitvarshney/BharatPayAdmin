@@ -128,6 +128,29 @@ const ShowActivityLog: React.FC<ShowActivityLogProps> = ({
       },
     },
     {
+      field: "ip",
+      headerName: "IP Address",
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: "method",
+      headerName: "Method",
+      flex: 1,
+      minWidth: 50,
+    },
+    {
+      field: "path",
+      headerName: "Path",
+      minWidth: 150,
+    },
+    {
+      field: "userAgent",
+      headerName: "User Agent",
+      flex: 1,
+      minWidth: 100,
+    },
+    {
       field: "reqBody",
       headerName: "Request Body",
       flex: 1,
@@ -188,7 +211,7 @@ const ShowActivityLog: React.FC<ShowActivityLogProps> = ({
         open={open}
         onClose={handleClose}
         PaperProps={{
-          sx: { width: "80%" },
+          sx: { width: "100%" },
         }}
       >
         <div className="p-[20px]">

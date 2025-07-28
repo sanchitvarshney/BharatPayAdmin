@@ -142,7 +142,8 @@ const UserProfile = () => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [passwordChange, setPasswordChange] = useState<boolean>(false);
-  const [modify2FactorAuthStatus, setModify2FactorAuthStatus] = useState<boolean>(false);
+  const [modify2FactorAuthStatus, setModify2FactorAuthStatus] =
+    useState<boolean>(false);
   const [updateStatus, setUpdateStatus] = useState<boolean>(false);
   const [updateVerification, setUpdateVerification] = useState<boolean>(false);
   const [askToVerify, setAskToVerify] = useState<boolean>(false);
@@ -254,6 +255,7 @@ const UserProfile = () => {
     dispatch(requirePasswordChange(payload)).then((res: any) => {
       if (res?.payload?.data?.success) {
         showToast(res.payload.data.message, "success");
+        dispatch(getUserProfile(params.id || ""));
       }
     });
   };
@@ -267,6 +269,7 @@ const UserProfile = () => {
       if (res?.payload?.data?.success) {
         showToast(res.payload.data.message, "success");
         setModify2FactorAuth(false);
+        dispatch(getUserProfile(params.id || ""));
       }
     });
   };
@@ -275,9 +278,90 @@ const UserProfile = () => {
     setResetPassword(false);
     setPassword("");
     setConfirmPassword("");
+    setAskPasswordChange(false);
   };
   const handleCloseActivityLogs = () => {
     setOpenActivityLogs(false);
+  };
+
+  const handleOpenUpdateUser = () => {
+    setUpdateUser(true);
+    setName(userProfile?.user_name || "");
+    setGender(userProfile?.gender || "");
+  };
+
+  const handleOpenUpdateStatus = () => {
+    setUpdateStatus(true);
+    setStatus(userProfile?.status || "");
+  };
+
+  const handleOpenUpdateVerification = () => {
+    setUpdateVerification(true);
+    setVerification(userProfile?.verification || "");
+  };
+
+  const handleOpenChangePhone = (ref: any) => {
+    setChangePhone(ref);
+    setMobile(userProfile?.mobile || "");
+    setAskToVerify(false);
+  };
+
+  const handleOpenChangeEmail = (ref: any) => {
+    setChangeEmail(ref);
+    setEmail(userProfile?.email || "");
+    setAskToVerify(false);
+  };
+
+  const handleCloseUpdateUser = () => {
+    setUpdateUser(false);
+    setName(userProfile?.user_name || "");
+    setGender(userProfile?.gender || "");
+  };
+
+  const handleCloseUpdateStatus = () => {
+    setUpdateStatus(false);
+    setStatus(userProfile?.status || "");
+  };
+
+  const handleCloseUpdateVerification = () => {
+    setUpdateVerification(false);
+    setVerification(userProfile?.verification || "");
+  };
+
+  const handleCloseChangePhone = () => {
+    setChangePhone(null);
+    setMobile(userProfile?.mobile || "");
+    setAskToVerify(false);
+  };
+
+  const handleCloseChangeEmail = () => {
+    setChangeEmail(null);
+    setEmail(userProfile?.email || "");
+    setAskToVerify(false);
+  };
+
+  const handleOpenRequiredChangePass = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setRequiredChangePass(event.currentTarget);
+    setPasswordChange(userProfile?.askChangePassword === "Y");
+  };
+
+  const handleOpenModify2FactorAuth = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setModify2FactorAuth(event.currentTarget);
+    setModify2FactorAuthStatus(userProfile?.twoFa === "ON");
+  };
+
+  const handleCloseRequiredChangePass = () => {
+    setRequiredChangePass(null);
+    setPasswordChange(userProfile?.askChangePassword === "Y");
+  };
+
+  const handleCloseModify2FactorAuth = () => {
+    setModify2FactorAuth(null);
+    setModify2FactorAuthStatus(userProfile?.twoFa === "ON");
   };
 
   useEffect(() => {
@@ -304,7 +388,7 @@ const UserProfile = () => {
 
   return (
     <>
-    {loading && <FullPageLoading/>}
+      {loading && <FullPageLoading />}
       <div>
         <Popover
           disableScrollLock={true}
@@ -352,7 +436,7 @@ const UserProfile = () => {
           id={Boolean(changePhone) ? "simple" : undefined}
           open={Boolean(changePhone)}
           anchorEl={changePhone}
-          onClose={() => setChangePhone(null)}
+          onClose={handleCloseChangePhone}
           sx={{
             "& .MuiPopover-paper": {
               width: "57%", // Custom width here
@@ -401,13 +485,7 @@ const UserProfile = () => {
             <div></div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button
-              onClick={() => {
-                setChangePhone(null);
-                setAskToVerify(false);
-              }}
-              variant="text"
-            >
+            <Button onClick={handleCloseChangePhone} variant="text">
               Close
             </Button>
             <Button
@@ -428,7 +506,7 @@ const UserProfile = () => {
                     if (res.payload.data?.success) {
                       setMobile("");
                       setAskToVerify(false);
-                      setChangePhone(null);
+                      handleCloseChangePhone();
                       dispatch(getUserProfile(params.id || ""));
                     }
                   });
@@ -446,7 +524,7 @@ const UserProfile = () => {
           id={Boolean(changeEmail) ? "simple" : undefined}
           open={Boolean(changeEmail)}
           anchorEl={changeEmail}
-          onClose={() => setChangeEmail(null)}
+          onClose={handleCloseChangeEmail}
           sx={{
             "& .MuiPopover-paper": {
               width: "57%", // Custom width here
@@ -487,13 +565,7 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button
-              onClick={() => {
-                setAskToVerify(false);
-                setChangeEmail(null);
-              }}
-              variant="text"
-            >
+            <Button onClick={handleCloseChangeEmail} variant="text">
               Close
             </Button>
             <Button
@@ -514,7 +586,7 @@ const UserProfile = () => {
                     if (res.payload.data?.success) {
                       setEmail("");
                       setAskToVerify(false);
-                      setChangeEmail(null);
+                      handleCloseChangeEmail();
                       dispatch(getUserProfile(params.id || ""));
                     }
                   });
@@ -533,7 +605,7 @@ const UserProfile = () => {
           id={Boolean(requiredChangePass) ? "requiredChangePass" : undefined}
           open={Boolean(requiredChangePass)}
           anchorEl={requiredChangePass}
-          onClose={() => setAnchorEl(null)}
+          onClose={handleCloseRequiredChangePass}
           sx={{
             "& .MuiPopover-paper": {
               width: "57%", // Custom width here
@@ -567,7 +639,7 @@ const UserProfile = () => {
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => setRequiredChangePass(false)}>Close</Button>
+            <Button onClick={handleCloseRequiredChangePass}>Close</Button>
             <Button onClick={() => handleRequirePasswordChange(passwordChange)}>
               Submit
             </Button>
@@ -580,7 +652,7 @@ const UserProfile = () => {
           id={Boolean(modify2FactorAuth) ? "modify2FactorAuth" : undefined}
           open={Boolean(modify2FactorAuth)}
           anchorEl={modify2FactorAuth}
-          onClose={() => setAnchorEl(null)}
+          onClose={handleCloseModify2FactorAuth}
           sx={{
             "& .MuiPopover-paper": {
               width: "57%", // Custom width here
@@ -608,16 +680,19 @@ const UserProfile = () => {
                 {modify2FactorAuthStatus ? "ON" : "OFF"}{" "}
               </div>
               <p className="text-[14px] text-zinc-400 mt-[5px]">
-                Turn on require 2 factor authentication so that this will need authentication code on every login.
+                Turn on require 2 factor authentication so that this will need
+                authentication code on every login.
               </p>
             </div>
           </div>
           <div className="h-[50px] flex items-center justify-end px-[20px] border-t">
-            <Button onClick={() => setModify2FactorAuth(false)}>Close</Button>
-            <Button onClick={() => handleModify2FactorAuth(modify2FactorAuthStatus)}>
+            <Button onClick={handleCloseModify2FactorAuth}>Close</Button>
+            <Button
+              onClick={() => handleModify2FactorAuth(modify2FactorAuthStatus)}
+            >
               Submit
             </Button>
-          </div>    
+          </div>
         </Popover>
       </div>
       <Modal
@@ -852,7 +927,7 @@ const UserProfile = () => {
 
       <Dialog
         open={updateUser}
-        onClose={setUpdateUser}
+        onClose={handleCloseUpdateUser}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -863,7 +938,7 @@ const UserProfile = () => {
           <DialogTitle fontWeight={600}>
             Update User - {userProfile ? userProfile?.user_name : "---"}
           </DialogTitle>
-          <IconButton onClick={() => setUpdateUser(false)}>
+          <IconButton onClick={handleCloseUpdateUser}>
             <Icons.close />
           </IconButton>
         </div>
@@ -928,8 +1003,7 @@ const UserProfile = () => {
                 ).then((res: any) => {
                   if (res.payload.data?.success) {
                     showToast(res.payload.data.message, "success");
-                    setUpdateUser(false);
-                    setName("");
+                    handleCloseUpdateUser();
                     dispatch(getUserProfile(params.id || ""));
                   }
                 });
@@ -943,7 +1017,7 @@ const UserProfile = () => {
       </Dialog>
       <Modal
         open={updateStatus}
-        onClose={setUpdateStatus}
+        onClose={handleCloseUpdateStatus}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -991,9 +1065,7 @@ const UserProfile = () => {
             <div className="flex items-center justify-end gap-[10px]">
               <Button
                 disabled={updateUserProfileLoading}
-                onClick={() => {
-                  setUpdateStatus(false);
-                }}
+                onClick={handleCloseUpdateStatus}
               >
                 Cancel
               </Button>
@@ -1009,8 +1081,7 @@ const UserProfile = () => {
                   ).then((res: any) => {
                     if (res.payload.data?.success) {
                       showToast(res.payload.data.message, "success");
-                      setUpdateStatus(false);
-                      setName("");
+                      handleCloseUpdateStatus();
                       dispatch(getUserProfile(params.id || ""));
                     }
                   });
@@ -1028,7 +1099,7 @@ const UserProfile = () => {
       </Modal>
       <Modal
         open={updateVerification}
-        onClose={setUpdateVerification}
+        onClose={handleCloseUpdateVerification}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -1076,9 +1147,7 @@ const UserProfile = () => {
             <div className="flex items-center justify-end gap-[10px]">
               <Button
                 disabled={updateUserProfileLoading}
-                onClick={() => {
-                  setUpdateVerification(false);
-                }}
+                onClick={handleCloseUpdateVerification}
               >
                 Cancel
               </Button>
@@ -1094,8 +1163,7 @@ const UserProfile = () => {
                   ).then((res: any) => {
                     if (res.payload.data?.success) {
                       showToast(res.payload.data.message, "success");
-                      setUpdateVerification(false);
-                      setName("");
+                      handleCloseUpdateVerification();
                       dispatch(getUserProfile(params.id || ""));
                     }
                   });
@@ -1213,10 +1281,7 @@ const UserProfile = () => {
               <List>
                 <ListItemButton
                   disabled={!userProfile}
-                  onClick={() => {
-                    setUpdateUser(true);
-                    setName(userProfile?.user_name || "");
-                  }}
+                  onClick={handleOpenUpdateUser}
                 >
                   <Typography fontSize={15} fontWeight={500} variant="inherit">
                     UPDATE USER
@@ -1224,7 +1289,7 @@ const UserProfile = () => {
                 </ListItemButton>
                 <ListItemButton
                   disabled={!userProfile}
-                  onClick={() => setUpdateVerification(true)}
+                  onClick={handleOpenUpdateVerification}
                 >
                   <Typography fontSize={15} fontWeight={500} variant="inherit">
                     UPDATE VERIFICATION
@@ -1232,7 +1297,7 @@ const UserProfile = () => {
                 </ListItemButton>
                 <ListItemButton
                   disabled={!userProfile}
-                  onClick={() => setUpdateStatus(true)}
+                  onClick={handleOpenUpdateStatus}
                 >
                   <Typography fontSize={15} fontWeight={500} variant="inherit">
                     UPDATE STATUS
@@ -1408,10 +1473,7 @@ const UserProfile = () => {
                       </p>
                     </div>
                     <IconButton
-                      onClick={() => {
-                        setChangePhone(ref.current);
-                        setMobile(userProfile?.mobile || "");
-                      }}
+                      onClick={() => handleOpenChangePhone(ref.current)}
                       color="primary"
                     >
                       <Icons.edit fontSize="small" />
@@ -1453,10 +1515,7 @@ const UserProfile = () => {
                       </p>
                     </div>
                     <IconButton
-                      onClick={() => {
-                        setChangeEmail(ref2.current);
-                        setEmail(userProfile?.email || "");
-                      }}
+                      onClick={() => handleOpenChangeEmail(ref2.current)}
                       color="primary"
                     >
                       <Icons.edit fontSize="small" />
@@ -1493,13 +1552,12 @@ const UserProfile = () => {
                       ? "requiredChangePass"
                       : undefined
                   }
-                  onClick={(e) => setRequiredChangePass(e.currentTarget)}
-                  // onClick={() => setResetPassword(true)}
+                  onClick={handleOpenRequiredChangePass}
                 >
                   <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
                     <p>Require password change</p>
                     <div>
-                      <p className=" font-[300]">
+                      <p className="font-[300]">
                         {passwordChange ? "Yes" : "No"}
                       </p>
                       <p className="text-[13px] text-zinc-500">
@@ -1515,20 +1573,19 @@ const UserProfile = () => {
                 <button
                   className="items-start w-full p-0 m-0 text-start"
                   aria-describedby={
-                    Boolean(modify2FactorAuth)
-                      ? "modify2FactorAuth"
-                      : undefined
+                    Boolean(modify2FactorAuth) ? "modify2FactorAuth" : undefined
                   }
-                  onClick={(e) => setModify2FactorAuth(e.currentTarget)}
-                  // onClick={() => setResetPassword(true)}
+                  onClick={handleOpenModify2FactorAuth}
                 >
-                <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
-                  <p>2-Step Verification</p>
-                  <p className=" font-[300]">{modify2FactorAuthStatus ? "ON" : "OFF"}</p>
-                  <div className="flex items-end justify-end">
-                    <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+                  <div className="grid grid-cols-3 py-[20px] hover:bg-zinc-100 px-[20px] group">
+                    <p>2-Step Verification</p>
+                    <p className="font-[300]">
+                      {modify2FactorAuthStatus ? "ON" : "OFF"}
+                    </p>
+                    <div className="flex items-end justify-end">
+                      <RiPencilFill className="h-[20px] w-[20px] text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer" />
+                    </div>
                   </div>
-                </div>
                 </button>
               </div>
             </CustomTabPanel>
@@ -1570,7 +1627,10 @@ const UserProfile = () => {
         </div>
       </div>
       <ShowLog open={open} handleClose={handleClose} />
-      <ShowActivityLog open={openActivityLogs} handleClose={handleCloseActivityLogs}/>
+      <ShowActivityLog
+        open={openActivityLogs}
+        handleClose={handleCloseActivityLogs}
+      />
     </>
   );
 };
