@@ -32,7 +32,8 @@ const initialState: AdduserSatates = {
   rolelistData: null,
   loading: false,
   activityLoading: false,
-  activityData:null,
+  activityData: null,
+  sendNotificationLoading: false,
 };
 
 export const addUser = createAsyncThunk<
@@ -70,17 +71,17 @@ export const getUserProfile = createAsyncThunk<
 });
 
 export const changeUserPassword = createAsyncThunk<
-  AxiosResponse<ChangePasswordResponse>,  // The success response type
-  ChangeUserPasswordPayload,             // The payload type
-  { rejectValue: string }               // Type for reject value, assuming an error message
+  AxiosResponse<ChangePasswordResponse>, // The success response type
+  ChangeUserPasswordPayload, // The payload type
+  { rejectValue: string } // Type for reject value, assuming an error message
 >("user/changeuserPassword", async (payload, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.put(
       `/user/change-user-password`,
       payload
     );
-    return response;  // Return the success response
-  } catch (error:any) {
+    return response; // Return the success response
+  } catch (error: any) {
     console.log(error.response.data.message);
     // Handle error by returning a rejected value with the proper type
     return rejectWithValue(error.response.data.message);
@@ -190,9 +191,7 @@ export const userLoginLogs = createAsyncThunk<AxiosResponse<any>, any>(
 export const userActivityLogs = createAsyncThunk<AxiosResponse<any>, any>(
   "/user/userActivityLogs",
   async (payload) => {
-    const response = await axiosInstance.get(
-      `logs/getLogs?userId=${payload}`
-    );
+    const response = await axiosInstance.get(`logs/getLogs?userId=${payload}`);
     return response;
   }
 );
@@ -208,6 +207,17 @@ export const notificationPendingDelete = createAsyncThunk<
   any
 >("/notification/pending", async (id) => {
   const response = await axiosInstance.delete(`/notification/pending/${id}`);
+  return response;
+});
+
+export const sendNotification = createAsyncThunk<
+  AxiosResponse<any>,
+  { title: string; description: string }
+>("/notification/notification", async (payload) => {
+  const response = await axiosInstance.post(
+    "/notification/notification",
+    payload
+  );
   return response;
 });
 
@@ -406,6 +416,21 @@ const userSlice = createSlice({
       .addCase(notificationPending.rejected, (state) => {
         state.loading = false;
         state.rolelistData = [];
+      })
+      .addCase(sendNotification.pending, (state) => {
+        state.sendNotificationLoading = true;
+      })
+      .addCase(sendNotification.fulfilled, (state, action) => {
+        state.sendNotificationLoading = false;
+        if (action.payload.data.success) {
+          showToast(
+            action.payload?.data?.message || "Notification sent successfully",
+            "success"
+          );
+        }
+      })
+      .addCase(sendNotification.rejected, (state) => {
+        state.sendNotificationLoading = false;
       });
   },
 });

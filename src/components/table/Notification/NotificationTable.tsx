@@ -79,10 +79,13 @@ const flattenMenuHierarchy = (
 
 const NotificationTable = () => {
   const gridRef = useRef<AgGridReact>(null);
+  const prevSendNotificationLoadingRef = useRef<boolean>(false);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const { menuList } = useAppSelector((state) => state.menu);
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector((state) => state.user);
+  const { loading, sendNotificationLoading } = useAppSelector(
+    (state) => state.user
+  );
 
   const [openUser, setOpenUser] = useState<any>(false);
   const [columnDefs] = useState<ColDef[]>([
@@ -141,7 +144,10 @@ const NotificationTable = () => {
   ]);
 
   // UseMemo to memoize the menuKey based on the current URL
-  const menuKey = useMemo(() => findMenuKey(window.location.pathname, menuList), [menuList]);
+  const menuKey = useMemo(
+    () => findMenuKey(window.location.pathname, menuList),
+    [menuList]
+  );
   // Store menuKey in localStorage whenever it changes
   useEffect(() => {
     if (menuKey) {
@@ -161,12 +167,11 @@ const NotificationTable = () => {
   const getDataForTable = async () => {
     dispatch(notificationPending()).then((res: any) => {
       if (res?.payload?.data?.success) {
-        if(res.payload.data.data.length == 0){
+        if (res.payload.data.data.length == 0) {
           setRowData([]);
-        };
+        }
         setRowData(res?.payload?.data?.data);
-      }
-      else{
+      } else {
         setRowData([]);
       }
     });
@@ -194,9 +199,22 @@ const NotificationTable = () => {
     getDataForTable();
   }, [dispatch]);
 
+  // Refresh table when a notification is sent
+  useEffect(() => {
+    // Only refresh when loading changes from true to false (notification just sent)
+    if (prevSendNotificationLoadingRef.current && !sendNotificationLoading) {
+      // Small delay to ensure the backend has processed the notification
+      const timeout = setTimeout(() => {
+        getDataForTable();
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+    prevSendNotificationLoadingRef.current = sendNotificationLoading;
+  }, [sendNotificationLoading]);
+
   return (
     <>
-      <div className="ag-theme-quartz h-[calc(100vh-100px)]">
+      <div className="ag-theme-quartz h-[calc(100vh-220px)]">
         <AgGridReact
           overlayNoRowsTemplate={OverlayNoRowsTemplate}
           loadingOverlayComponent={CustomLoadingOverlay}
