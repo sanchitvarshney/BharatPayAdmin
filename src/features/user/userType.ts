@@ -95,5 +95,6 @@ export type AdduserSatates = {
   rolelistData: any;
   loading: boolean;
   activityData:any,
-  activityLoading: boolean
+  activityLoading: boolean;
+  sendNotificationLoading: boolean;
 };

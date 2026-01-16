@@ -56,6 +56,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SendIcon from "@mui/icons-material/Send";
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -115,4 +116,5 @@ export const Icons = {
   userOutline: AccountCircleOutlinedIcon,
   notifications: NotificationsIcon,
   print: LocalPrintshopIcon,
+  send: SendIcon,
 };
