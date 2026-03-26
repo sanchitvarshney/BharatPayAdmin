@@ -1,40 +1,55 @@
-import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import LoadingButton from "@mui/lab/LoadingButton";
+// import { useState } from "react";
+// import { useForm } from "react-hook-form";
+// import { FaEye, FaEyeSlash } from "react-icons/fa";
+// import LoadingButton from "@mui/lab/LoadingButton";
 import { showToast } from "@/utills/toasterContext";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { loginUserAsync } from "@/features/authentication/authSlice";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
+import { CircularProgress, Typography } from "@mui/material";
+import { GoogleLogin } from "@react-oauth/google";
 
-interface LoginFormInputs {
-  username: string;
-  password: string;
-  rememberMe: boolean;
-}
+// interface LoginFormInputs {
+//   username: string;
+//   password: string;
+//   rememberMe: boolean;
+// }
 
 const Login: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormInputs>();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<LoginFormInputs>();
 
-  const [showPassword, setShowPassword] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+  // const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    const payload = {
-      username: data.username,
-      password: data.password,
-      rememberMe: data.rememberMe,
+  // const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
+  //   const payload = {
+  //     username: data.username,
+  //     password: data.password,
+  //     rememberMe: data.rememberMe,
+  //   };
+
+  //   dispatch(loginUserAsync(payload)).then((res: any) => {
+  //     if (res.payload.data.success) {
+  //       navigate("/");
+  //     } else {
+  //       showToast(res.payload.data.message, "error");
+  //     }
+  //   });
+  // };
+  const handleLoginWithGoogle = (googleResponse: any) => {
+    const data: any = {
+      credential: googleResponse.credential,
     };
-
-    dispatch(loginUserAsync(payload)).then((res: any) => {
+    dispatch(loginUserAsync(data)).then((res: any) => {
+  
       if (res.payload.data.success) {
         navigate("/");
       } else {
@@ -47,6 +62,13 @@ const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-2xl">
         <div>
+         <div className="flex justify-center mb-6">
+            <img
+              src="/bharatpay.svg"
+              alt="BPE Logo"
+              className="h-16 w-auto"
+            />
+          </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Welcome Back
           </h2>
@@ -54,8 +76,32 @@ const Login: React.FC = () => {
             Sign in to your account
           </p>
         </div>
+           {loading ? (
+          <div className="flex justify-center items-center gap-2">
+            <Typography
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Please wait.....
+            </Typography>
+            <CircularProgress color="secondary" size={25} />
+          </div>
+        ) : (
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              handleLoginWithGoogle(credentialResponse);
+            }}
+            onError={() => {
+              showToast("Login failed", "error");
+            }}
+            // shape="circle"
+            text="continue_with"
+            logo_alignment="center"
+          />
+        )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        {/* <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label
@@ -169,7 +215,7 @@ const Login: React.FC = () => {
               )}
             </button>
           </div>
-        </form>
+        </form> */}
       </div>
     </div>
   );

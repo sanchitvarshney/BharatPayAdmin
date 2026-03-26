@@ -22,7 +22,7 @@ const initialState: AuthState = {
 };
 
 export const loginUserAsync = createAsyncThunk<AxiosResponse<LoginResponse>, LoginCredentials>("auth/signin", async (loginCredential) => {
-  const response = await axiosInstance.post<LoginResponse>("/auth/signin", loginCredential);
+  const response = await axiosInstance.post<LoginResponse>("/auth/auth/google", loginCredential);
   return response;
 });
 
@@ -95,10 +95,7 @@ const authSlice = createSlice({
       .addCase(loginUserAsync.fulfilled, (state, action:any) => {
         if (action.payload.data.success) {
           setToken(action.payload.data.data?.token);
-          // localStorage.setItem("loggedinUser", JSON.stringify(action.payload.data.data));
           localStorage.setItem("loggedinUser", btoa(JSON.stringify(action.payload.data.data)));
-
-          // state.token = action.payload.data.data?.token;
         }
         if(!action.payload.data.data){
           state.qrStatus = action.payload.data;
