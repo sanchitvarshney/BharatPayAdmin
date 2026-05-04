@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "@/utills/tokenUtills";
+import { getToken, removeToken } from "@/utills/tokenUtills";
 import { v4 as uuidv4 } from "uuid";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { showToast } from "@/utills/toasterContext";
@@ -47,10 +47,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // if (error.response?.status === 401) {
-    //   removeToken();
-    //   window.location.href = "/login";
-    // }
+     if (error.response?.status === 401) {
+    removeToken();
+     window.location.href = "/login";
+    }
     showToast(error.response?.data?.message ? error.response?.data?.message : error.response?.data?.message?.msg, "error");
     return Promise.reject(error);
   }
