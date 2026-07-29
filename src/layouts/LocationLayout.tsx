@@ -11,7 +11,7 @@ const LocationLayout: React.FC<Props> = ({ children }) => {
   const location = useLocation();
 
   // Helper function to check if a route is active
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path; 
 
   return (
     <div className="flex w-full h-[calc(100vh-70px)]">
