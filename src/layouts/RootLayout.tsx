@@ -45,13 +45,19 @@ const menuItems = [
     icon: Icons.permission,
     navigateTo: "/permission/list",
   },
-
+  {
+    title: "AWB",
+    tab: "awb",
+    icon: Icons.awb,
+    navigateTo: "/awb/count",
+  },
   {
     title: "Notification",
     tab: "notification",
     icon: Icons.notifications,
     navigateTo: "/notification",
   },
+
 ];
 const profileItem = {
   title: "Profile",

@@ -23,6 +23,8 @@ import AllotLocationPage from "./pages/location/AllotLocationPage";
 import Notification from "./pages/Notification/Notification";
 import NotificationsLayout from "@/layouts/NotificationsLayout";
 import PasswordRecoveryPage from "@/pages/authentication/PasswordRecoveryPage";
+import AwbLayout from "@/layouts/AwbLayout";
+import AwbCount from "@/pages/awb/AwbCount";
 
 export const router = createBrowserRouter([
   {
@@ -122,6 +124,14 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/awb/count",
+        element: (
+          <AwbLayout>
+            <AwbCount />
+          </AwbLayout>
+        ),
       },
     ],
   },

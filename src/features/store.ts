@@ -6,6 +6,7 @@ import menuReducer from "@/features/menu/menuSlice";
 import isIdReducer from "@/features/menu/isIdReducer";
 import locationSlice from "@/features/location/locationSlice";
 import ProfileSlice from "@/features/profile/ProfileSlice";
+import awbReducer from "@/features/awb/awbSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -14,7 +15,8 @@ export const store = configureStore({
     menu: menuReducer,
     isId: isIdReducer,
     location: locationSlice,
-    profile:ProfileSlice
+    profile:ProfileSlice,
+    awb: awbReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
