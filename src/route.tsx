@@ -23,6 +23,12 @@ import AllotLocationPage from "./pages/location/AllotLocationPage";
 import Notification from "./pages/Notification/Notification";
 import NotificationsLayout from "@/layouts/NotificationsLayout";
 import PasswordRecoveryPage from "@/pages/authentication/PasswordRecoveryPage";
+import MasterRateLayout from "./layouts/MasterRateLayout";
+import MasterRateCreate from "./pages/master-rates/MasterRateCreate";
+import MasterRateList from "./pages/master-rates/MasterRateList";
+import BillingLayout from "./layouts/BillingLayout";
+import CategoryRateCreate from "./pages/billing/CategoryRateCreate";
+import CategoryRateList from "./pages/billing/CategoryRateList";
 
 export const router = createBrowserRouter([
   {
@@ -79,12 +85,45 @@ export const router = createBrowserRouter([
           </Menulayout>
         ),
       },
+  
       {
         path: "/menu/list",
         element: (
           <Menulayout>
             <MenuList />
           </Menulayout>
+        ),
+      },
+            {
+        path: "/master/master-rates",
+        element: (
+          <MasterRateLayout>
+            <MasterRateCreate />
+          </MasterRateLayout>
+        ),
+      },
+      {
+        path: "/master/master-rates/list",
+        element: (
+          <MasterRateLayout>
+            <MasterRateList />
+          </MasterRateLayout>
+        ),
+      },
+      {
+        path: "/billing/category-rate",
+        element: (
+          <BillingLayout>
+            <CategoryRateCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/category-list",
+        element: (
+          <BillingLayout>
+            <CategoryRateList />
+          </BillingLayout>
         ),
       },
       {
