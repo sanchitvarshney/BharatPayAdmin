@@ -57,6 +57,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SendIcon from "@mui/icons-material/Send";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -117,4 +118,5 @@ export const Icons = {
   notifications: NotificationsIcon,
   print: LocalPrintshopIcon,
   send: SendIcon,
+  awb: LocalShippingIcon,
 };
