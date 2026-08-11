@@ -96,7 +96,9 @@ const AwbListTable: React.FC<Props> = ({
             onUpdated?.();
           }
         })
-        .catch(() => {});
+        .catch((err) => {
+          showToast(err?.message || "Failed to update count", "error");
+        });
     },
     [dispatch, onUpdated]
   );
