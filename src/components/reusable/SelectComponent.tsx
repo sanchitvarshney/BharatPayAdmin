@@ -55,6 +55,7 @@ const SelectComponent: React.FC<Props> = ({ value, onChange, label = "", width =
       size={size}
       options={itemList || []}
       getOptionLabel={(option) => (option.part_code ? `(${option.part_code})-${option.text}` : option.text)}
+      filterOptions={(options) => options} 
       filterSelectedOptions
       onChange={(_, value) => {
         onChange(value);

@@ -24,7 +24,7 @@ const componentSchema = z
 
 const entrySchema = z.object({
   component: componentSchema,
-  rate: z.number().min(0, "Rate must be a positive number"),
+  rate: z.number(),
   status: z.string().nonempty("Status is required"),
 });
 
@@ -135,18 +135,20 @@ const CategoryRateForm: React.FC<Props> = ({ mode = "create", categoryKey, defau
       flex: 1.5,
       editable: false,
      renderCell: (params: GridRenderCellParams<any>) => (
-  <SelectComponent
-    value={params.row.component}
-    
-    varient="standard"
-    size="medium"
-    onChange={(value) =>
-      setValue(`components.${params.row.index}.component`, value as ComponentType, {
-        shouldValidate: true,
-        shouldDirty: true,
-      })
-    }
-  />
+  
+  <div className="w-full h-full" onKeyDown={(e) => e.stopPropagation()}>
+    <SelectComponent
+      value={params.row.component}
+      varient="standard"
+      size="medium"
+      onChange={(value) =>
+        setValue(`components.${params.row.index}.component`, value as ComponentType, {
+          shouldValidate: true,
+          shouldDirty: true,
+        })
+      }
+    />
+  </div>
 ),
       cellClassName: (params: any) =>
         errors.components?.[params.row.index]?.component ? "bg-red-50" : "",

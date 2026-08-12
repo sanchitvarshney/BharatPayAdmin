@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   DataGrid,
   GridColDef,
@@ -15,12 +15,12 @@ type EntryRow = {
   rate: number;
 };
 
-// Shared edit-cell input for Min Range / Max Range / Rate: clamps to non-negative,
-// blocks "-"/"+"/"e" keystrokes, and selects the existing value on focus.
+
 export const NumericEditCell: React.FC<GridRenderEditCellParams> = (props) => {
   const { id, field, value, hasFocus } = props;
   const apiRef = useGridApiContext();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState<string>(value === null || value === undefined ? "" : String(value));
 
   useEffect(() => {
     if (hasFocus) {
@@ -30,23 +30,49 @@ export const NumericEditCell: React.FC<GridRenderEditCellParams> = (props) => {
   }, [hasFocus]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Math.max(0, Number(e.target.value) || 0);
+    let sanitized = e.target.value.replace(/[^0-9.-]/g, "");
+    sanitized = sanitized[0] === "-" ? "-" + sanitized.slice(1).replace(/-/g, "") : sanitized.replace(/-/g, "");
+    const firstDot = sanitized.indexOf(".");
+    if (firstDot !== -1) {
+      sanitized = sanitized.slice(0, firstDot + 1) + sanitized.slice(firstDot + 1).replace(/\./g, "");
+    }
+    setText(sanitized);
+    const parsed = Number(sanitized);
+    const newValue = sanitized === "" || sanitized === "-" || sanitized.endsWith(".") || Number.isNaN(parsed) ? sanitized : parsed;
     apiRef.current.setEditCellValue({ id, field, value: newValue });
   };
 
+  const navigationKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab", "Home", "End"];
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (["-", "+", "e"].includes(e.key)) e.preventDefault();
     // Prevent the native "Enter submits the nearest form" behavior; DataGrid's
     // own keydown handling still sees the (non-default-prevented-for-Enter) bubble.
-    if (e.key === "Enter") e.preventDefault();
+    if (e.key === "Enter") {
+      e.preventDefault();
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || navigationKeys.includes(e.key)) return;
+    const input = e.currentTarget;
+    if (/^[0-9]$/.test(e.key)) return;
+    if (e.key === "-") {
+      if (input.selectionStart === 0 && !input.value.includes("-")) return;
+      e.preventDefault();
+      return;
+    }
+    if (e.key === ".") {
+      if (!input.value.includes(".")) return;
+      e.preventDefault();
+      return;
+    }
+    e.preventDefault();
   };
 
   return (
     <input
       ref={inputRef}
-      type="number"
-      min={0}
-      value={value ?? 0}
+      type="text"
+      inputMode="decimal"
+      value={text}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       className="w-full h-full px-2 outline-none border-none bg-transparent"
@@ -84,9 +110,9 @@ const MasterRateEntriesGrid: React.FC<Props> = ({ data, h = 300, onUpdate, colum
           processRowUpdate={(newRow: EntryRow) => {
             onUpdate(newRow.index, {
               rateId: newRow.rateId,
-              minRange: Math.max(0, Number(newRow.minRange)),
-              maxRange: Math.max(0, Number(newRow.maxRange)),
-              rate: Math.max(0, Number(newRow.rate)),
+              minRange: Math.max(0, Number(newRow.minRange) || 0),
+              maxRange: Math.max(0, Number(newRow.maxRange) || 0),
+              rate: Number(newRow.rate) || 0,
             });
             return newRow;
           }}

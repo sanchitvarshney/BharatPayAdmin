@@ -68,6 +68,7 @@ const SelectSKU: React.FC<Props> = ({
       size={size}
       options={deviceList || []}
       getOptionLabel={(option) => `${option.text}`}
+      filterOptions={(options) => options} // Disable filtering; results are already server-filtered
       filterSelectedOptions
       onChange={(_, value) => {
         onChange(value);

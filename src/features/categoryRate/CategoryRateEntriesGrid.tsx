@@ -50,7 +50,7 @@ const CategoryRateEntriesGrid: React.FC<Props> = ({
           processRowUpdate={(newRow: EntryRow) => {
             onUpdate(newRow.index, {
               component: newRow.component,
-              rate: Math.max(0, Number(newRow.rate)),
+              rate: Number(newRow.rate) || 0,
               status: newRow.status,
             });
             return newRow;
