@@ -30,12 +30,11 @@ const menuItems = [
     navigateTo: "/location/list",
   },
   { title: "Menu", tab: "menu", icon: Icons.menu, navigateTo: "/menu/create" },
-    { title: "Master Rates", tab: "master", icon: Icons.rate, navigateTo: "/master/master-rates" },
   {
-    title: "Category Rate",
+    title: "Master Billing",
     tab: "billing",
-    icon: Icons.category,
-    navigateTo: "/billing/category-rate",
+    icon: Icons.rate,
+    navigateTo: "/master/master-rates",
   },
   {
     title: "Permission",

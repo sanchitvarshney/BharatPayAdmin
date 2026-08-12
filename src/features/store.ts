@@ -8,6 +8,7 @@ import locationSlice from "@/features/location/locationSlice";
 import ProfileSlice from "@/features/profile/ProfileSlice";
 import masterRateReducer from "@/features/masterRate/masterRateSlice";
 import categoryRateReducer from "@/features/categoryRate/categoryRateSlice";
+import categoryWeightageReducer from "@/features/categoryWeightage/categoryWeightageSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -18,7 +19,8 @@ export const store = configureStore({
     location: locationSlice,
     profile:ProfileSlice,
     masterRate: masterRateReducer,
-    categoryRate: categoryRateReducer
+    categoryRate: categoryRateReducer,
+    categoryWeightage: categoryWeightageReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

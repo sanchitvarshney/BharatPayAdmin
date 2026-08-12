@@ -59,6 +59,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SendIcon from "@mui/icons-material/Send";
 import CategoryIcon from '@mui/icons-material/Category';
 import RateReviewIcon from '@mui/icons-material/RateReview';
+import PercentIcon from '@mui/icons-material/Percent';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -120,5 +123,8 @@ export const Icons = {
   print: LocalPrintshopIcon,
   send: SendIcon,
   category: CategoryIcon,
-  rate: RateReviewIcon
+  rate: RateReviewIcon,
+  percent: PercentIcon,
+  playlistAdd: PlaylistAddIcon,
+  bulletList: FormatListBulletedIcon
 };

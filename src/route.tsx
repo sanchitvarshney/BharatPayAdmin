@@ -23,12 +23,13 @@ import AllotLocationPage from "./pages/location/AllotLocationPage";
 import Notification from "./pages/Notification/Notification";
 import NotificationsLayout from "@/layouts/NotificationsLayout";
 import PasswordRecoveryPage from "@/pages/authentication/PasswordRecoveryPage";
-import MasterRateLayout from "./layouts/MasterRateLayout";
 import MasterRateCreate from "./pages/master-rates/MasterRateCreate";
 import MasterRateList from "./pages/master-rates/MasterRateList";
 import BillingLayout from "./layouts/BillingLayout";
 import CategoryRateCreate from "./pages/billing/CategoryRateCreate";
 import CategoryRateList from "./pages/billing/CategoryRateList";
+import CategoryWeightageCreate from "./pages/billing/CategoryWeightageCreate";
+import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
 
 export const router = createBrowserRouter([
   {
@@ -97,17 +98,17 @@ export const router = createBrowserRouter([
             {
         path: "/master/master-rates",
         element: (
-          <MasterRateLayout>
+          <BillingLayout>
             <MasterRateCreate />
-          </MasterRateLayout>
+          </BillingLayout>
         ),
       },
       {
         path: "/master/master-rates/list",
         element: (
-          <MasterRateLayout>
+          <BillingLayout>
             <MasterRateList />
-          </MasterRateLayout>
+          </BillingLayout>
         ),
       },
       {
@@ -123,6 +124,22 @@ export const router = createBrowserRouter([
         element: (
           <BillingLayout>
             <CategoryRateList />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/wastage",
+        element: (
+          <BillingLayout>
+            <CategoryWeightageCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/wastage-list",
+        element: (
+          <BillingLayout>
+            <CategoryWeightageList />
           </BillingLayout>
         ),
       },
