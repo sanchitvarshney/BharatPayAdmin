@@ -5,6 +5,7 @@ import {
   GridRenderEditCellParams,
   useGridApiContext,
 } from "@mui/x-data-grid";
+import { entriesGridSx } from "@/components/reusable/entriesGridSx";
 
 type EntryRow = {
   id: string;
@@ -95,7 +96,6 @@ type Props = {
   ) => void;
 };
 
-// Reusable entries table (Min Range / Max Range / Rate) shared by create and edit flows
 const MasterRateEntriesGrid: React.FC<Props> = ({ data, h = 300, onUpdate, columns }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -106,6 +106,7 @@ const MasterRateEntriesGrid: React.FC<Props> = ({ data, h = 300, onUpdate, colum
           hideFooter
           disableColumnMenu
           disableRowSelectionOnClick
+          sx={entriesGridSx}
           getRowHeight={() => 50}
           processRowUpdate={(newRow: EntryRow) => {
             onUpdate(newRow.index, {

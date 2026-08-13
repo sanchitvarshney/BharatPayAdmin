@@ -141,23 +141,25 @@ const CategoryRateListTable: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] ag-theme-quartz">
-      <AgGridReact
-        loading={categoryRateListLoading}
-        loadingOverlayComponent={CustomLoadingOverlay}
-        overlayNoRowsTemplate={OverlayNoRowsTemplate}
-        suppressCellFocus={true}
-        rowData={rowData}
-        columnDefs={columns}
-        treeData={true}
-        groupDefaultExpanded={-1}
-        getDataPath={getDataPath}
-        autoGroupColumnDef={autoGroupColumnDef}
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 25, 50]}
-        onGridReady={onGridReady}
-      />
+    <div className="h-[calc(100vh-80px)] p-[16px] bg-muted/30">
+      <div className="h-full ag-theme-quartz grid-card border border-border rounded-lg shadow-sm overflow-hidden">
+        <AgGridReact
+          loading={categoryRateListLoading}
+          loadingOverlayComponent={CustomLoadingOverlay}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
+          suppressCellFocus={true}
+          rowData={rowData}
+          columnDefs={columns}
+          treeData={true}
+          groupDefaultExpanded={-1}
+          getDataPath={getDataPath}
+          autoGroupColumnDef={autoGroupColumnDef}
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[10, 25, 50]}
+          onGridReady={onGridReady}
+        />
+      </div>
 
       <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
         <div className="min-w-[60vw] max-w-[90vw] h-full flex flex-col">

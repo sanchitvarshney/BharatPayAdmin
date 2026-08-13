@@ -1,6 +1,7 @@
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { ComponentType } from "@/components/reusable/SelectComponent";
+import { entriesGridSx } from "@/components/reusable/entriesGridSx";
 
 type EntryRow = {
   id: string;
@@ -40,12 +41,7 @@ const CategoryRateEntriesGrid: React.FC<Props> = ({
           hideFooter
           disableColumnMenu
           disableRowSelectionOnClick
-          sx={{
-            "& .MuiDataGrid-cell": {
-              display: "flex",
-              alignItems: "center",
-            },
-          }}
+          sx={entriesGridSx}
           getRowHeight={() => 50}
           processRowUpdate={(newRow: EntryRow) => {
             onUpdate(newRow.index, {
