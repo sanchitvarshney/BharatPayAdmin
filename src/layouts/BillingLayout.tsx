@@ -48,6 +48,15 @@ const NAV_GROUPS = [
       { label: "List", path: "/billing/wastage-list", icon: Icons.bulletList },
     ],
   },
+  {
+    key: "bharatpe-credit",
+    label: "BharatPe Credit",
+    icon: Icons.creditCard,
+    items: [
+      { label: "Add", path: "/billing/bharatpe-credit", icon: Icons.playlistAdd },
+      { label: "List", path: "/billing/bharatpe-credit-list", icon: Icons.bulletList },
+    ],
+  },
 ];
 
 const BillingLayout: React.FC<Props> = ({ children }) => {

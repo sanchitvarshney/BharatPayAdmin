@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { Autocomplete, Box, CircularProgress, TextField, Typography } from "@mui/material";
 import useDebounce from "@/hooks/useDebounce";
 import axiosInstance from "@/api/baratpayDashApi";
+import { showToast } from "@/utills/toasterContext";
 
 export type ComponentType = {
   id: string;
@@ -33,8 +34,9 @@ const SelectComponent: React.FC<Props> = ({ value, onChange, label = "", width =
     try {
       const response = await axiosInstance.get(`/backend/search/item/${query}`);
       setItemList(response.data.data); // Assuming response follows the LocationApiresponse format
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error fetching items:", error);
+      showToast( error?.response?.data?.message?.msg || "Failed to fetch items", "error");
     } finally {
       setLoading(false);
     }
@@ -85,11 +87,39 @@ const SelectComponent: React.FC<Props> = ({ value, onChange, label = "", width =
       }}
     />
   )}
-  renderOption={(props, option) => (
-    <li {...props}>
-      {option.part_code ? `(${option.part_code})-${option.text}` : option.text}
-    </li>
-  )}
+  renderOption={(props, option) => {
+    const { key, ...optionProps } = props as React.HTMLAttributes<HTMLLIElement> & { key?: React.Key };
+    return (
+      <Box
+        key={key}
+        component="li"
+        {...optionProps}
+        sx={{
+          display: "flex !important",
+          flexDirection: "column",
+          alignItems: "flex-start !important",
+          gap: 0.25,
+          py: "8px !important",
+        }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.3 }}>
+          {option.text}
+        </Typography>
+        {option.part_code && (
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              fontSize: "0.7rem",
+              lineHeight: 1.3,
+            }}
+          >
+            Part Code: <Box component="span" sx={{ color: "primary.main", fontWeight: 600 }}>{option.part_code}</Box>
+          </Typography>
+        )}
+      </Box>
+    );
+  }}
   sx={{
     width,
     height: "40px",

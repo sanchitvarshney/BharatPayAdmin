@@ -30,6 +30,9 @@ import CategoryRateCreate from "./pages/billing/CategoryRateCreate";
 import CategoryRateList from "./pages/billing/CategoryRateList";
 import CategoryWeightageCreate from "./pages/billing/CategoryWeightageCreate";
 import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
+import BharatpeCreditCreate from "./pages/billing/BharatpeCreditCreate";
+import BharatpeCreditList from "./pages/billing/BharatpeCreditList";
+import Custom404Page from "./pages/Custom404Page";
 
 export const router = createBrowserRouter([
   {
@@ -86,7 +89,7 @@ export const router = createBrowserRouter([
           </Menulayout>
         ),
       },
-  
+
       {
         path: "/menu/list",
         element: (
@@ -95,7 +98,7 @@ export const router = createBrowserRouter([
           </Menulayout>
         ),
       },
-            {
+      {
         path: "/master/master-rates",
         element: (
           <BillingLayout>
@@ -144,6 +147,22 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: "/billing/bharatpe-credit",
+        element: (
+          <BillingLayout>
+            <BharatpeCreditCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/bharatpe-credit-list",
+        element: (
+          <BillingLayout>
+            <BharatpeCreditList />
+          </BillingLayout>
+        ),
+      },
+      {
         path: "/location/list",
         element: (
           <LocationLayout>
@@ -178,6 +197,14 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "*",
+        element: (
+          <ProtectedRoute authentication>
+            <Custom404Page />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
