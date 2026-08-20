@@ -33,6 +33,8 @@ import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
 import BharatpeCreditCreate from "./pages/billing/BharatpeCreditCreate";
 import BharatpeCreditList from "./pages/billing/BharatpeCreditList";
 import Custom404Page from "./pages/Custom404Page";
+import AwbLayout from "@/layouts/AwbLayout";
+import AwbCount from "@/pages/awb/AwbCount";
 
 export const router = createBrowserRouter([
   {
@@ -204,6 +206,14 @@ export const router = createBrowserRouter([
           <ProtectedRoute authentication>
             <Custom404Page />
           </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/awb/count",
+        element: (
+          <AwbLayout>
+            <AwbCount />
+          </AwbLayout>
         ),
       },
     ],

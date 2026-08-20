@@ -63,6 +63,7 @@ import PercentIcon from '@mui/icons-material/Percent';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -128,5 +129,6 @@ export const Icons = {
   percent: PercentIcon,
   playlistAdd: PlaylistAddIcon,
   bulletList: FormatListBulletedIcon,
-  creditCard: CreditCardIcon
+  creditCard: CreditCardIcon,
+  awb: LocalShippingIcon,
 };
