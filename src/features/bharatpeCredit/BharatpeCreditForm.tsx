@@ -14,20 +14,51 @@ import SelectComponent from "@/components/reusable/SelectComponent";
 import { showToast } from "@/utills/toasterContext";
 
 const optionSchema = z
-  .object({ id: z.string(), text: z.string(), part_code: z.string() })
+  .object({
+    id: z.string(),
+    text: z.string(),
+    part_code: z.string(),
+  })
   .nullable()
-  .refine((val) => !!val, { message: "This field is required" });
+  .refine((val) => val !== null, {
+    message: "This field is required",
+  });
 
 const schema = z.object({
   show: optionSchema,
+
   calculate: optionSchema,
-  type: z.string().nonempty("This field is required").nullable(),
+
+  type: z
+    .string()
+    .nullable()
+    .refine((value) => value !== null && value !== "", {
+      message: "This field is required",
+    }),
 });
 
-export type BharatpeCreditFormValues = z.infer<typeof schema>;
+type BharatpeCreditFormValues = {
+  show:
+    | {
+        id: string;
+        text: string;
+        part_code: string;
+      }
+    | null;
+
+  calculate:
+    | {
+        id: string;
+        text: string;
+        part_code: string;
+      }
+    | null;
+
+  type: string | null;
+};
 
 export const BLANK_BHARATPE_CREDIT_FORM: BharatpeCreditFormValues = {
-  show: null,
+ show: null,
   calculate: null,
   type: null,
 };

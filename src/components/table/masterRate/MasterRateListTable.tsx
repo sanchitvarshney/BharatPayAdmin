@@ -71,6 +71,7 @@ const flattenMasterRateGroups = (groups: MasterRateDeviceGroup[]): RowData[] =>
 
 const toFormValues = (product: EditingProduct): MasterRateFormValues => ({
   type: product.deviceCategory,
+  //@ts-ignore
   sku: product?.productKey
     ? { id: product?.productKey, text: product.productSkuCode || product.productName }
     : null,

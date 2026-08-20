@@ -17,15 +17,19 @@ export const COMPONENT_STATUS = {
   INACTIVE: "INACTIVE",
 };
 
-const componentSchema = z
-  .object({ id: z.string(), text: z.string(), part_code: z.string() })
-  .nullable()
-  .refine((val) => !!val, { message: "Component is required" });
 
 const entrySchema = z.object({
-  component: componentSchema,
+component: z
+  .object({
+    id: z.string(),
+    text: z.string(),
+    part_code: z.string(),
+  })
+  .nullable()
+  .optional(),
+
   rate: z.number(),
-  status: z.string().nonempty("Status is required"),
+  status: z.string(),
 });
 
 const schema = z.object({
@@ -40,6 +44,7 @@ export type CategoryRateFormValues = z.infer<typeof schema>;
 
 export const BLANK_CATEGORY_RATE_FORM: CategoryRateFormValues = {
   categoryName: "",
+ 
   components: [{ component: null, rate: 0, status: COMPONENT_STATUS.ACTIVE }],
 };
 
@@ -76,7 +81,7 @@ const CategoryRateForm: React.FC<Props> = ({ mode = "create", categoryKey, defau
   const watchedComponents = useWatch({ control, name: "components" });
 
   const onSubmit = (data: CategoryRateFormValues) => {
-    const components = data.components.map((component) => ({
+    const components = data?.components?.map((component) => ({
       component_key: component.component!.id,
       rate: component.rate,
       status: component.status,

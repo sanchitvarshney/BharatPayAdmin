@@ -26,9 +26,20 @@ export const COMPONENT_STATUS = {
 };
 
 const componentSchema = z
-  .object({ id: z.string(), text: z.string(), part_code: z.string() })
+  .object({
+    id: z.string(),
+    text: z.string(),
+    part_code: z.string(),
+  })
   .nullable()
-  .refine((val) => !!val, { message: "Component is required" });
+  .superRefine((value, ctx) => {
+    if (value === null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Component is required",
+      });
+    }
+  });
 
 const entrySchema = z.object({
   component: componentSchema,

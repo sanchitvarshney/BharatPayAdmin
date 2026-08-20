@@ -82,7 +82,7 @@ export const NumericEditCell: React.FC<GridRenderEditCellParams> = (props) => {
 };
 
 type Props = {
-  h?: number;
+  h?: number | string;
   columns: GridColDef[];
   data: any;
   onUpdate: (

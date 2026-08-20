@@ -11,15 +11,13 @@ import {
 } from "@/features/bharatpeCredit/bharatpeCreditSlice";
 import { BharatpeCreditListItem } from "@/features/bharatpeCredit/bharatpeCreditType";
 import { Icons } from "@/components/icons/icons";
-import BharatpeCreditForm, {
-  BharatpeCreditFormValues,
-} from "@/features/bharatpeCredit/BharatpeCreditForm";
+import BharatpeCreditForm from "@/features/bharatpeCredit/BharatpeCreditForm";
 import SharedDialog from "@/components/shared/SharedDialog";
 import { showToast } from "@/utills/toasterContext";
 
 type EditingItem = BharatpeCreditListItem;
 
-const toFormValues = (item: EditingItem): BharatpeCreditFormValues => ({
+const toFormValues = (item: EditingItem): any => ({
   show: { id: String(item.show_component_key), text: item.show_component, part_code: item.show_component },
   calculate: {
     id: String(item.calc_component_key),

@@ -47,10 +47,19 @@ const entrySchema = z.object({
 });
 
 const skuSchema = z
-  .object({ id: z.string(), text: z.string() })
+  .object({
+    id: z.string(),
+    text: z.string(),
+  })
   .nullable()
-  .refine((val) => !!val, { message: "Product SKU is required" });
-
+  .superRefine((value, ctx) => {
+    if (value === null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Product SKU is required",
+      });
+    }
+  });
 const schema = z.object({
   type: z.string().nonempty("Device type is required"),
   sku: skuSchema,
