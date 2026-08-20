@@ -18,6 +18,10 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
+          'react/jsx-no-target-blank': 'off',
+        "react/prop-types": "off",
+        "react-hooks/exhaustive-deps": "off",
+          "@typescript-eslint/no-explicit-any": "off",
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',

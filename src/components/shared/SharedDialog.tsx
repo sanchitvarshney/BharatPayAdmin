@@ -15,11 +15,19 @@ interface SharedDialogProps {
   endIcon?: React.ReactNode;
   loading?: boolean;
   color?: "inherit" | "primary" | "secondary" | "error" | "info" | "success" | "warning";
+  disableBackdropClose?: boolean;
 }
 
-const SharedDialog: React.FC<SharedDialogProps> = ({ open, title, content, onClose, onConfirm, confirmText = "Confirm", cancelText = "Cancel", startIcon, endIcon, loading = false, color = "error" }) => {
+const SharedDialog: React.FC<SharedDialogProps> = ({ open, title, content, onClose, onConfirm, confirmText = "Confirm", cancelText = "Cancel", startIcon, endIcon, loading = false, color = "error", disableBackdropClose = false }) => {
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="dialog-title">
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (disableBackdropClose && reason === "backdropClick") return;
+        onClose();
+      }}
+      aria-labelledby="dialog-title"
+    >
       <div className="absolute top-0 left-0 right-0">{loading && <LinearProgress />}</div>
       <DialogTitle id="dialog-title" fontWeight={600}>
         {title}

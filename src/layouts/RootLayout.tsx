@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Star } from "lucide-react";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Navigation from "@/components/shared/Navigation";
 
-import { CgArrowTopRight } from "react-icons/cg";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import CustomTooltip from "@/components/ui/CustomTooltip";
 import axiosInstance from "@/api/baratpayDashApi";
 import { Icons } from "@/components/icons/icons";
 import { getAdminMenuList, getPermissionMenu } from "@/features/menu/menuSlice";
@@ -39,6 +30,12 @@ const menuItems = [
     navigateTo: "/location/list",
   },
   { title: "Menu", tab: "menu", icon: Icons.menu, navigateTo: "/menu/create" },
+  {
+    title: "Master Billing",
+    tab: "billing",
+    icon: Icons.rate,
+    navigateTo: "/master/master-rates",
+  },
   {
     title: "Permission",
     tab: "permission",
@@ -77,8 +74,8 @@ const RootLayout: React.FC<Props> = ({ children }) => {
       const response = await axiosInstance.get(
         "permission/getUserMenuPermission"
       );
-      let newMenu = response.data.menu;
-      let master = response.data.masterMenu;
+      const newMenu = response.data.menu;
+      const master = response.data.masterMenu;
       setNewMenu(newMenu);
       setMasterMenu(master);
       return newMenu;
@@ -112,52 +109,6 @@ const RootLayout: React.FC<Props> = ({ children }) => {
     }
   }, [menuKey]);
 
-  const renderMenu = (menu: any, r: any, setSidemenu: any) => {
-    return (
-      <Accordion type="single" className="w-full" collapsible>
-        <ul className="flex flex-col gap-[10px]  p-[10]">
-          {menu.map((item: any, index: number) =>
-            item?.menu_key === r?.menu_key ||
-            item?.parent_menu_key === r?.menu_key ? (
-              <li key={index}>
-                {item?.children ? (
-                  <AccordionItem
-                    value={`${index + item.name}`}
-                    className="border-0 hover:bg-[#DBEAFE]" // Hover effect applied to the item
-                  >
-                    <AccordionTrigger className="p-[10px] rounded-md cursor-pointer hover:no-underline">
-                      <span className="flex gap-[10px] items-center">
-                        {item.name}
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-white rounded">
-                      {renderMenu(item.children, r, setSidemenu)}
-                    </AccordionContent>
-                  </AccordionItem>
-                ) : (
-                  <div className="flex items-center justify-between w-full">
-                    <Link
-                      onClick={() => setSidemenu(false)}
-                      to={item.url}
-                      className="w-full hover:no-underline hover:bg-[#DBEAFE] p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]"
-                    >
-                      {item.name}
-                      <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
-                    </Link>
-                    <CustomTooltip message="Add to favorite" side="right">
-                      <div className="h-[30px] min-w-[30px] flex justify-center items-center hover:bg-[#DBEAFE] hover:text-cyan-600 transition-all cursor-pointer rounded-md">
-                        <Star className="h-[16px] w-[16px]" />
-                      </div>
-                    </CustomTooltip>
-                  </div>
-                )}
-              </li>
-            ) : null
-          )}
-        </ul>
-      </Accordion>
-    );
-  };
 
   return (
     <Wrapper className="h-[100vh] w-[100%] bg-blue-800 p-[10px] ">

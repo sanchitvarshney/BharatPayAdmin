@@ -57,6 +57,12 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SendIcon from "@mui/icons-material/Send";
+import CategoryIcon from '@mui/icons-material/Category';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import PercentIcon from '@mui/icons-material/Percent';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 export const Icons = {
   save: SaveIcon,
@@ -118,5 +124,11 @@ export const Icons = {
   notifications: NotificationsIcon,
   print: LocalPrintshopIcon,
   send: SendIcon,
+  category: CategoryIcon,
+  rate: RateReviewIcon,
+  percent: PercentIcon,
+  playlistAdd: PlaylistAddIcon,
+  bulletList: FormatListBulletedIcon,
+  creditCard: CreditCardIcon,
   awb: LocalShippingIcon,
 };

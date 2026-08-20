@@ -23,6 +23,16 @@ import AllotLocationPage from "./pages/location/AllotLocationPage";
 import Notification from "./pages/Notification/Notification";
 import NotificationsLayout from "@/layouts/NotificationsLayout";
 import PasswordRecoveryPage from "@/pages/authentication/PasswordRecoveryPage";
+import MasterRateCreate from "./pages/master-rates/MasterRateCreate";
+import MasterRateList from "./pages/master-rates/MasterRateList";
+import BillingLayout from "./layouts/BillingLayout";
+import CategoryRateCreate from "./pages/billing/CategoryRateCreate";
+import CategoryRateList from "./pages/billing/CategoryRateList";
+import CategoryWeightageCreate from "./pages/billing/CategoryWeightageCreate";
+import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
+import BharatpeCreditCreate from "./pages/billing/BharatpeCreditCreate";
+import BharatpeCreditList from "./pages/billing/BharatpeCreditList";
+import Custom404Page from "./pages/Custom404Page";
 import AwbLayout from "@/layouts/AwbLayout";
 import AwbCount from "@/pages/awb/AwbCount";
 
@@ -81,12 +91,77 @@ export const router = createBrowserRouter([
           </Menulayout>
         ),
       },
+
       {
         path: "/menu/list",
         element: (
           <Menulayout>
             <MenuList />
           </Menulayout>
+        ),
+      },
+      {
+        path: "/master/master-rates",
+        element: (
+          <BillingLayout>
+            <MasterRateCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/master/master-rates/list",
+        element: (
+          <BillingLayout>
+            <MasterRateList />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/category-rate",
+        element: (
+          <BillingLayout>
+            <CategoryRateCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/category-list",
+        element: (
+          <BillingLayout>
+            <CategoryRateList />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/wastage",
+        element: (
+          <BillingLayout>
+            <CategoryWeightageCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/wastage-list",
+        element: (
+          <BillingLayout>
+            <CategoryWeightageList />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/bharatpe-credit",
+        element: (
+          <BillingLayout>
+            <BharatpeCreditCreate />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/bharatpe-credit-list",
+        element: (
+          <BillingLayout>
+            <BharatpeCreditList />
+          </BillingLayout>
         ),
       },
       {
@@ -124,6 +199,14 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "*",
+        element: (
+          <ProtectedRoute authentication>
+            <Custom404Page />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/awb/count",
