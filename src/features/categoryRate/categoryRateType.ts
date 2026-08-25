@@ -41,6 +41,7 @@ export type CategoryRateGroup = {
   categoryKey: string;
   categoryName: string;
   components: CategoryRateComponentItem[];
+  partCode: string;
 };
 
 export type CategoryRateListResponse = {

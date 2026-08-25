@@ -77,7 +77,15 @@ const UpadteEmail: React.FC<Props> = ({ open, handleClose }) => {
     };
   }, [send]);
   return (
-    <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+    <Dialog
+      open={open}
+      onClose={(_event, reason) => {
+        if (reason === "backdropClick") return;
+        handleClose();
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
       <div className="absolute top-0 left-0 right-0">{(emailOtpLoading || updateEmailLoading) && <LinearProgress />}</div>
       <DialogTitle id="alert-dialog-title">
         <Typography fontWeight={600} fontSize={20}>

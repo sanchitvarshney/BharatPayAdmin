@@ -208,7 +208,7 @@ const MasterRateListTable: React.FC = () => {
   const getDataPath = useCallback((data: RowData) => data.orgHierarchy, []);
 
   const onGridReady = (params: GridReadyEvent) => {
-    params.api.autoSizeAllColumns();
+    params.api.sizeColumnsToFit();
   };
 
   return (

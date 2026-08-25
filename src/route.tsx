@@ -32,6 +32,7 @@ import CategoryWeightageCreate from "./pages/billing/CategoryWeightageCreate";
 import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
 import BharatpeCreditCreate from "./pages/billing/BharatpeCreditCreate";
 import BharatpeCreditList from "./pages/billing/BharatpeCreditList";
+import ComponentRateList from "./pages/billing/ComponentRateList";
 import Custom404Page from "./pages/Custom404Page";
 import AwbLayout from "@/layouts/AwbLayout";
 import AwbCount from "@/pages/awb/AwbCount";
@@ -161,6 +162,14 @@ export const router = createBrowserRouter([
         element: (
           <BillingLayout>
             <BharatpeCreditList />
+          </BillingLayout>
+        ),
+      },
+      {
+        path: "/billing/component-rate-list",
+        element: (
+          <BillingLayout>
+            <ComponentRateList />
           </BillingLayout>
         ),
       },

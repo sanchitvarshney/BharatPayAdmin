@@ -93,7 +93,7 @@ const CategoryWeightageListTable: React.FC = () => {
   );
 
   const onGridReady = (params: GridReadyEvent) => {
-    params.api.autoSizeAllColumns();
+    params.api.sizeColumnsToFit();
   };
 
   return (

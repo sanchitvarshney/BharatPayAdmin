@@ -112,7 +112,7 @@ const BharatpeCreditListTable: React.FC = () => {
   );
 
   const onGridReady = (params: GridReadyEvent) => {
-    params.api.autoSizeAllColumns();
+    params.api.sizeColumnsToFit();
   };
 
   return (

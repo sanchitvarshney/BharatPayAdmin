@@ -47,6 +47,7 @@ const Login: React.FC = () => {
   const handleLoginWithGoogle = (googleResponse: any) => {
     const data: any = {
       credential: googleResponse.credential,
+      isAdmin: true
     };
     dispatch(loginUserAsync(data)).then((res: any) => {
   
