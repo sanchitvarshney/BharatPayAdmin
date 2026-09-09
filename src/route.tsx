@@ -33,6 +33,9 @@ import CategoryWeightageList from "./pages/billing/CategoryWeightageList";
 import BharatpeCreditCreate from "./pages/billing/BharatpeCreditCreate";
 import BharatpeCreditList from "./pages/billing/BharatpeCreditList";
 import ComponentRateList from "./pages/billing/ComponentRateList";
+import VendorRateCreate from "./pages/billing/VendorRateCreate";
+import VendorPricingList from "./pages/billing/VendorPricingList";
+import VendorRateLayout from "./layouts/VendorRateLayout";
 import Custom404Page from "./pages/Custom404Page";
 import AwbLayout from "@/layouts/AwbLayout";
 import AwbCount from "@/pages/awb/AwbCount";
@@ -171,6 +174,22 @@ export const router = createBrowserRouter([
           <BillingLayout>
             <ComponentRateList />
           </BillingLayout>
+        ),
+      },
+      {
+        path: "/vendor-pricing",
+        element: (
+          <VendorRateLayout>
+            <VendorRateCreate />
+          </VendorRateLayout>
+        ),
+      },
+      {
+        path: "/vendor-pricing/list",
+        element: (
+          <VendorRateLayout>
+            <VendorPricingList />
+          </VendorRateLayout>
         ),
       },
       {
