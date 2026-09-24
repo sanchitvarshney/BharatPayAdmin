@@ -65,6 +65,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 export const Icons = {
   save: SaveIcon,
   refresh: RefreshIcon,
@@ -133,4 +134,5 @@ export const Icons = {
   creditCard: CreditCardIcon,
   awb: LocalShippingIcon,
   component: SettingsInputComponentIcon,
+  vendor: StorefrontIcon,
 };

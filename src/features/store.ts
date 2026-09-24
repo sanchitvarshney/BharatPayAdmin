@@ -12,6 +12,7 @@ import categoryWeightageReducer from "@/features/categoryWeightage/categoryWeigh
 import bharatpeCreditReducer from "@/features/bharatpeCredit/bharatpeCreditSlice";
 import awbReducer from "@/features/awb/awbSlice";
 import componentRateReducer from "@/features/componentRate/componentRateSlice";
+import vendorRateReducer from "@/features/vendorRate/vendorRateSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -26,7 +27,8 @@ export const store = configureStore({
     categoryWeightage: categoryWeightageReducer,
     bharatpeCredit: bharatpeCreditReducer,
     awb: awbReducer,
-    componentRate: componentRateReducer
+    componentRate: componentRateReducer,
+    vendorRate: vendorRateReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

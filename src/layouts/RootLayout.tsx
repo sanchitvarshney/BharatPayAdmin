@@ -37,6 +37,12 @@ const menuItems = [
     navigateTo: "/master/master-rates",
   },
   {
+    title: "Vendor Pricing",
+    tab: "vendor-pricing",
+    icon: Icons.vendor,
+    navigateTo: "/vendor-pricing",
+  },
+  {
     title: "Permission",
     tab: "permission",
     icon: Icons.permission,
