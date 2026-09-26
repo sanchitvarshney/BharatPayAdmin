@@ -93,6 +93,7 @@ const Login: React.FC = () => {
             onSuccess={(credentialResponse) => {
               handleLoginWithGoogle(credentialResponse);
             }}
+            use_fedcm_for_button
             onError={() => {
               showToast("Login failed", "error");
             }}
