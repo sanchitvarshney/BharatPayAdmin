@@ -6,7 +6,7 @@ import { showToast } from "@/utills/toasterContext";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { loginUserAsync } from "@/features/authentication/authSlice";
 import {  useNavigate } from "react-router-dom";
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { GoogleLogin } from "@react-oauth/google";
 
 // interface LoginFormInputs {
@@ -50,58 +50,79 @@ const Login: React.FC = () => {
       isAdmin: true
     };
     dispatch(loginUserAsync(data)).then((res: any) => {
-  
-      if (res.payload.data.success) {
-        navigate("/");
-      } else {
-        showToast(res.payload.data.message, "error");
+      if (loginUserAsync.fulfilled.match(res)) {
+        if (res.payload?.data?.success) {
+          navigate("/");
+        } else {
+          showToast(
+            res.payload?.data?.message || "Unable to sign in. Please try again.",
+            "error"
+          );
+        }
+      } else if (!res.payload?.message) {
+        showToast("Unable to sign in. Please try again.", "error");
       }
-    });
+    })
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-2xl">
-        <div>
-         <div className="flex justify-center mb-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-10">
+      <div className="w-full max-w-sm">
+        <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl ring-1 ring-gray-900/5 px-6 py-10 sm:px-10">
+          <div className="flex justify-center">
             <img
-              src="/bharatpay.svg"
-              alt="BPE Logo"
-              className="h-16 w-auto"
+              src="/mslogo.png"
+              alt="BharatPay"
+              className="h-14 w-auto"
             />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Welcome Back
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your account
-          </p>
-        </div>
-           {loading ? (
-          <div className="flex justify-center items-center gap-2">
-            <Typography
-              style={{
-                textAlign: "center",
-              }}
-            >
-              Please wait.....
-            </Typography>
-            <CircularProgress color="secondary" size={25} />
+
+          <div className="mt-8 text-center">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              Welcome back
+            </h1>
+            <p className="mt-2 text-sm text-gray-500">
+              Sign in to the BharatPay admin console
+            </p>
           </div>
-        ) : (
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              handleLoginWithGoogle(credentialResponse);
-            }}
-            use_fedcm_for_button
-            onError={() => {
-              showToast("Login failed", "error");
-            }}
-            // shape="circle"
-            text="continue_with"
-            logo_alignment="center"
-          />
-        )}
+
+          <div
+            className="mt-8 flex min-h-[44px] items-center justify-center"
+            aria-live="polite"
+            aria-busy={loading}
+          >
+            {loading ? (
+              <div className="flex items-center gap-3 text-sm font-medium text-gray-600">
+                <CircularProgress size={20} thickness={5} />
+                <span>Signing you in…</span>
+              </div>
+            ) : (
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  handleLoginWithGoogle(credentialResponse);
+                }}
+                use_fedcm_for_button
+                onError={() => {
+                  showToast("Google sign-in failed. Please try again.", "error");
+                }}
+                text="continue_with"
+                shape="pill"
+                size="large"
+                width="300"
+                logo_alignment="center"
+              />
+            )}
+          </div>
+
+          <p className="mt-8 text-center text-xs text-gray-400">
+            Use your authorized organization Google account.
+          </p>
+             <p className="mt-6 text-center text-xs text-gray-400">
+          © {new Date().getFullYear()} MsCorpres. All rights reserved.
+        </p>
+        </div>
+
+     
 
         {/* <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">

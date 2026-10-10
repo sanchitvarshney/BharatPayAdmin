@@ -21,9 +21,13 @@ const initialState: AuthState = {
   qrCodeLoading: false
 };
 
-export const loginUserAsync = createAsyncThunk<AxiosResponse<LoginResponse>, LoginCredentials>("auth/signin", async (loginCredential) => {
-  const response = await axiosInstance.post<LoginResponse>("/auth/auth/google", loginCredential);
-  return response;
+export const loginUserAsync = createAsyncThunk<AxiosResponse<LoginResponse>, LoginCredentials, { rejectValue: { message?: string } | undefined }>("auth/signin", async (loginCredential, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post<LoginResponse>("/auth/auth/google", loginCredential);
+    return response;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data);
+  }
 });
 
 export const getPasswordOtp = createAsyncThunk<
