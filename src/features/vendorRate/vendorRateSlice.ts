@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import axiosInstance from "@/api/baratpayDashApi";
 import { showToast } from "@/utills/toasterContext";
-import { VendorPricingEntry, VendorPricingListResponse, VendorPricingUpdateEntry, VendorRateState } from "./vendorRateType";
+import { VendorPricingEntry, VendorPricingListParams, VendorPricingListResponse, VendorPricingUpdateEntry, VendorRateState } from "./vendorRateType";
 
 const ADD_ENDPOINT = "/adminPo/addVendorPricing";
 const LIST_ENDPOINT = "/adminPo/getVendorPricing";
@@ -12,6 +12,7 @@ const initialState: VendorRateState = {
   createVendorRateLoading: false,
   vendorPricingListLoading: false,
   vendorPricingList: null,
+  vendorPricingPagination: null,
   updateVendorPricingLoading: false,
 };
 
@@ -23,10 +24,10 @@ export const createVendorRate = createAsyncThunk<AxiosResponse<any>, VendorPrici
   },
 );
 
-export const getVendorPricingList = createAsyncThunk<AxiosResponse<VendorPricingListResponse>>(
+export const getVendorPricingList = createAsyncThunk<AxiosResponse<VendorPricingListResponse>, VendorPricingListParams>(
   "vendorRate/getVendorPricingList",
-  async () => {
-    const response = await axiosInstance.get(LIST_ENDPOINT);
+  async (params) => {
+    const response = await axiosInstance.get(LIST_ENDPOINT, { params });
     return response;
   },
 );
@@ -63,12 +64,14 @@ const vendorRateSlice = createSlice({
       .addCase(getVendorPricingList.fulfilled, (state, action) => {
         if (action.payload.data.success) {
           state.vendorPricingList = action.payload.data.data;
+          state.vendorPricingPagination = action.payload.data.pagination ?? null;
         }
         state.vendorPricingListLoading = false;
       })
       .addCase(getVendorPricingList.rejected, (state) => {
         state.vendorPricingListLoading = false;
         state.vendorPricingList = null;
+        state.vendorPricingPagination = null;
       })
       .addCase(updateVendorPricing.pending, (state) => {
         state.updateVendorPricingLoading = true;

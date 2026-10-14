@@ -45,5 +45,11 @@ export type VendorRateState = {
   createVendorRateLoading: boolean;
   vendorPricingListLoading: boolean;
   vendorPricingList: VendorPricingListItem[] | null;
+  vendorPricingPagination: VendorPricingPagination | null;
   updateVendorPricingLoading: boolean;
+};
+
+export type VendorPricingListParams = {
+  page: number;
+  limit: number;
 };
