@@ -11,6 +11,7 @@ import SharedDialog from "@/components/shared/SharedDialog";
 import { deleteRole, editRole, getRoleList } from "@/features/permission/permissionSlice";
 import { showToast } from "@/utills/toasterContext";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { leftAlignedColumn, rightAlignedColumn } from "@/utills/agGridAlignUtils";
 
 const RoleListTable: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +25,8 @@ const RoleListTable: React.FC = () => {
     {
       headerName: "#",
       field: "ID",
-      width: 100,
+      width: 50,
+      ...leftAlignedColumn,
       valueGetter: (params: any) => {
         return params.node.rowIndex + 1;
       },
@@ -37,7 +39,8 @@ const RoleListTable: React.FC = () => {
     {
       headerName: "Role",
       field: "role_name",
-      flex: 1,
+      ...leftAlignedColumn,
+      width: 150,
       cellRenderer: (params: any) => {
         // Get the role_name and role_id from the row data
         const roleName = params?.data?.role_name;
@@ -58,15 +61,20 @@ const RoleListTable: React.FC = () => {
       headerName: "Role Description",
       field: "description",
       flex: 1,
+      ...leftAlignedColumn,
+      wrapText: true,
+      autoHeight: true,
     },
     {
       headerName: "Users",
       field: "count",
-      flex: 1,
+     width : 100,
+     ...rightAlignedColumn,
     },
     {
-      headerName: "",
+      headerName: "Actions",
       field: "action",
+      ...leftAlignedColumn,
       cellRenderer: (params: any) => (
         <div className="flex items-center h-full gap-[10px]">
           <IconButton

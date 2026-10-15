@@ -13,6 +13,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { findMenuKey } from "@/general";
+import { leftAlignedColumn } from "@/utills/agGridAlignUtils";
 
 const ViewUser = () => {
   const [value, setValue] = React.useState("1");
@@ -51,8 +52,7 @@ const ViewUser = () => {
     {
       field: "fullName",
       headerName: "Name",
-      minWidth: 200,
-      maxWidth: 400,
+    flex: 1,
       filter: true,
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-[10px] py-[5px] max-w-max ">
@@ -67,19 +67,20 @@ const ViewUser = () => {
         </div>
       ),
       autoHeight: true,
-      flex: 1,
+      wrapText: true,
+      ...leftAlignedColumn,
     },
     {
       field: "emailID",
       headerName: "Email",
       flex: 1,
-      minWidth: 200,
-      maxWidth: 400,
+   ...leftAlignedColumn,
+   wrapText: true,
       filter: true,
     },
-    { field: "mobileNo", headerName: "Mobile No.",filter: true},
-    { field: "gender", headerName: "Gender" },
-    { field: "role", headerName: "Role",filter: true },
+    { field: "mobileNo", headerName: "Mobile No.",filter: true, ...leftAlignedColumn, width: 140 },
+    { field: "gender", headerName: "Gender", ...leftAlignedColumn, width: 100 },
+    { field: "role", headerName: "Role",filter: true , ...leftAlignedColumn, width: 100 },
     { field: "userID", headerName: "userID", hide: true },
   ];
 

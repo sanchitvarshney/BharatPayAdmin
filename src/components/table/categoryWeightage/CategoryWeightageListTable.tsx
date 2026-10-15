@@ -12,6 +12,10 @@ import CategoryWeightageForm, {
   CategoryWeightageFormValues,
   COMPONENT_STATUS,
 } from "@/features/categoryWeightage/CategoryWeightageForm";
+import {
+  leftAlignedColumn,
+  rightAlignedColumn,
+} from "@/utills/agGridAlignUtils";
 
 type EditingItem = CategoryWeightageListItem;
 
@@ -31,9 +35,8 @@ const toFormValues = (item: EditingItem): CategoryWeightageFormValues => ({
 
 const CategoryWeightageListTable: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { categoryWeightageList, categoryWeightageListLoading } = useAppSelector(
-    (state) => state.categoryWeightage,
-  );
+  const { categoryWeightageList, categoryWeightageListLoading } =
+    useAppSelector((state) => state.categoryWeightage);
   const [rowData, setRowData] = useState<CategoryWeightageListItem[]>([]);
   const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -61,23 +64,55 @@ const CategoryWeightageListTable: React.FC = () => {
       {
         headerName: "#",
         colId: "srNo",
-        width: 100,
+        width: 50,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) => (params.node?.rowIndex ?? 0) + 1,
       },
-      { headerName: "Part Code", field: "part_code", flex: 1 },
-      { headerName: "Wastage %", field: "wastage_percent", flex: 1 },
-      { headerName: "Created By", field: "created_by", flex: 1 },
-      { headerName: "Created Date", field: "created_at", flex: 1 },
-      { headerName: "Updated By", field: "updated_by", flex: 1 },
-      { headerName: "Updated Date", field: "updated_at", flex: 1 },
+      {
+        headerName: "Part Code",
+        field: "part_code",
+        width: 120,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Wastage %",
+        field: "wastage_percent",
+        width: 120,
+        ...rightAlignedColumn,
+      },
+      {
+        headerName: "Created By",
+        field: "created_by",
+        width: 150,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Created Date",
+        field: "created_at",
+        width: 150,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Updated By",
+        field: "updated_by",
+        width: 150,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Updated Date",
+        field: "updated_at",
+        width: 150,
+        ...leftAlignedColumn,
+      },
       {
         headerName: "Action",
         field: "action",
         width: 90,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) =>
           params.data ? (
             <IconButton

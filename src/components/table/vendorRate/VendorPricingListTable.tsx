@@ -21,6 +21,7 @@ import {
 } from "@/features/vendorRate/vendorRateSlice";
 import { VendorPricingListItem } from "@/features/vendorRate/vendorRateType";
 import { Icons } from "@/components/icons/icons";
+import { leftAlignedColumn } from "@/utills/agGridAlignUtils";
 
 type RowData = {
   pricing_key: string;
@@ -249,9 +250,10 @@ const VendorPricingListTable: React.FC = () => {
       {
         headerName: "#",
         colId: "srNo",
-        width: 70,
+        width: 50,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) =>
           (page - 1) * limit + (params.node?.rowIndex ?? 0) + 1,
       },
@@ -259,6 +261,8 @@ const VendorPricingListTable: React.FC = () => {
         headerName: "Vendor",
         field: "vendor_name",
         flex: 1.2,
+        warpText: true,
+        ...leftAlignedColumn,
         getQuickFilterText: (params: any) =>
           `${params.data?.vendor_name ?? ""} ${params.data?.vendor_id ?? ""}`,
         cellRenderer: (params: any) =>
@@ -273,15 +277,19 @@ const VendorPricingListTable: React.FC = () => {
         headerName: "Part Code",
         field: "part_code",
         flex: 0.8,
+        ...leftAlignedColumn,
+        
       },
       {
         headerName: "Component",
         field: "component_name",
         flex: 1.4,
+        ...leftAlignedColumn,
+        warpText: true,
       },
 
-      { headerName: "Currency", field: "currency", flex: 0.7 },
-      { headerName: "Inserted Date", field: "insert_date", flex: 1 },
+      { headerName: "Currency", field: "currency", flex: 0.7, ...leftAlignedColumn },
+      { headerName: "Inserted At", field: "insert_date", flex: 1 },
       { headerName: "Inserted By", field: "inserted_by", flex: 0.9 },
       {
         headerName: "Rate",
@@ -289,6 +297,7 @@ const VendorPricingListTable: React.FC = () => {
         flex: 0.8,
         cellRenderer: RateCellRenderer,
         getQuickFilterText: () => "",
+        ...leftAlignedColumn,
       },
       {
         headerName: "Action",
@@ -296,6 +305,7 @@ const VendorPricingListTable: React.FC = () => {
         width: 110,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) =>
           params.data ? (
             <div className="flex items-center h-full">

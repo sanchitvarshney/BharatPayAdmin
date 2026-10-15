@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Autocomplete, Box, CircularProgress, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import useDebounce from "@/hooks/useDebounce";
 import axiosInstance from "@/api/baratpayDashApi";
 import { showToast } from "@/utills/toasterContext";
@@ -21,7 +27,17 @@ type Props = {
   size?: "small" | "medium";
 };
 
-const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "100%", error, helperText, required = false, varient = "outlined", size = "medium" }) => {
+const SelectVendor: React.FC<Props> = ({
+  value,
+  onChange,
+  label = "",
+  width = "100%",
+  error,
+  helperText,
+  required = false,
+  varient = "outlined",
+  size = "medium",
+}) => {
   const [inputValue, setInputValue] = useState("");
   const debouncedInputValue = useDebounce(inputValue, 300);
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,11 +46,16 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
   const fetchItems = async (query: string | null) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/vendor/vendorOptions/${query}`);
+      const response = await axiosInstance.get(
+        `/vendor/vendorOptions/${query}`,
+      );
       setItemList(response.data.data);
     } catch (error: any) {
       console.error("Error fetching vendors:", error);
-      showToast(error?.response?.data?.message?.msg || "Failed to fetch vendors", "error");
+      showToast(
+        error?.response?.data?.message?.msg || "Failed to fetch vendors",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -55,7 +76,9 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
       value={value}
       size={size}
       options={itemList || []}
-      getOptionLabel={(option) => (option.id ? `(${option.id})-${option.text}` : option.text)}
+      getOptionLabel={(option) =>
+        option.id ? `(${option.id})-${option.text}` : option.text
+      }
       filterOptions={(options) => options}
       filterSelectedOptions
       onChange={(_, value) => {
@@ -64,7 +87,8 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
       loading={loading}
       isOptionEqualToValue={(option, value) => option.id === value?.id}
       onInputChange={(_, newInputValue, reason: any) => {
-        (reason === "input" || reason === "clear") && setInputValue(newInputValue);
+        const isInputValueChange = reason === "input" || reason === "clear";
+        if (isInputValueChange) setInputValue(newInputValue);
       }}
       renderInput={(params) => (
         <TextField
@@ -87,7 +111,8 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
         />
       )}
       renderOption={(props, option) => {
-        const { key, ...optionProps } = props as React.HTMLAttributes<HTMLLIElement> & { key?: React.Key };
+        const { key, ...optionProps } =
+          props as React.HTMLAttributes<HTMLLIElement> & { key?: React.Key };
         return (
           <Box
             key={key}
@@ -101,7 +126,10 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
               py: "8px !important",
             }}
           >
-            <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.3 }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, lineHeight: 1.3 }}
+            >
               {option.text}
             </Typography>
             <Typography
@@ -112,7 +140,13 @@ const SelectVendor: React.FC<Props> = ({ value, onChange, label = "", width = "1
                 lineHeight: 1.3,
               }}
             >
-              Vendor Code: <Box component="span" sx={{ color: "primary.main", fontWeight: 600 }}>{option.id}</Box>
+              Vendor Code:{" "}
+              <Box
+                component="span"
+                sx={{ color: "primary.main", fontWeight: 600 }}
+              >
+                {option.id}
+              </Box>
             </Typography>
           </Box>
         );

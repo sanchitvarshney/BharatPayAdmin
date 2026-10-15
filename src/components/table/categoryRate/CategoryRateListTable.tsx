@@ -9,6 +9,7 @@ import { getCategoryRateList } from "@/features/categoryRate/categoryRateSlice";
 import { CategoryRateGroup } from "@/features/categoryRate/categoryRateType";
 import { Icons } from "@/components/icons/icons";
 import CategoryRateForm, { CategoryRateFormValues, COMPONENT_STATUS } from "@/features/categoryRate/CategoryRateForm";
+import { leftAlignedColumn, rightAlignedColumn } from "@/utills/agGridAlignUtils";
 
 type RowData = {
   orgHierarchy: string[];
@@ -94,9 +95,9 @@ const CategoryRateListTable: React.FC = () => {
       { headerName: "Category Key", field: "categoryKey", hide: true },
       { headerName: "Component Key", field: "componentKey", hide: true },
       { headerName: "Rate Key", field: "rateKey", hide: true },
-      { headerName: "Component Name", field: "componentName", flex: 1 },
-      { headerName: "Rate", field: "rate", flex: 1 },
-      { headerName: "Created Date", field: "createdDate", flex: 1 },
+      { headerName: "Component Name", field: "componentName", minWidth: 200  , ...leftAlignedColumn, wrapText: true, autoHeight: true },
+      { headerName: "Rate", field: "rate", minWidth:100, maxWidth: 100, ...rightAlignedColumn },
+      { headerName: "Created At", field: "createdDate", minWidth: 200, maxWidth: 200, ...leftAlignedColumn },
     ],
     [],
   );
@@ -104,7 +105,8 @@ const CategoryRateListTable: React.FC = () => {
   const autoGroupColumnDef: ColDef = useMemo(
     () => ({
       headerName: "Category / Component",
-      minWidth: 400,
+      minWidth: 250,
+      maxWidth: 450,
       valueGetter: (params: any) => (params.node.group ? params.node.key : undefined),
       cellRendererParams: {
         suppressCount: true,

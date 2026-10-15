@@ -14,6 +14,7 @@ import { Icons } from "@/components/icons/icons";
 import BharatpeCreditForm from "@/features/bharatpeCredit/BharatpeCreditForm";
 import SharedDialog from "@/components/shared/SharedDialog";
 import { showToast } from "@/utills/toasterContext";
+import { leftAlignedColumn } from "@/utills/agGridAlignUtils";
 
 type EditingItem = BharatpeCreditListItem;
 
@@ -75,22 +76,24 @@ const BharatpeCreditListTable: React.FC = () => {
       {
         headerName: "#",
         colId: "srNo",
-        width: 90,
+        width: 50,
+        ...leftAlignedColumn,
         sortable: false,
         filterable: false,
         cellRenderer: (params: any) => (params.node?.rowIndex ?? 0) + 1,
       },
-      { headerName: "Show Part Name", field: "show_component", flex: 1 },
-      { headerName: "Calculate Part Name", field: "calc_component", flex: 1 },
-      { headerName: "Type", field: "type", flex: 1 },
-      { headerName: "Created By", field: "created_by", flex: 1 },
-      { headerName: "Created Date", field: "date", flex: 1 },
+      { headerName: "Show Part Name", field: "show_component", flex: 1, wrapText: true, ...leftAlignedColumn, autoHeight: true },
+      { headerName: "Calculate Part Name", field: "calc_component", flex: 1, wrapText: true, ...leftAlignedColumn, autoHeight: true },
+      { headerName: "Type", field: "type", flex: 0.4, ...leftAlignedColumn },
+      { headerName: "Created By", field: "created_by", flex: 0.5, ...leftAlignedColumn },
+      { headerName: "Created Date", field: "date", flex: 0.5, ...leftAlignedColumn },
       {
         headerName: "Action",
         field: "action",
         width: 110,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) =>
           params.data ? (
             <div className="flex items-center h-full">

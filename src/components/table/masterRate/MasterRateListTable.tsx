@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { ColDef, GridReadyEvent } from "@ag-grid-community/core";
-import { Divider, Drawer, IconButton, Typography } from "@mui/material";
+import { Chip, Divider, Drawer, IconButton, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "@/hooks/useReduxHook";
 import { OverlayNoRowsTemplate } from "@/components/reusable/OverlayNoRowsTeplate";
 import CustomLoadingOverlay from "@/components/reusable/CustomLoadingOverlay";
@@ -11,6 +11,10 @@ import { Icons } from "@/components/icons/icons";
 import MasterRateForm, {
   MasterRateFormValues,
 } from "@/features/masterRate/MasterRateForm";
+import {
+  leftAlignedColumn,
+  rightAlignedColumn,
+} from "@/utills/agGridAlignUtils";
 
 type RowData = {
   orgHierarchy: string[];
@@ -73,7 +77,10 @@ const toFormValues = (product: EditingProduct): MasterRateFormValues => ({
   type: product.deviceCategory,
   //@ts-ignore
   sku: product?.productKey
-    ? { id: product?.productKey, text: product.productSkuCode || product.productName }
+    ? {
+        id: product?.productKey,
+        text: product.productSkuCode || product.productName,
+      }
     : null,
   entries: product.entries.map((entry) => ({
     rateId: entry.rateId,
@@ -89,7 +96,9 @@ const MasterRateListTable: React.FC = () => {
     (state) => state.masterRate,
   );
   const [rowData, setRowData] = useState<RowData[]>([]);
-  const [editingProduct, setEditingProduct] = useState<EditingProduct | null>(null);
+  const [editingProduct, setEditingProduct] = useState<EditingProduct | null>(
+    null,
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -109,16 +118,16 @@ const MasterRateListTable: React.FC = () => {
     const entries: RowData[] = (node.allLeafChildren || [])
       .map((leaf: any) => leaf.data)
       .filter(Boolean);
-    
+
     if (!entries.length) return;
     const first = entries[0];
-      console.log("entries", entries);
+    console.log("entries", entries);
     setEditingProduct({
       productKey: first.productKey,
       deviceCategory: first.deviceCategory,
       productSkuCode: first.productSkuCode,
       productName: first.productName,
-      
+
       entries,
     });
     setDrawerOpen(true);
@@ -135,7 +144,14 @@ const MasterRateListTable: React.FC = () => {
         flex: 1,
         hide: true,
       },
-      { headerName: "Model", field: "productModelName", flex: 1 },
+      {
+        headerName: "Model",
+        field: "productModelName",
+        maxWidth: 120,
+        minWidth: 120,
+        ...leftAlignedColumn,
+        wrapText: true,
+      },
       {
         headerName: "Range",
         field: "",
@@ -143,31 +159,70 @@ const MasterRateListTable: React.FC = () => {
           params.data
             ? `${params.data.minCount} - ${params.data.maxCount}`
             : "",
-        flex: 1,
+        maxWidth: 150,
+        minWidth: 150,
+        ...rightAlignedColumn,
+        wrapText: true,
       },
-      { headerName: "Amount", field: "amount", flex: 1 },
+      {
+        headerName: "Amount",
+        field: "amount",
+        maxWidth: 100,
+        minWidth: 100,
+        ...rightAlignedColumn,
+      },
       {
         headerName: "Status",
         field: "activeStatus",
-        flex: 1,
-        cellRenderer: (params: any) =>
-          params.data ? (
-            <Typography
-              variant="subtitle2"
+        maxWidth: 100,
+        minWidth: 100,
+        ...leftAlignedColumn,
+        cellRenderer: (params: any) => {
+          if (!params.data) return "";
+          const isActive = params.data.activeStatus === "ACTIVE";
+          return (
+            <Chip
+              label={isActive ? "Active" : "Inactive"}
+              size="small"
               sx={{
-                color: params.data.activeStatus === "ACTIVE" ? "green" : "red",
+                fontSize: 13,
+                fontWeight: 500,
+                borderRadius: "6px",
+                color: isActive ? "#10b981" : "#ef4444",
+                backgroundColor: isActive ? "#ecfdf5" : "#fef2f2",
               }}
-            >
-              {params.data.activeStatus === "ACTIVE" ? "Active" : "Inactive"}
-            </Typography>
-          ) : (
-            ""
-          ),
+            />
+          );
+        },
       },
-      { headerName: "Created By", field: "createdUser", flex: 1 },
-      { headerName: "Created Date", field: "createdDate", flex: 1 },
-      { headerName: "Updated By", field: "updatedUser", flex: 1 },
-      { headerName: "Updated Date", field: "updatedDate", flex: 1 },
+      {
+        headerName: "Created By",
+        field: "createdUser",
+        maxWidth: 150,
+        minWidth: 150,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Created At",
+        field: "createdDate",
+        maxWidth: 200,
+        minWidth: 200,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Updated By",
+        field: "updatedUser",
+        maxWidth: 150,
+        minWidth: 150,
+        ...leftAlignedColumn,
+      },
+      {
+        headerName: "Updated At",
+        field: "updatedDate",
+        maxWidth: 200,
+        minWidth: 200,
+        ...leftAlignedColumn,
+      },
     ],
     [],
   );
@@ -176,7 +231,8 @@ const MasterRateListTable: React.FC = () => {
     () => ({
       headerName: "Device Type / Product",
       minWidth: 400,
-      valueGetter: (params: any) => (params.node.group ? params.node.key : undefined),
+      valueGetter: (params: any) =>
+        params.node.group ? params.node.key : undefined,
       cellRendererParams: {
         suppressCount: true,
         innerRenderer: (params: any) => {
@@ -191,7 +247,7 @@ const MasterRateListTable: React.FC = () => {
                     e.stopPropagation();
                     handleEditClick(params.node);
                   }}
-                  sx={{ml:1}}
+                  sx={{ ml: 1 }}
                 >
                   <Icons.edit fontSize="small" />
                 </IconButton>

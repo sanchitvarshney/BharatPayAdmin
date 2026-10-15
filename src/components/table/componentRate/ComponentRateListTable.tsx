@@ -14,6 +14,7 @@ import {
   departmentOptions,
 } from "@/features/componentRate/componentRateType";
 import { Icons } from "@/components/icons/icons";
+import { leftAlignedColumn } from "@/utills/agGridAlignUtils";
 
 type FieldChangeHandler = (
   componentKey: string,
@@ -29,6 +30,7 @@ type CellRendererParams = {
 const RATE_PATTERN = /^\d*\.?\d{0,2}$/;
 
 const fieldSx = {
+  maxWidth: "120px",
   "& .MuiInputBase-input": { fontSize: "13px", padding: "2px 0" },
 };
 
@@ -52,6 +54,7 @@ const RateCellRenderer: React.FC<CellRendererParams> = ({ data, context }) => (
 const menuItemSx = { fontSize: "13px" };
 
 const selectSx = {
+  maxWidth: "120px",
   fontSize: "13px",
   "& .MuiSelect-select": { padding: "2px 24px 2px 0" },
 };
@@ -136,26 +139,29 @@ const ComponentRateListTable: React.FC = () => {
       {
         headerName: "#",
         colId: "srNo",
-        width: 90,
+        width: 50,
         sortable: false,
+        ...leftAlignedColumn,
         filterable: false,
         cellRenderer: (params: any) => (params.node?.rowIndex ?? 0) + 1,
       },
-      { headerName: "Component Name", field: "c_name", flex: 1, filter: true },
-      { headerName: "Part Code", field: "c_part_no", flex: 1, filter: true },
+      { headerName: "Component Name", field: "c_name", flex: 1,...leftAlignedColumn, wrapText: true, autoHeight: true },
+      { headerName: "Part Code", field: "c_part_no", width: 120,...leftAlignedColumn },
       {
         headerName: "Rate",
         field: "rate",
-        flex: 1,
+        width: 100,
+        maxWidth: 100,
+        ...leftAlignedColumn,
         cellRenderer: RateCellRenderer,
-        cellStyle: { display: "flex", alignItems: "center" },
       },
       {
         headerName: "Department",
         field: "department",
-        flex: 1,
+        width: 150,
+        maxWidth: 150,
+        ...leftAlignedColumn,
         cellRenderer: DepartmentCellRenderer,
-        cellStyle: { display: "flex", alignItems: "center" },
       },
       {
         headerName: "Action",
@@ -163,6 +169,7 @@ const ComponentRateListTable: React.FC = () => {
         width: 110,
         sortable: false,
         filterable: false,
+        ...leftAlignedColumn,
         cellRenderer: (params: any) =>
           params.data ? (
             <div className="flex items-center h-full">
